@@ -11,6 +11,7 @@
 namespace Imdb;
 
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Psr\SimpleCache\CacheInterface;
 
 /**
@@ -57,7 +58,7 @@ class MdbBase extends Config
     public function __construct(?Config $config = null, ?LoggerInterface $logger = null, ?CacheInterface $cache = null)
     {
         $this->config = $config ?: $this;
-        $this->logger = empty($logger) ? new Logger($this->debug) : $logger;
+        $this->logger = $logger ?? ($this->debug ? new Logger($this->debug) : new NullLogger());
         $this->cache = empty($cache) ? new Cache($this->config, $this->logger) : $cache;
         $this->graphql = new GraphQL($this->cache, $this->logger, $this->config);
     }

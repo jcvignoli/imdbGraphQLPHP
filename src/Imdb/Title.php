@@ -46,14 +46,9 @@ class Title extends MdbBase
     protected $mainPoster = null;
     protected $mainPosterThumb = null;
     protected $mainPlotoutline = null;
-    protected $mainMovietype = null;
-    protected $mainTitle = null;
-    protected $mainOriginalTitle = null;
-    protected $mainYear = -1;
-    protected $mainEndYear = -1;
+    protected $mainTitleYearMovietype = array();
     protected $mainTop250 = 0;
-    protected $mainRating = 0;
-    protected $mainRatingVotes = 0;
+    protected $mainRatingVotes = array();
     protected $mainMetacritics = array();
     protected $mainRank = array();
     protected $mainPhoto = array();
@@ -95,6 +90,11 @@ class Title extends MdbBase
     protected $watchOption = array();
     protected $status = null;
     protected $news = array();
+
+    #---------------------------------------------[ fromSearchResults Protected variables]---
+    protected $mainTitle = null;
+    protected $mainYear = null;
+    protected $mainMovietype = null;
 
     #----------------------------------------------------------[ Helper for TitleSearch class ]---
     /**
@@ -140,70 +140,42 @@ class Title extends MdbBase
     }
 
     #-------------------------------------------------------------[ Title ]---
-
-    /** Get movie type
-     * @return string movietype (TV Series, Movie, TV Episode, TV Special, TV Movie, TV Mini Series, Video Game, TV Short, Video)
-     * @see IMDB page / (TitlePage)
-     * If no movietype has been defined explicitly, it returns 'Movie' -- so this is always set.
+    /**
+     * Get title, originalTitle, year, endYear and movietype properties
+     * @return array(title:string|null, originalTitle:string|null, year:int|null, endYear:int|null, movietype:string|null)
      */
-    public function movietype()
+    public function titleYearMovietype()
     {
-        if (empty($this->mainMovietype)) {
-            $this->titleYear();
-            if (empty($this->mainMovietype)) {
-                $this->mainMovietype = 'Movie';
-            }
-        }
-        return $this->mainMovietype;
+        $query = <<<EOF
+query TitleYearMovietype(\$id: ID!) {
+  title(id: \$id) {
+    titleText {
+      text
     }
-
-    /** Get movie title
-     * @return string title movie title (name)
-     * @see IMDB page / (TitlePage)
-     */
-    public function title()
-    {
-        if (empty($this->mainTitle)) {
-            $this->titleYear();
-        }
-        return $this->mainTitle;
+    originalTitleText {
+      text
     }
-
-    /** Get movie original title
-     * @return string mainOriginalTitle  movie original title
-     * @see IMDB page / (TitlePage)
-     */
-    public function originalTitle()
-    {
-        if (empty($this->mainOriginalTitle)) {
-            $this->titleYear();
-        }
-        return $this->mainOriginalTitle ;
+    titleType {
+      text
     }
-
-    /** Get year
-     * @return string year
-     * @see IMDB page / (TitlePage)
-     */
-    public function year()
-    {
-        if ($this->mainYear == -1) {
-            $this->titleYear();
-        }
-        return $this->mainYear;
+    releaseYear {
+      year
+      endYear
     }
-
-    /** Get end-year
-     * if production spanned multiple years, usually for series
-     * @return int endyear|null
-     * @see IMDB page / (TitlePage)
-     */
-    public function endyear()
-    {
-        if ($this->mainEndYear == -1) {
-            $this->titleYear();
-        }
-        return $this->mainEndYear;
+  }
+}
+EOF;
+        $data = $this->graphql->query($query, "TitleYearMovietype", ["id" => "tt$this->imdbID"]);
+        $this->mainTitleYearMovietype = array(
+            'title' => isset($data->title->titleText->text) ?
+                             trim(str_replace('"', ':', trim($data->title->titleText->text, '"'))) : null,
+            'originalTitle' => isset($data->title->originalTitleText->text) ?
+                                     trim(str_replace('"', ':', trim($data->title->originalTitleText->text, '"'))) : null,
+            'year' => isset($data->title->releaseYear->year) ? $data->title->releaseYear->year : null,
+            'endYear' => isset($data->title->releaseYear->endYear) ? $data->title->releaseYear->endYear : null,
+            'movietype' => isset($data->title->titleType->text) ? $data->title->titleType->text : null
+        );
+        return $this->mainTitleYearMovietype;
     }
 
     #---------------------------------------------------------------[ Runtime ]---
@@ -269,53 +241,32 @@ EOF;
         return $this->runtimes;
     }
 
-    #----------------------------------------------------------[ Movie Rating ]---
+    #----------------------------------------------------------[ Rating Votes Metacritics]---
     /**
-     * Get movie rating
-     * @return int/float or 0
+     * Get movie rating and votes
+     * @return array(rating:float, votes:int)
      * @see IMDB page / (TitlePage)
      */
-    public function rating()
+    public function ratingVotes()
     {
-        if ($this->mainRating == 0) {
-            $query = <<<EOF
-query Rating(\$id: ID!) {
-  title(id: \$id) {
-    ratingsSummary {
-      aggregateRating
-    }
-  }
-}
-EOF;
-            $data = $this->graphql->query($query, "Rating", ["id" => "tt$this->imdbID"]);
-            if (!empty($data->title->ratingsSummary->aggregateRating)) {
-                $this->mainRating = $data->title->ratingsSummary->aggregateRating;
-            }
-        }
-        return $this->mainRating;
-    }
-
-     /**
-     * Return number of votes for this movie
-     * @return int
-     * @see IMDB page / (TitlePage)
-     */
-    public function votes()
-    {
-        if ($this->mainRatingVotes == 0) {
+        if (empty($this->mainRatingVotes)) {
             $query = <<<EOF
 query RatingVotes(\$id: ID!) {
   title(id: \$id) {
     ratingsSummary {
+      aggregateRating
       voteCount
     }
   }
 }
 EOF;
             $data = $this->graphql->query($query, "RatingVotes", ["id" => "tt$this->imdbID"]);
-            if (!empty($data->title->ratingsSummary->voteCount)) {
-                $this->mainRatingVotes = $data->title->ratingsSummary->voteCount;
-            }
+            $this->mainRatingVotes = array(
+                    'rating' => isset($data->title->ratingsSummary->aggregateRating) ?
+                                      $data->title->ratingsSummary->aggregateRating : 0,
+                    'votes' => isset($data->title->ratingsSummary->voteCount) ?
+                                     $data->title->ratingsSummary->voteCount : 0
+                );
         }
         return $this->mainRatingVotes;
     }
@@ -869,7 +820,10 @@ language {
 }
 EOF;
             $data = $this->graphQlGetAll("AlsoKnow", "akas", $query, $filter);
-            $originalTitle = $this->originalTitle();
+            if (empty($mainTitleYearMovietype)) {
+                $mainTitleYearMovietype = $this->titleYearMovietype();
+            }
+            $originalTitle = $mainTitleYearMovietype['originalTitle'];
             if (!empty($originalTitle)) {
                 $this->akas[] = array(
                     'title' => $originalTitle,
@@ -1529,75 +1483,73 @@ EOF;
      */
     public function episode($thumb = true, $yearbased = 0)
     {
-        if ($this->movietype() === "TV Series" || $this->movietype() === "TV Mini Series") {
-            if (empty($this->seasonEpisodes)) {
-                // Check if season or year based
-                $seasonsData = $this->seasonYearCheck($yearbased);
-                if ($seasonsData === false) {
-                    return $this->seasonEpisodes;
-                }
-                if (is_array($seasonsData) && count($seasonsData) > 0) {
-                    foreach ($seasonsData as $edge) {
-                        if (empty($edge->node->text)) {
-                            return $this->seasonEpisodes;
-                        }
-                        $seasonYear = $edge->node->text;
-                        $filter = $this->buildFilter($seasonYear);
-                        if ($seasonYear == "Unknown") { //this is intended capitol
-                            $seasonYear = -1;
-                        }
-                        // Get all episodes
-                        $episodesData = $this->graphQlGetAllEpisodes($filter);
-                        $episodes = array();
-                        foreach ($episodesData as $edge) {
-                            $dateParts = array(
-                                'day' => isset($edge->node->releaseDate->day) ?
-                                            $edge->node->releaseDate->day : null,
-                                'month' => isset($edge->node->releaseDate->month) ?
-                                                $edge->node->releaseDate->month : null,
-                                'year' => isset($edge->node->releaseDate->year) ?
-                                                $edge->node->releaseDate->year : null
-                            );
-                            $airDate = $this->buildDateString($dateParts);
-                            $epNumber = null;
-                            if (isset($edge->node->series->displayableEpisodeNumber->episodeNumber->episodeNumber)) {
-                                $epNumber = $edge->node->series->displayableEpisodeNumber->episodeNumber->episodeNumber;
-                                // Unknown episodes get a number to keep them separate.
-                                if ($epNumber == "unknown") {
-                                    $epNumber = -1;
-                                }
-                            }
-                            $imgUrl = null;
-                            if (!empty($edge->node->primaryImage->url)) {
-                                $img = str_replace('.jpg', '', $edge->node->primaryImage->url);
-                                if ($thumb == true) {
-                                    $fullImageWidth = $edge->node->primaryImage->width;
-                                    $fullImageHeight = $edge->node->primaryImage->height;
-                                    $newImageWidth = $this->config->episodeThumbnailWidth;
-                                    $newImageHeight = $this->config->episodeThumbnailHeight;
-                                    $parameter = $this->imageFunctions->resultParameter($fullImageWidth, $fullImageHeight, $newImageWidth, $newImageHeight);
-                                    $imgUrl = $img . $parameter;
-                                } else {
-                                    $imgUrl = $img . 'QL100_SX1000_.jpg';
-                                }
-                            }
-                            $episode = array(
-                                    'imdbid' => isset($edge->node->id) ?
-                                                    str_replace('tt', '', $edge->node->id) : null,
-                                    'title' => isset($edge->node->titleText->text) ?
-                                                    $edge->node->titleText->text : null,
-                                    'airdate' => $airDate,
-                                    'airdateParts' => $dateParts,
-                                    'plot' => isset($edge->node->plot->plotText->plainText) ?
-                                                    $edge->node->plot->plotText->plainText : null,
-                                    'season' => $seasonYear,
-                                    'episode' => $epNumber,
-                                    'imgUrl' => $imgUrl
-                                );
-                            $episodes[] = $episode;
-                        }
-                        $this->seasonEpisodes[$seasonYear] = $episodes;
+        if (empty($this->seasonEpisodes)) {
+            // Check if season or year based
+            $seasonsData = $this->seasonYearCheck($yearbased);
+            if ($seasonsData === false) {
+                return $this->seasonEpisodes;
+            }
+            if (is_array($seasonsData) && count($seasonsData) > 0) {
+                foreach ($seasonsData as $edge) {
+                    if (empty($edge->node->text)) {
+                        return $this->seasonEpisodes;
                     }
+                    $seasonYear = $edge->node->text;
+                    $filter = $this->buildFilter($seasonYear);
+                    if ($seasonYear == "Unknown") { //this is intended capitol
+                        $seasonYear = -1;
+                    }
+                    // Get all episodes
+                    $episodesData = $this->graphQlGetAllEpisodes($filter);
+                    $episodes = array();
+                    foreach ($episodesData as $edge) {
+                        $dateParts = array(
+                            'day' => isset($edge->node->releaseDate->day) ?
+                                        $edge->node->releaseDate->day : null,
+                            'month' => isset($edge->node->releaseDate->month) ?
+                                            $edge->node->releaseDate->month : null,
+                            'year' => isset($edge->node->releaseDate->year) ?
+                                            $edge->node->releaseDate->year : null
+                        );
+                        $airDate = $this->buildDateString($dateParts);
+                        $epNumber = null;
+                        if (isset($edge->node->series->displayableEpisodeNumber->episodeNumber->episodeNumber)) {
+                            $epNumber = $edge->node->series->displayableEpisodeNumber->episodeNumber->episodeNumber;
+                            // Unknown episodes get a number to keep them separate.
+                            if ($epNumber == "unknown") {
+                                $epNumber = -1;
+                            }
+                        }
+                        $imgUrl = null;
+                        if (!empty($edge->node->primaryImage->url)) {
+                            $img = str_replace('.jpg', '', $edge->node->primaryImage->url);
+                            if ($thumb == true) {
+                                $fullImageWidth = $edge->node->primaryImage->width;
+                                $fullImageHeight = $edge->node->primaryImage->height;
+                                $newImageWidth = $this->config->episodeThumbnailWidth;
+                                $newImageHeight = $this->config->episodeThumbnailHeight;
+                                $parameter = $this->imageFunctions->resultParameter($fullImageWidth, $fullImageHeight, $newImageWidth, $newImageHeight);
+                                $imgUrl = $img . $parameter;
+                            } else {
+                                $imgUrl = $img . 'QL100_SX1000_.jpg';
+                            }
+                        }
+                        $episode = array(
+                                'imdbid' => isset($edge->node->id) ?
+                                                str_replace('tt', '', $edge->node->id) : null,
+                                'title' => isset($edge->node->titleText->text) ?
+                                                $edge->node->titleText->text : null,
+                                'airdate' => $airDate,
+                                'airdateParts' => $dateParts,
+                                'plot' => isset($edge->node->plot->plotText->plainText) ?
+                                                $edge->node->plot->plotText->plainText : null,
+                                'season' => $seasonYear,
+                                'episode' => $epNumber,
+                                'imgUrl' => $imgUrl
+                            );
+                        $episodes[] = $episode;
+                    }
+                    $this->seasonEpisodes[$seasonYear] = $episodes;
                 }
             }
         }
@@ -2504,12 +2456,13 @@ EOF;
     #-------------------------------------------------[ Video ]---
     /**
      * Get all video URL's and images from videogallery page
+     * See config settings for this method
      * @return array categorized by type array videos
      *     [Trailer] => Array
      *          [0] => Array()
      *              [id] => 4030506521
      *              [name] => A Clockwork Orange
-     *              [runtime] => 130
+     *              [runtime] => 130 (seconds)
      *              [description] => Trailer for A Clockwork Orange - Two-Disc Anniversary Edition Blu-ray Book Packaging
      *              [titleName] => A Clockwork Orange
      *              [titleYear] => 1971
@@ -2529,10 +2482,11 @@ EOF;
     public function video()
     {
         if (empty($this->videos)) {
+            $filter = $this->config->videoIncludeMature === true ? ',filter:{maturityLevel:INCLUDE_MATURE}' : '';
             $query = <<<EOF
 query Video(\$id: ID!) {
   title(id: \$id) {
-    videoStrip(first:9999) {
+    videoStrip(first:9999$filter) {
       edges {
         node {
           id
@@ -2579,14 +2533,23 @@ EOF;
                )
             {
                 foreach ($data->title->videoStrip->edges as $edge) {
+                    if ($this->config->videoContentType == 'trailer' &&
+                        isset($edge->node->contentType->displayName->value) &&
+                        $edge->node->contentType->displayName->value !== "Trailer"
+                       )
+                    {
+                        continue;
+                    }
                     $thumbUrl = null;
                     $videoId = isset($edge->node->id) ?
                                     str_replace('vi', '', $edge->node->id) : null;
                     if (!empty($edge->node->thumbnail->url)) {
                         $fullImageWidth = $edge->node->thumbnail->width;
                         $fullImageHeight = $edge->node->thumbnail->height;
+                        $newImageWidth = $this->config->videoThumbnailWidth;
+                        $newImageHeight = $this->config->videoThumbnailHeight;
                         $img = str_replace('.jpg', '', $edge->node->thumbnail->url);
-                        $parameter = $this->imageFunctions->resultParameter($fullImageWidth, $fullImageHeight, 500, 281);
+                        $parameter = $this->imageFunctions->resultParameter($fullImageWidth, $fullImageHeight, $newImageWidth, $newImageHeight);
                         $thumbUrl = $img . $parameter;
                     }
                     $this->videos[$edge->node->contentType->displayName->value][] = array(
@@ -3177,44 +3140,6 @@ EOF;
 
     #========================================================[ Helper functions ]===
     #===============================================================================
-
-    /**
-     * Setup title and year properties
-     */
-    protected function titleYear()
-    {
-        $query = <<<EOF
-query TitleYear(\$id: ID!) {
-  title(id: \$id) {
-    titleText {
-      text
-    }
-    originalTitleText {
-      text
-    }
-    titleType {
-      text
-    }
-    releaseYear {
-      year
-      endYear
-    }
-  }
-}
-EOF;
-        $data = $this->graphql->query($query, "TitleYear", ["id" => "tt$this->imdbID"]);
-
-        $this->mainTitle = isset($data->title->titleText->text) ?
-                                 trim(str_replace('"', ':', trim($data->title->titleText->text, '"'))) : null;
-        $this->mainOriginalTitle  = isset($data->title->originalTitleText->text) ?
-                                          trim(str_replace('"', ':', trim($data->title->originalTitleText->text, '"'))) : null;
-        $this->mainMovietype = isset($data->title->titleType->text) ?
-                                     $data->title->titleType->text : null;
-        $this->mainYear = isset($data->title->releaseYear->year) ?
-                                $data->title->releaseYear->year : null;
-        $this->mainEndYear = isset($data->title->releaseYear->endYear) ?
-                                   $data->title->releaseYear->endYear : null;
-    }
 
     #========================================================[ photo/poster ]===
     /**

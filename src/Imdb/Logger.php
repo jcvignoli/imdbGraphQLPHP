@@ -39,7 +39,7 @@ class Logger implements LoggerInterface
      * @param array $context
      * @return void
      */
-    public function alert(Stringable|string $message, array $context = [])
+    public function alert(Stringable|string $message, array $context = []): void
     {
         $this->log('alert', $message, $context);
     }
@@ -66,7 +66,7 @@ class Logger implements LoggerInterface
      * @param array $context
      * @return void
      */
-    public function error(Stringable|string $message, array $context = [])
+    public function error(Stringable|string $message, array $context = []): void
     {
         $this->log('error', $message, $context);
     }

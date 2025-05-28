@@ -3,6 +3,7 @@
 namespace Imdb;
 
 use Psr\Log\LoggerInterface;
+use Stringable;
 
 /**
  * Debug logging. Echos html to the page

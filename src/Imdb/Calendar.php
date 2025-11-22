@@ -402,8 +402,8 @@ EOF;
     private function buildDateString($dateParts)
     {
         if (!empty($dateParts['month']) && !empty($dateParts['day']) && !empty($dateParts['year'])) {
-            return $dateParts['month'] . '-' .
-                   $dateParts['day'] . '-' .
+            return $dateParts['month'] . '/' .
+                   $dateParts['day'] . '/' .
                    $dateParts['year'];
         } else {
             return false;

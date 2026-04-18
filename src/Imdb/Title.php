@@ -1635,26 +1635,8 @@ EOF;
      */
     public function goof($spoil = false)
     {
-        // imdb connection category ids to camelCase
-        $categoryIds = array(
-            'continuity' => 'continuity',
-            'factual_error' => 'factualError',
-            'not_a_goof' => 'notAGoof',
-            'revealing_mistake' => 'revealingMistake',
-            'miscellaneous' => 'miscellaneous',
-            'anachronism' => 'anachronism',
-            'audio_visual_unsynchronized' => 'audioVisualUnsynchronized',
-            'crew_or_equipment_visible' => 'crewOrEquipmentVisible',
-            'error_in_geography' => 'errorInGeography',
-            'plot_hole' => 'plotHole',
-            'boom_mic_visible' => 'boomMicVisible',
-            'character_error' => 'characterError'
-        );
-
         if (empty($this->goofs)) {
-            foreach ($categoryIds as $categoryId) {
-                $this->goofs[$categoryId] = array();
-            }
+
             $filter = $spoil === false ? ', filter: {spoilers: EXCLUDE_SPOILERS}' : '';
             $query = <<<EOF
 category {
@@ -1670,7 +1652,15 @@ EOF;
             $data = $this->graphQlGetAll("Goofs", "goofs", $query, $filter);
             if (count($data) > 0) {
                 foreach ($data as $edge) {
-                    $this->goofs[$categoryIds[$edge->node->category->id]][] = array(
+                    // category Id
+                    $catId = !empty($edge->node->category->id) ? $edge->node->category->id : "unknown";
+                    $catIdSplit = explode('_', $catId);
+                    $categoryId = '';
+                    foreach ($catIdSplit as $catIdKey => $catIdItem) {
+                        $categoryId .= ucwords($catIdItem);
+                    }
+                    $categoryId = lcfirst($categoryId);
+                    $this->goofs[$categoryId][] = array(
                         'content' => isset($edge->node->displayableArticle->body->plainText) ?
                                         $edge->node->displayableArticle->body->plainText : null,
                         'isSpoiler' => $edge->node->isSpoiler
@@ -1722,20 +1712,7 @@ EOF;
      */
     public function trivia($spoil = false)
     {
-        // imdb connection category ids to camelCase
-        $categoryIds = array(
-            'uncategorized' => 'uncategorized',
-            'actor-trademark' => 'actorTrademark',
-            'cameo' => 'cameo',
-            'director-cameo' => 'directorCameo',
-            'director-trademark' => 'directorTrademark',
-            'smithee' => 'smithee'
-        );
-
         if (empty($this->trivias)) {
-            foreach ($categoryIds as $categoryId) {
-                $this->trivias[$categoryId] = array();
-            }
 
             $filter = $spoil === false ? ', filter: {spoilers: EXCLUDE_SPOILERS}' : '';
             $query = <<<EOF
@@ -1776,7 +1753,15 @@ EOF;
                             );
                         }
                     }
-                    $this->trivias[$categoryIds[$edge->node->category->id]][] = array(
+                    // category Id
+                    $catId = !empty($edge->node->category->id) ? $edge->node->category->id : "unknown";
+                    $catIdSplit = explode('-', $catId);
+                    $categoryId = '';
+                    foreach ($catIdSplit as $catIdKey => $catIdItem) {
+                        $categoryId .= ucwords($catIdItem);
+                    }
+                    $categoryId = lcfirst($categoryId);
+                    $this->trivias[$categoryId][] = array(
                         'content' => isset($edge->node->displayableArticle->body->plainText) ?
                                         preg_replace('/\s\s+/', ' ', $edge->node->displayableArticle->body->plainText) : null,
                         'names' => $names,
@@ -2034,31 +2019,7 @@ EOF;
      */
     public function connection()
     {
-        // imdb connection category ids to camelCase
-        $categoryIds = array(
-            'alternate_language_version_of' => 'alternateLanguageVersionOf',
-            'edited_from' => 'editedFrom',
-            'edited_into' => 'editedInto',
-            'featured_in' => 'featured',
-            'features' => 'features',
-            'followed_by' => 'followedBy',
-            'follows' => 'follows',
-            'referenced_in' => 'referenced',
-            'references' => 'references',
-            'remade_as' => 'remadeAs',
-            'remake_of' => 'remakeOf',
-            'same_franchise' => 'sameFranchise',
-            'spin_off' => 'spinOff',
-            'spin_off_from' => 'spinOffFrom',
-            'spoofed_in' => 'spoofed',
-            'spoofs' => 'spoofs',
-            'version_of' => 'versionOf'
-        );
-
         if (empty($this->connections)) {
-            foreach ($categoryIds as $categoryId) {
-                $this->connections[$categoryId] = array();
-            }
             $query = <<<EOF
 associatedTitle {
   id
@@ -2090,7 +2051,15 @@ EOF;
             $edges = $this->graphQlGetAll("Connections", "connections", $query);
             if (count($edges) > 0) {
                 foreach ($edges as $edge) {
-                    $this->connections[$categoryIds[$edge->node->category->id]][] = array(
+                   // category Id
+                    $catId = !empty($edge->node->category->id) ? $edge->node->category->id : "unknown";
+                    $catIdSplit = explode('_', $catId);
+                    $categoryId = '';
+                    foreach ($catIdSplit as $catIdKey => $catIdItem) {
+                        $categoryId .= ucwords($catIdItem);
+                    }
+                    $categoryId = lcfirst($categoryId);
+                    $this->connections[$categoryId][] = array(
                         'titleId' => isset($edge->node->associatedTitle->id) ?
                                         str_replace('tt', '', $edge->node->associatedTitle->id) : null,
                         'titleName' => isset($edge->node->associatedTitle->titleText->text) ?

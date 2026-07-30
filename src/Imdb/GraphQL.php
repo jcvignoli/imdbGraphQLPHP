@@ -73,13 +73,12 @@ class GraphQL
     {
         $request = new Request('https://api.graphql.imdb.com/', $this->config);
         $request->addHeaderLine("Content-Type", "application/json");
+        $request->addHeaderLine("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36");
+        $request->addHeaderLine("x-imdb-client-name", "imdb-web-next-localized");
+
         if ($this->config->useLocalization === true) {
-            if (!empty($this->config->country)) {
-                $request->addHeaderLine("X-Imdb-User-Country", $this->config->country);
-            }
-            if (!empty($this->config->language)) {
-                $request->addHeaderLine("X-Imdb-User-Language", $this->config->language);
-            }
+            $request->addHeaderLine("x-imdb-user-country", !empty($this->config->country) ? $this->config->country : "US");
+            $request->addHeaderLine("X-Imdb-User-Language", !empty($this->config->language) ? $this->config->language : "US");
         }
         $payload = json_encode(
             array(
@@ -88,19 +87,26 @@ class GraphQL
                 'variables' => (object) $variables // apparently $variables needs to object
             )
         );
-        $this->logger->info("[GraphQL] Requesting $queryName");
+        $this->logger->info("[GraphQL] Requesting {$queryName}");
         $request->post($payload);
         if (200 == $request->getStatus()) {
-            return json_decode($request->getResponseBody())->data;
+            $responseObj = json_decode($request->getResponseBody());
+            
+            // Ensure response contains expected data property
+            if (isset($responseObj->data)) {
+                return $responseObj->data;
+            }
+            
+            $this->logger->error('[GraphQL] GraphQL Error or Missing Data for ' . $queryName . ' Response: ' . $request->getResponseBody());
+            return new \stdClass();
         } else {
-            $this->logger->error( '[GraphQL] Failed to retrieve query ' . $queryName . ' Response headers: ' . implode( ' ', $request->getLastResponseHeaders() ) . ' Response body: ' . $request->getResponseBody() );
+            $this->logger->error('[GraphQL] Failed to retrieve query ' . $queryName . ' Response headers: ' . implode(' ', $request->getLastResponseHeaders()) . ' Response body: ' . $request->getResponseBody());
             if ($this->config->throwHttpExceptions) {
                 // Some classes don't use imdbId like Chart, Trailers, Calendar and KeywordSearch
                 $imdbErrorID = !isset($variables['id']) ? 'n/a' : $variables['id'];
-                throw new \Exception("Failed to retrieve query [$queryName] , IMDb id [$imdbErrorID]");
-            } else {
-                return new \StdClass();
+                $this->logger->error("Failed to retrieve query [{$queryName}] , IMDb id [{$imdbErrorID}]");
             }
+            return new \stdClass();
         }
     }
 }

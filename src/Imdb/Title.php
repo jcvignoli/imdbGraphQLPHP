@@ -103,10 +103,10 @@ class Title extends MdbBase
      * @param string $title film title
      * @param string $orignalTitle Original film title
      * @param string|null $year
-     * @param string $type
-     * @param Config $config
-     * @param LoggerInterface $logger OPTIONAL override default logger
-     * @param CacheInterface $cache OPTIONAL override default cache
+     * @param string|null $type
+     * @param Config|null $config
+     * @param LoggerInterface|null $logger OPTIONAL override default logger
+     * @param CacheInterface|null $cache OPTIONAL override default cache
      * @return Title
      */
     public static function fromSearchResult(
@@ -114,7 +114,7 @@ class Title extends MdbBase
         string $title,
         string $orignalTitle,
         ?string $year,
-        string $type,
+        ?string $type,
         ?Config $config = null,
         ?LoggerInterface $logger = null,
         ?CacheInterface $cache = null
@@ -1537,11 +1537,11 @@ EOF;
                     return $this->seasonEpisodes;
                 }
                 if (is_array($seasonsData) && count($seasonsData) > 0) {
-                    foreach ($seasonsData as $edge) {
-                        if (empty($edge->node->text)) {
+                foreach ($seasonsData as $seasonsDataEdge) {
+                    if (empty($seasonsDataEdge->node->text)) {
                             return $this->seasonEpisodes;
                         }
-                        $seasonYear = $edge->node->text;
+                        $seasonYear = $seasonsDataEdge->node->text;
                         $filter = $this->buildFilter($seasonYear);
                         if ($seasonYear == "Unknown") { //this is intended capitol
                             $seasonYear = -1;

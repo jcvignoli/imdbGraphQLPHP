@@ -41,7 +41,8 @@ class Cache implements CacheInterface
         $this->logger = $logger;
 
         if (($this->config->cacheUse|| $this->config->cacheStore) && !is_dir($this->config->cacheDir)) {
-            @mkdir($this->config->cacheDir, 0700, true);
+            @mkdir($this->config->cacheDir, 0755, true);
+            @mkdir($this->config->photoroot, 0755, true);
             if (!is_dir($this->config->cacheDir)) {
                 $this->logger->critical("[Cache] Configured cache directory [{$this->config->cacheDir}] does not exist!");
                 throw new Exception("[Cache] Configured cache directory [{$this->config->cacheDir}] does not exist!");

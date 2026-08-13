@@ -21,7 +21,6 @@ use Imdb\Image;
  */
 class Chart extends MdbBase
 {
-
     protected $imageFunctions;
     protected $newImageWidth;
     protected $newImageHeight;
@@ -117,11 +116,11 @@ EOF;
         if (!isset($data->titleChartRankings)) {
             return $top250TitleResults;
         }
-        if (isset($data->titleChartRankings->edges) &&
+        if (
+            isset($data->titleChartRankings->edges) &&
             is_array($data->titleChartRankings->edges) &&
             count($data->titleChartRankings->edges) > 0
-           )
-        {
+        ) {
             foreach ($data->titleChartRankings->edges as $edge) {
                 $thumbUrl = null;
                 if (!empty($edge->node->item->primaryImage->url)) {
@@ -234,11 +233,11 @@ EOF;
         if (!isset($data->nameChartRankings)) {
             return $top250NameResults;
         }
-        if (isset($data->nameChartRankings->edges) &&
+        if (
+            isset($data->nameChartRankings->edges) &&
             is_array($data->nameChartRankings->edges) &&
             count($data->nameChartRankings->edges) > 0
-           )
-        {
+        ) {
             foreach ($data->nameChartRankings->edges as $edge) {
                 $thumbUrl = null;
                 $credits = array();
@@ -365,11 +364,11 @@ EOF;
         if (!isset($data->chartNames)) {
             return $mostPopularNameResults;
         }
-        if (isset($data->chartNames->edges) &&
+        if (
+            isset($data->chartNames->edges) &&
             is_array($data->chartNames->edges) &&
             count($data->chartNames->edges) > 0
-           )
-        {
+        ) {
             foreach ($data->chartNames->edges as $edge) {
                 $thumbUrl = null;
                 $credits = array();
@@ -421,7 +420,7 @@ EOF;
      *           Documentary, Drama, Family, Fantasy, Film-Noir, Game-Show,
      *           History, Horror, Music, Musical, Mystery, News, Reality-TV,
      *           Romance, Sci-Fi, Short, Sport, Talk-Show, Thriller, War, Western
-     * 
+     *
      * @parameter $listType This defines different kind of lists like Movie or TV
      * possible values for $listType:
      *  LOWEST_RATED_MOVIES
@@ -436,7 +435,7 @@ EOF;
      *      Top Rated English IMDb Movies List
      *  TOP_RATED_TV_SHOWS
      *      Top Rated IMDb TV List
-     * 
+     *
      * @return
      * Array
      *   (
@@ -514,11 +513,11 @@ EOF;
         if (!isset($data->chartTitles)) {
             return $mostPopularTitleResults;
         }
-        if (isset($data->chartTitles->edges) &&
+        if (
+            isset($data->chartTitles->edges) &&
             is_array($data->chartTitles->edges) &&
             count($data->chartTitles->edges) > 0
-           )
-        {
+        ) {
             foreach ($data->chartTitles->edges as $edge) {
                 $thumbUrl = null;
                 if (!empty($edge->node->primaryImage->url)) {
@@ -631,11 +630,11 @@ EOF;
         if (!isset($data->boxOfficeWeekendChart)) {
             return array();
         }
-        if (isset($data->boxOfficeWeekendChart->edges) &&
+        if (
+            isset($data->boxOfficeWeekendChart->edges) &&
             is_array($data->boxOfficeWeekendChart->edges) &&
             count($data->boxOfficeWeekendChart->edges) > 0
-           )
-        {
+        ) {
             foreach ($data->boxOfficeWeekendChart->entries as $edge) {
                 $thumbUrl = null;
                 if (!empty($edge->title->primaryImage->url)) {
@@ -692,12 +691,13 @@ EOF;
      * @param string $endDate current date! like '1/2/2013' (month/day/year)
      * @return int number of weeks
      */
-    function datediffInWeeks($startDate, $endDate)
+    public function datediffInWeeks($startDate, $endDate)
     {
-        if($startDate > $endDate) return $this->datediffInWeeks($endDate, $startDate);
+        if ($startDate > $endDate) {
+            return $this->datediffInWeeks($endDate, $startDate);
+        }
         $first = \DateTime::createFromFormat('m/d/Y', $startDate);
         $second = \DateTime::createFromFormat('m/d/Y', $endDate);
-        return ceil($first->diff($second)->days/7);
+        return ceil($first->diff($second)->days / 7);
     }
-
 }

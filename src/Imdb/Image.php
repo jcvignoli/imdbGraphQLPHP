@@ -1,4 +1,5 @@
 <?php
+
 #############################################################################
 # imdbGraphQLPHP                                 ed (github user: duck7000) #
 # written by ed (duck7000)                                                  #
@@ -15,7 +16,6 @@ namespace Imdb;
  */
 class Image
 {
-
     /**
      */
     public function __construct()
@@ -48,7 +48,7 @@ class Image
             return 'QL75_UY' . $newImageHeight . '_CR' . $cropParameter . ',0,' . $newImageWidth . ',' . $newImageHeight . '_.jpg';
         } else {
             $cropParameter = $this->thumbUrlCropParameterVertical($fullImageWidth, $fullImageHeight, $newImageWidth, $newImageHeight);
-            return 'QL75_UX' . $newImageWidth . '_CR0,' . $cropParameter . ',' . $newImageWidth .',' . $newImageHeight . '_.jpg';
+            return 'QL75_UX' . $newImageWidth . '_CR0,' . $cropParameter . ',' . $newImageWidth . ',' . $newImageHeight . '_.jpg';
         }
     }
 
@@ -83,7 +83,7 @@ class Image
         $newScalefactor = $fullImageHeight / $newImageHeight;
         $scaledWidth = $fullImageWidth / $newScalefactor;
         $totalPixelCropSize = $scaledWidth - $newImageWidth;
-        $cropValue = max($this->roundInteger($totalPixelCropSize)/2, 0);
+        $cropValue = max($this->roundInteger($totalPixelCropSize) / 2, 0);
         return $cropValue;
     }
 
@@ -101,7 +101,7 @@ class Image
         $newScalefactor = $fullImageWidth / $newImageWidth;
         $scaledHeight = $fullImageHeight / $newScalefactor;
         $totalPixelCropSize = $scaledHeight - $newImageHeight;
-        $cropValue = max($this->roundInteger($totalPixelCropSize)/2, 0);
+        $cropValue = max($this->roundInteger($totalPixelCropSize) / 2, 0);
         return $cropValue;
     }
 
@@ -118,5 +118,4 @@ class Image
         $rawNewWidth = $fullImageWidth / $newScalefactor;
         return ceil($rawNewWidth);
     }
-
 }

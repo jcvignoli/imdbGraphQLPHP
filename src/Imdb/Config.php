@@ -16,7 +16,6 @@ namespace Imdb;
  */
 class Config
 {
-
     #========================================================[ Cache options]===
     /**
      * Directory to store cached pages. This must be writable by the web
@@ -484,11 +483,10 @@ class Config
      * @var boolean
      */
     public $throwHttpExceptions = true;
-    
+
     /**
      * Set curlopt_timout, this is the time out if curl has a connection problem
      * @var int
      */
     public $curloptTimeout = 30;
-
 }

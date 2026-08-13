@@ -38,7 +38,7 @@ class NameSearchAdvanced extends MdbBase
 
     /**
      * Advanced Name Search
-     * 
+     *
      * @param string $searchTerm input searchTerm to search with specific name
      *
      * @param string $birthDay like (month-day iso) "--11-19" or "11-19" (both are supported)
@@ -46,7 +46,7 @@ class NameSearchAdvanced extends MdbBase
      * @param string $birthDateRangeStart start date (iso date string) ("1975-01-01")
      * @param string $birthDateRangeEnd end date (iso date string) ("1995-01-01")
      * if both dates are provided searches within the date span ("1950-01-01" - "1980-01-01")
-     * 
+     *
      * @param string $deathDateRangeStart start date (iso date string) ("1975-01-01")
      * @param string  $deathDateRangeEnd end date (iso date string) ("1995-01-01")
      * if both dates are provided searches within the date span ("1950-01-01" - "1980-01-01")
@@ -82,8 +82,7 @@ class NameSearchAdvanced extends MdbBase
         $deathDateRangeStart = '',
         $deathDateRangeEnd = '',
         $birthPlace = ''
-    )
-    {
+    ) {
 
         $results = array();
         $names = array();
@@ -99,7 +98,7 @@ class NameSearchAdvanced extends MdbBase
         if (empty($constraints)) {
             return $results;
         }
-        
+
         $amount = $this->config->nameSearchAdvancedAmount;
         $sortBy = $this->config->nameSortBy;
         $sortOrder = $this->config->nameSortOrder;
@@ -161,13 +160,12 @@ EOF;
         if (!isset($data->advancedNameSearch)) {
             return $results;
         }
-        if (isset($data->advancedNameSearch->edges) &&
+        if (
+            isset($data->advancedNameSearch->edges) &&
             is_array($data->advancedNameSearch->edges) &&
             count($data->advancedNameSearch->edges) > 0
-           )
-        {
+        ) {
             foreach ($data->advancedNameSearch->edges as $edge) {
-
                 // professions
                 $professions = array();
                 if (!empty($edge->node->name->primaryProfessions)) {
@@ -214,7 +212,7 @@ EOF;
                     'bio' => isset($edge->node->name->bio->text->plainText) ?
                                 $edge->node->name->bio->text->plainText : null,
                     'professions' => $professions,
-                    'knownFor'=> $knownFor,
+                    'knownFor' => $knownFor,
                     'imgUrl' => $imgUrl
                 );
             }
@@ -243,15 +241,14 @@ EOF;
      * @return string constraints or false
      */
     private function buildConstraints(
-    $searchTerm,
-    $birthDay,
-    $birthDateRangeStart,
-    $birthDateRangeEnd,
-    $deathDateRangeStart,
-    $deathDateRangeEnd,
-    $birthPlace
-    )
-    {
+        $searchTerm,
+        $birthDay,
+        $birthDateRangeStart,
+        $birthDateRangeEnd,
+        $deathDateRangeStart,
+        $deathDateRangeEnd,
+        $birthPlace
+    ) {
         $constraint = '{';
 
         // Name search input
@@ -368,7 +365,7 @@ EOF;
             return false;
         }
     }
-    
+
     /**
      * Check if input death dates not empty and valid
      * @param string $startDate (searches between startDate and present date) iso date string ('1975-01-01')
@@ -401,5 +398,4 @@ EOF;
             return false;
         }
     }
-
 }

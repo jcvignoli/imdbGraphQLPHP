@@ -12,7 +12,6 @@ namespace Imdb;
 
 class TitleSearch extends MdbBase
 {
-
     /**
      * Search IMDb for titles matching $searchTerms
      * @param string $searchTerms
@@ -26,11 +25,11 @@ class TitleSearch extends MdbBase
      *  TV
      *  TV_EPISODE
      *  VIDEO_GAME
-     * 
+     *
      * @param string $startDate search from startDate til present date, iso date (year-month-day) ("1975-01-01")
      * @param string $endDate search from endDate and earlier, iso date (year-month-day) ("1975-01-01")
      * if both dates are provided searches within the date span ("1950-01-01" - "1980-01-01")
-     * 
+     *
      * @return array<int, array<string, string|Title>>
      */
     public function search($searchTerms, $types = null, $startDate = '', $endDate = '')
@@ -90,11 +89,11 @@ EOF;
         if (!isset($data->mainSearch)) {
             return $results;
         }
-        if (isset($data->mainSearch->edges) &&
+        if (
+            isset($data->mainSearch->edges) &&
             is_array($data->mainSearch->edges) &&
             count($data->mainSearch->edges) > 0
-           )
-        {
+        ) {
             foreach ($data->mainSearch->edges as $key => $edge) {
                 $yearRange = null;
                 if (isset($edge->node->entity->releaseYear->year)) {
@@ -194,5 +193,4 @@ EOF;
             }
         }
     }
-
 }

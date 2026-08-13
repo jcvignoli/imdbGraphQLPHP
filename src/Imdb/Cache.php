@@ -1,4 +1,5 @@
 <?php
+
 #############################################################################
 # imdbphp6                                                (c) Ed (duck7000) #
 # written by Ed                                                             #
@@ -40,7 +41,7 @@ class Cache implements CacheInterface
         $this->config = $config;
         $this->logger = $logger;
 
-        if (($this->config->cacheUse|| $this->config->cacheStore) && !is_dir($this->config->cacheDir)) {
+        if (($this->config->cacheUse || $this->config->cacheStore) && !is_dir($this->config->cacheDir)) {
             @mkdir($this->config->cacheDir, 0755, true);
             @mkdir($this->config->photoroot, 0755, true);
             if (!is_dir($this->config->cacheDir)) {

@@ -16,7 +16,6 @@ namespace Imdb;
  */
 class KeywordSearch extends MdbBase
 {
-
     /**
      * Search IMDb for titles matching $keywords
      * @param string $keywords input keywords, ("nihilism" or "sex drugs")
@@ -75,11 +74,11 @@ EOF;
         if (!isset($data->mainSearch)) {
             return $results;
         }
-        if (isset($data->mainSearch->edges) &&
+        if (
+            isset($data->mainSearch->edges) &&
             is_array($data->mainSearch->edges) &&
             count($data->mainSearch->edges) > 0
-           )
-        {
+        ) {
             foreach ($data->mainSearch->edges as $key => $edge) {
                 $keywordText = isset($edge->node->entity->text->text) ?
                                     $edge->node->entity->text->text : null;
@@ -97,5 +96,4 @@ EOF;
         }
         return $results;
     }
-
 }

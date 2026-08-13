@@ -19,7 +19,6 @@ use Imdb\Image;
  */
 class TitleSearchAdvanced extends MdbBase
 {
-
     protected $imageFunctions;
     protected $newImageWidth;
     protected $newImageHeight;
@@ -38,7 +37,7 @@ class TitleSearchAdvanced extends MdbBase
     }
     /**
      * Advanced Search IMDb on genres, titleTypes, creditId, startDate, endDate, countryId, languageId, $keywords
-     * 
+     *
      * @param string $searchTerm input searchTerm to search for specific titleText
      *
      * @param string $genres if multiple genres separate by , (Horror,Action etc)
@@ -59,11 +58,11 @@ class TitleSearchAdvanced extends MdbBase
      * if one or both dates are not valid then the whole constraint will not be added!
      *
      * @param string $countryId iso 3166 country code like "US" or "US,DE" (separate by comma)
-     * 
+     *
      * @param string $languageId iso 639 Language code like "en" or "en,de" (separate by comma)
-     * 
+     *
      * @param string $keywords like "sex" or "sex,drugs" (separate by comma)
-     * 
+     *
      * @param string $companyId like "0185428" (without co) (single companyid is supported)
      *
      * @return Title[] array of Titles
@@ -91,8 +90,7 @@ class TitleSearchAdvanced extends MdbBase
         $languageId = '',
         $keywords = '',
         $companyId = ''
-    )
-    {
+    ) {
 
         $results = array();
         $titles = array();
@@ -172,13 +170,12 @@ EOF;
         if (!isset($data->advancedTitleSearch)) {
             return $results;
         }
-        if (isset($data->advancedTitleSearch->edges) &&
+        if (
+            isset($data->advancedTitleSearch->edges) &&
             is_array($data->advancedTitleSearch->edges) &&
             count($data->advancedTitleSearch->edges) > 0
-           )
-        {
+        ) {
             foreach ($data->advancedTitleSearch->edges as $edge) {
-
                 // Year range
                 $yearRange = '';
                 if (isset($edge->node->title->releaseYear->year)) {
@@ -259,8 +256,7 @@ EOF;
         $languageId,
         $keywords,
         $companyId
-    )
-    {
+    ) {
         $constraint = '{';
 
         // Title search input
@@ -290,7 +286,7 @@ EOF;
         }
 
         // Date Range
-        $dateRange = $this->checkDates( $startDate, $endDate);
+        $dateRange = $this->checkDates($startDate, $endDate);
         if ($dateRange !== false) {
             $constraint .= $dateRange;
         }
@@ -404,5 +400,4 @@ EOF;
             return false;
         }
     }
-
 }

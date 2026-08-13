@@ -19,7 +19,6 @@ use Psr\SimpleCache\CacheInterface;
  */
 class Company extends MdbBase
 {
-
     /**
      * @param Config $config OPTIONAL override default config
      * @param LoggerInterface $logger OPTIONAL override default logger `\Imdb\Logger` with a custom one
@@ -184,7 +183,6 @@ EOF;
         $keyStaff = array();
         if (!empty($data->company->keyStaff->edges)) {
             foreach ($data->company->keyStaff->edges as $staff) {
-
                 // Employments
                 $employments = array();
                 if (!empty($staff->node->summary->employment)) {
@@ -213,7 +211,6 @@ EOF;
         $knownFor = array();
         if (!empty($data->company->knownForTitles->edges)) {
             foreach ($data->company->knownForTitles->edges as $title) {
-
                 // Jobs
                 $jobs = array();
                 if (!empty($title->node->summary->jobs)) {
@@ -292,5 +289,4 @@ EOF;
         );
         return $companyResults;
     }
-
 }

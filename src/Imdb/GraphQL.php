@@ -91,12 +91,12 @@ class GraphQL
         $request->post($payload);
         if (200 == $request->getStatus()) {
             $responseObj = json_decode($request->getResponseBody());
-            
+
             // Ensure response contains expected data property
             if (isset($responseObj->data)) {
                 return $responseObj->data;
             }
-            
+
             $this->logger->error('[GraphQL] GraphQL Error or Missing Data for ' . $queryName . ' Response: ' . $request->getResponseBody());
             return new \stdClass();
         } else {

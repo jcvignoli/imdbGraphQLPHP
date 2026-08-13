@@ -1,4 +1,5 @@
 <?php
+
 #############################################################################
 # imdbGraphQLPHP                                 ed (github user: duck7000) #
 # written by ed (github user: duck7000)                                     #
@@ -83,22 +84,22 @@ class MdbBase extends Config
         } elseif (preg_match("/(?:nm|tt)(\d{7,8})/", $id, $matches)) {
             $this->imdbID = $matches[1];
         } else {
-            $this->debug_scalar("<BR>setid: Invalid IMDB ID '$id'!<BR>");
+            $this->debugScalar("<BR>setid: Invalid IMDB ID '$id'!<BR>");
         }
     }
 
     #---------------------------------------------------------[ Debug helpers ]---
-    protected function debug_scalar($scalar)
+    protected function debugScalar($scalar)
     {
         $this->logger->error($scalar);
     }
 
-    protected function debug_object($object)
+    protected function debugObject($object)
     {
         $this->logger->error('{object}', array('object' => $object));
     }
 
-    protected function debug_html($html)
+    protected function debugHtml($html)
     {
         $this->logger->error(htmlentities($html));
     }

@@ -21,7 +21,6 @@ use Imdb\Image;
  */
 class Trailers extends MdbBase
 {
-
     protected $imageFunctions;
     protected $newImageWidth;
     protected $newImageHeight;
@@ -102,11 +101,11 @@ EOF;
         if (!isset($data->recentVideos)) {
             return $recentVideoResults;
         }
-        if (isset($data->recentVideos->videos) &&
+        if (
+            isset($data->recentVideos->videos) &&
             is_array($data->recentVideos->videos) &&
             count($data->recentVideos->videos) > 0
-           )
-        {
+        ) {
             foreach ($data->recentVideos->videos as $edge) {
                 $thumbUrl = null;
                 $videoId = isset($edge->id) ?
@@ -140,7 +139,7 @@ EOF;
         }
         return $recentVideoResults;
     }
-    
+
     /**
      * Get trending trailers as seen on IMDb https://www.imdb.com/trailers/
      * @return
@@ -202,11 +201,11 @@ EOF;
         if (!isset($data->trendingTitles)) {
             return $trendingVideoResults;
         }
-        if (isset($data->trendingTitles->titles) &&
+        if (
+            isset($data->trendingTitles->titles) &&
             is_array($data->trendingTitles->titles) &&
             count($data->trendingTitles->titles) > 0
-           )
-        {
+        ) {
             foreach ($data->trendingTitles->titles as $edge) {
                 $thumbUrl = null;
                 $videoId = isset($edge->latestTrailer->id) ?
@@ -243,5 +242,4 @@ EOF;
         }
         return $trendingVideoResults;
     }
-
 }

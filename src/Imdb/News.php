@@ -21,7 +21,6 @@ use Imdb\Image;
  */
 class News extends MdbBase
 {
-
     protected $imageFunctions;
     protected $newImageWidth;
     protected $newImageHeight;
@@ -50,7 +49,7 @@ class News extends MdbBase
      *  MOVIE
      *  TOP
      *  TV
-     * 
+     *
      * @return
      * Array
      *   (
@@ -58,13 +57,13 @@ class News extends MdbBase
      *          (
      *          [id] =>             (string) (without ni)
      *          [title] =>          (string) news item title
-     *          [author] =>         (string) 
+     *          [author] =>         (string)
      *          [date] =>           (string) iso date string
-     *          [extUrl] =>         (string) 
+     *          [extUrl] =>         (string)
      *          [exturlLabel] =>    (string) label used for extUrl
-     *          [textHtml] =>       (string) 
-     *          [textText] =>       (string) 
-     *          [thumbnailUrl] =>   (string) 
+     *          [textHtml] =>       (string)
+     *          [textText] =>       (string)
+     *          [thumbnailUrl] =>   (string)
      *          )
      *  )
      */
@@ -106,11 +105,11 @@ EOF;
         if (!isset($data->news)) {
             return $newsListItems;
         }
-        if (isset($data->news->edges) &&
+        if (
+            isset($data->news->edges) &&
             is_array($data->news->edges) &&
             count($data->news->edges) > 0
-           )
-        {
+        ) {
             foreach ($data->news->edges as $edge) {
                 $thumbUrl = null;
                 if (!empty($edge->node->image->url)) {
@@ -143,5 +142,4 @@ EOF;
         }
         return $newsListItems;
     }
-
 }

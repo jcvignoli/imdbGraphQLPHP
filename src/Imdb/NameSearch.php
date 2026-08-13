@@ -14,7 +14,6 @@ namespace Imdb;
  * Search for names on IMDb
  */
 class NameSearch extends MdbBase
-
 {
     /**
      * Search IMDb for names matching $searchTerms
@@ -75,11 +74,11 @@ EOF;
         if (!isset($data->mainSearch)) {
             return $results;
         }
-        if (isset($data->mainSearch->edges) &&
+        if (
+            isset($data->mainSearch->edges) &&
             is_array($data->mainSearch->edges) &&
             count($data->mainSearch->edges) > 0
-           )
-        {
+        ) {
             foreach ($data->mainSearch->edges as $key => $edge) {
                 $creditKnownFor = array(
                     'title' => isset($edge->node->entity->knownFor->edges[0]->node->credit->title->titleText->text) ?

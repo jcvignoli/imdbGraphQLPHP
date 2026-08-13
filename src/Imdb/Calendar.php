@@ -65,9 +65,9 @@ class Calendar extends MdbBase
         $calendar = array();
         $startDate = date("Y-m-d");
         if ($startDateOverride !== 0) {
-            $startDate = date('Y-m-d', strtotime($startDateOverride . ' day', strtotime($startDate)) );
+            $startDate = date('Y-m-d', strtotime($startDateOverride . ' day', strtotime($startDate)));
         }
-        $futureDate = $endDateOverride !== 0 ? gmdate('Y-m-d', strtotime( '+ ' . $endDateOverride . ' days', strtotime($startDate)) ) : date('Y-m-d', strtotime('+1 year', strtotime($startDate)) );
+        $futureDate = $endDateOverride !== 0 ? gmdate('Y-m-d', strtotime('+ ' . $endDateOverride . ' days', strtotime($startDate))) : date('Y-m-d', strtotime('+1 year', strtotime($startDate)));
 
         $query = <<<EOF
 query ComingSoon {
@@ -120,11 +120,11 @@ EOF;
         if (!isset($data->comingSoon)) {
             return $calendar;
         }
-        if (isset($data->comingSoon->edges) &&
+        if (
+            isset($data->comingSoon->edges) &&
             is_array($data->comingSoon->edges) &&
             count($data->comingSoon->edges) > 0
-           )
-        {
+        ) {
             foreach ($data->comingSoon->edges as $edge) {
                 $title = isset($edge->node->titleText->text) ?
                             $edge->node->titleText->text : null;
@@ -199,7 +199,7 @@ EOF;
      *      544306775 (TV and Streaming Calendar)
      * @config options
      *      $streamSortBy, $streamSortOrder, $calendarThumbnailWidth, $calendarThumbnailHeight
-     * 
+     *
      * @return array ()
      *  [listId] =>                 (string) 549391228 (without ls)
      *  [listName] =>               (string) What's New on Netflix in November 2024
@@ -319,14 +319,13 @@ EOF;
         if (!isset($data->list)) {
             return $calendarStreaming;
         }
-        if (isset($data->list->items->edges) &&
+        if (
+            isset($data->list->items->edges) &&
             is_array($data->list->items->edges) &&
             count($data->list->items->edges) > 0
-           )
-        {
+        ) {
             $items = array();
             foreach ($data->list->items->edges as $edge) {
-
                 // image url
                 $imgUrl = null;
                 if (!empty($edge->node->item->primaryImage->url)) {
@@ -410,5 +409,4 @@ EOF;
             return false;
         }
     }
-
 }

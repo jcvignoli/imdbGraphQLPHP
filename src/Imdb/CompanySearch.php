@@ -16,13 +16,12 @@ namespace Imdb;
  */
 class CompanySearch extends MdbBase
 {
-
     /**
      * Search IMDb for companies matching input search string
      * @param string $company input company, ("warner brothers")
      * The results can be used as input for advancedTitleSearch class to get titles based on this company
      * Or the results can be used as input for Company class to get company info
-     * 
+     *
      * @return array[]
      * Array
      * (
@@ -78,11 +77,11 @@ EOF;
         if (!isset($data->mainSearch)) {
             return $results;
         }
-        if (isset($data->mainSearch->edges) &&
+        if (
+            isset($data->mainSearch->edges) &&
             is_array($data->mainSearch->edges) &&
             count($data->mainSearch->edges) > 0
-           )
-        {
+        ) {
             foreach ($data->mainSearch->edges as $key => $edge) {
                 $results[] = array(
                     'id' => isset($edge->node->entity->id) ?
@@ -98,5 +97,4 @@ EOF;
         }
         return $results;
     }
-
 }

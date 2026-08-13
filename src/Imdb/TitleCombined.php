@@ -1,4 +1,5 @@
 <?php
+
 #############################################################################
 # imdbGraphQLPHP                                 ed (github user: duck7000) #
 # written by Ed                                                             #
@@ -19,7 +20,6 @@ use Imdb\Image;
  */
 class TitleCombined extends MdbBase
 {
-
     protected $imageFunctions;
     protected $newImageWidth;
     protected $newImageHeight;
@@ -50,7 +50,7 @@ class TitleCombined extends MdbBase
             * [reDirectId] => (redirected ID or false)
             * [movieType] => Movie
             * [year] => 1971
-            * [endYear] => 
+            * [endYear] =>
             * [imgThumb] => https://m.media-amazon.com/images/M/MV5BMTY3MjM1Mzc4N15BMl5BanBnXkFtZTgwODM0NzAxMDE@._V1_QL75_SX190_CR0,0,190,281_.jpg (190x281 pixels)
             * [imgFull] => https://m.media-amazon.com/images/M/MV5BMTY3MjM1Mzc4N15BMl5BanBnXkFtZTgwODM0NzAxMDE@._V1_QL100_SX1000_.jpg (max 1000 pixels)
             * [runtime] => 136
@@ -257,11 +257,11 @@ EOF;
         if (is_array($genreArray) && count($genreArray) > 0) {
             foreach ($genreArray as $edge) {
                 $subGenres = array();
-                if (isset($edge->subGenres) &&
+                if (
+                    isset($edge->subGenres) &&
                     is_array($edge->subGenres) &&
                     count($edge->subGenres) > 0
-                    )
-                {
+                ) {
                     foreach ($edge->subGenres as $subGenre) {
                         if (!empty($subGenre->keyword->text->text)) {
                             $subGenres[] = $subGenre->keyword->text->text;
@@ -289,7 +289,7 @@ EOF;
     {
         $creditsPrincipal = array();
         if (is_array($principalCredits) && count($principalCredits) > 0) {
-            foreach ($principalCredits as $value){
+            foreach ($principalCredits as $value) {
                 $category = 'Unknown';
                 $credits = array();
                 if (!empty($value->credits[0]->category->text)) {
@@ -298,11 +298,11 @@ EOF;
                         $category = "Star";
                     }
                 }
-                if (isset($value->credits) &&
+                if (
+                    isset($value->credits) &&
                     is_array($value->credits) &&
                     count($value->credits) > 0
-                    )
-                {
+                ) {
                     foreach ($value->credits as $credit) {
                         $credits[] = array(
                             'name' => isset($credit->name->nameText->text) ?
@@ -338,5 +338,4 @@ EOF;
             return false;
         }
     }
-
 }

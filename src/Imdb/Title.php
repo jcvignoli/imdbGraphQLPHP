@@ -1,4 +1,5 @@
 <?php
+
 #############################################################################
 # imdbGraphQLPHP                                 ed (github user: duck7000) #
 # written by Giorgos Giagas                                                 #
@@ -25,7 +26,6 @@ use Imdb\Image;
  */
 class Title extends MdbBase
 {
-
     protected $imageFunctions;
     protected $akas = array();
     protected $releaseDates = array();
@@ -238,18 +238,18 @@ EOF;
             if (!isset($data->title)) {
                 return $this->runtimes;
             }
-            if (isset($data->title->runtimes->edges) &&
+            if (
+                isset($data->title->runtimes->edges) &&
                 is_array($data->title->runtimes->edges) &&
                 count($data->title->runtimes->edges) > 0
-               )
-            {
+            ) {
                 foreach ($data->title->runtimes->edges as $edge) {
                     $attributes = array();
-                    if (isset($edge->node->attributes) &&
+                    if (
+                        isset($edge->node->attributes) &&
                         is_array($edge->node->attributes) &&
                         count($edge->node->attributes) > 0
-                       )
-                    {
+                    ) {
                         foreach ($edge->node->attributes as $attribute) {
                             if (!empty($attribute->text)) {
                                 $attributes[] = $attribute->text;
@@ -358,11 +358,11 @@ EOF;
                 return $this->mainMetacritics;
             }
             $reviews = array();
-            if (isset($data->title->metacritic->reviews->edges) &&
+            if (
+                isset($data->title->metacritic->reviews->edges) &&
                 is_array($data->title->metacritic->reviews->edges) &&
                 count($data->title->metacritic->reviews->edges) > 0
-               )
-            {
+            ) {
                 foreach ($data->title->metacritic->reviews->edges as $edge) {
                     $reviews[] = array(
                         'reviewer' => isset($edge->node->reviewer) ? $edge->node->reviewer : null,
@@ -498,11 +498,11 @@ EOF;
             if (!isset($data->title)) {
                 return $this->recommendations;
             }
-            if (isset($data->title->moreLikeThisTitles->edges) &&
+            if (
+                isset($data->title->moreLikeThisTitles->edges) &&
                 is_array($data->title->moreLikeThisTitles->edges) &&
                 count($data->title->moreLikeThisTitles->edges) > 0
-               )
-            {
+            ) {
                 foreach ($data->title->moreLikeThisTitles->edges as $edge) {
                     $thumb = null;
                     if (!empty($edge->node->primaryImage->url)) {
@@ -554,11 +554,11 @@ EOF;
             if (!isset($data->title)) {
                 return $this->languages;
             }
-            if (isset($data->title->spokenLanguages->spokenLanguages) &&
+            if (
+                isset($data->title->spokenLanguages->spokenLanguages) &&
                 is_array($data->title->spokenLanguages->spokenLanguages) &&
                 count($data->title->spokenLanguages->spokenLanguages) > 0
-               )
-            {
+            ) {
                 foreach ($data->title->spokenLanguages->spokenLanguages as $language) {
                     if (!empty($language->text)) {
                         $this->languages[] = $language->text;
@@ -601,18 +601,18 @@ EOF;
             if (!isset($data->title)) {
                 return $this->genres;
             }
-            if (isset($data->title->titleGenres->genres) &&
+            if (
+                isset($data->title->titleGenres->genres) &&
                 is_array($data->title->titleGenres->genres) &&
                 count($data->title->titleGenres->genres) > 0
-               )
-            {
+            ) {
                 foreach ($data->title->titleGenres->genres as $edge) {
                     $subGenres = array();
-                    if (isset($edge->subGenres) &&
+                    if (
+                        isset($edge->subGenres) &&
                         is_array($edge->subGenres) &&
                         count($edge->subGenres) > 0
-                       )
-                    {
+                    ) {
                         foreach ($edge->subGenres as $subGenre) {
                             if (!empty($subGenre->keyword->text->text)) {
                                 $subGenres[] = ucwords($subGenre->keyword->text->text);
@@ -698,15 +698,17 @@ EOF;
 
         $req = new Request($photoUrl, $this->config);
         $req->sendRequest();
-        if (strpos($req->getResponseHeader("Content-Type"), 'image/jpeg') === 0 ||
+        if (
+            strpos($req->getResponseHeader("Content-Type"), 'image/jpeg') === 0 ||
             strpos($req->getResponseHeader("Content-Type"), 'image/gif') === 0 ||
-            strpos($req->getResponseHeader("Content-Type"), 'image/bmp') === 0) {
+            strpos($req->getResponseHeader("Content-Type"), 'image/bmp') === 0
+        ) {
             $image = $req->getResponseBody();
         } else {
             $ctype = $req->getResponseHeader("Content-Type");
-            $this->debug_scalar("*photoerror* at " . __FILE__ . " line " . __LINE__ . ": " . $photo_url . ": Content Type is '$ctype'");
+            $this->debugScalar("*photoerror* at " . __FILE__ . " line " . __LINE__ . ": " . $photo_url . ": Content Type is '$ctype'");
             if (substr($ctype, 0, 4) == 'text') {
-                $this->debug_scalar("Details: <PRE>" . $req->getResponseBody() . "</PRE>\n");
+                $this->debugScalar("Details: <PRE>" . $req->getResponseBody() . "</PRE>\n");
             }
             return false;
         }
@@ -734,7 +736,7 @@ EOF;
             $ext = "_big";
         }
         if (!is_dir($this->config->photoroot)) {
-            $this->debug_scalar("<BR>***ERROR*** The configured image directory does not exist!<BR>");
+            $this->debugScalar("<BR>***ERROR*** The configured image directory does not exist!<BR>");
             return false;
         }
         $path = $this->config->photoroot . "tt{$this->imdbid()}" . "{$ext}.jpg";
@@ -742,7 +744,7 @@ EOF;
             return $this->config->photodir . "tt{$this->imdbid()}" . "{$ext}.jpg";
         }
         if (!is_writable($this->config->photoroot)) {
-            $this->debug_scalar("<BR>***ERROR*** The configured image directory lacks write permission!<BR>");
+            $this->debugScalar("<BR>***ERROR*** The configured image directory lacks write permission!<BR>");
             return false;
         }
         if ($this->savephoto($path, $thumb)) {
@@ -775,11 +777,11 @@ EOF;
             if (!isset($data->title)) {
                 return $this->countries;
             }
-            if (isset($data->title->countriesOfOrigin->countries) &&
+            if (
+                isset($data->title->countriesOfOrigin->countries) &&
                 is_array($data->title->countriesOfOrigin->countries) &&
                 count($data->title->countriesOfOrigin->countries) > 0
-               )
-            {
+            ) {
                 foreach ($data->title->countriesOfOrigin->countries as $country) {
                     if (!empty($country->text)) {
                         $this->countries[] = $country->text;
@@ -814,11 +816,11 @@ EOF;
             if (count($data) > 0) {
                 foreach ($data as $edge) {
                     $attributes = array();
-                    if (isset($edge->node->attributes) &&
+                    if (
+                        isset($edge->node->attributes) &&
                         is_array($edge->node->attributes) &&
                         count($edge->node->attributes) > 0
-                       )
-                    {
+                    ) {
                         foreach ($edge->node->attributes as $attribute) {
                             if (!empty($attribute->text)) {
                                 $attributes[] = $attribute->text;
@@ -883,11 +885,11 @@ EOF;
             if (count($data) > 0) {
                 foreach ($data as $edge) {
                     $comments = array();
-                    if (isset($edge->node->attributes) &&
+                    if (
+                        isset($edge->node->attributes) &&
                         is_array($edge->node->attributes) &&
                         count($edge->node->attributes) > 0
-                       )
-                    {
+                    ) {
                         foreach ($edge->node->attributes as $attribute) {
                             if (!empty($attribute->text)) {
                                 $comments[] = $attribute->text;
@@ -935,11 +937,11 @@ EOF;
             if (count($data) > 0) {
                 foreach ($data as $edge) {
                     $comments = array();
-                    if (isset($edge->node->attributes) &&
+                    if (
+                        isset($edge->node->attributes) &&
                         is_array($edge->node->attributes) &&
                         count($edge->node->attributes) > 0
-                    )
-                    {
+                    ) {
                         foreach ($edge->node->attributes as $attribute) {
                             if (!empty($attribute->text)) {
                                 $comments[] = $attribute->text;
@@ -1012,18 +1014,18 @@ EOF;
         if (!isset($data->title)) {
             return $this->parentsGuide;
         }
-        if (isset($data->title->parentsGuide->categories) &&
+        if (
+            isset($data->title->parentsGuide->categories) &&
             is_array($data->title->parentsGuide->categories) &&
             count($data->title->parentsGuide->categories) > 0
-           )
-        {
+        ) {
             foreach ($data->title->parentsGuide->categories as $category) {
                 $guideItems = array();
-                if (isset($category->guideItems->edges) &&
+                if (
+                    isset($category->guideItems->edges) &&
                     is_array($category->guideItems->edges) &&
                     count($category->guideItems->edges) > 0
-                   )
-                {
+                ) {
                     foreach ($category->guideItems->edges as $edge) {
                         $guideItems[] = array(
                             'isSpoiler' => $edge->node->isSpoiler,
@@ -1106,11 +1108,11 @@ EOF;
             if (!isset($data->title)) {
                 return $this->plot;
             }
-            if (isset($data->title->plots->edges) &&
+            if (
+                isset($data->title->plots->edges) &&
                 is_array($data->title->plots->edges) &&
                 count($data->title->plots->edges) > 0
-               )
-            {
+            ) {
                 foreach ($data->title->plots->edges as $edge) {
                     if (!empty($edge->node->plotText->plainText)) {
                         $this->plot[] = array(
@@ -1151,11 +1153,11 @@ EOF;
             if (!isset($data->title)) {
                 return $this->taglines;
             }
-            if (isset($data->title->taglines->edges) &&
+            if (
+                isset($data->title->taglines->edges) &&
                 is_array($data->title->taglines->edges) &&
                 count($data->title->taglines->edges) > 0
-               )
-            {
+            ) {
                 foreach ($data->title->taglines->edges as $edge) {
                     if (!empty($edge->node->text)) {
                         $this->taglines[] = $edge->node->text;
@@ -1199,12 +1201,12 @@ EOF;
             if (!isset($data->title)) {
                 return $this->creditsPrincipal;
             }
-            if (isset($data->title->principalCredits) &&
+            if (
+                isset($data->title->principalCredits) &&
                 is_array($data->title->principalCredits) &&
                 count($data->title->principalCredits) > 0
-               )
-            {
-                foreach ($data->title->principalCredits as $value){
+            ) {
+                foreach ($data->title->principalCredits as $value) {
                     $category = 'Unknown';
                     $credits = array();
                     if (!empty($value->credits[0]->category->text)) {
@@ -1213,11 +1215,11 @@ EOF;
                             $category = "Star";
                         }
                     }
-                    if (isset($value->credits) &&
+                    if (
+                        isset($value->credits) &&
                         is_array($value->credits) &&
                         count($value->credits) > 0
-                       )
-                    {
+                    ) {
                         foreach ($value->credits as $credit) {
                             $credits[] = array(
                                 'name' => isset($credit->name->nameText->text) ?
@@ -1283,11 +1285,11 @@ EOF;
             if (count($data) > 0) {
                 foreach ($data as $edge) {
                     $castCharacters = array();
-                    if (isset($edge->node->characters) &&
+                    if (
+                        isset($edge->node->characters) &&
                         is_array($edge->node->characters) &&
                         count($edge->node->characters) > 0
-                       )
-                    {
+                    ) {
                         foreach ($edge->node->characters as $character) {
                             if (!empty($character->name)) {
                                 $castCharacters[] = $character->name;
@@ -1297,11 +1299,11 @@ EOF;
                     $comments = array();
                     $nameAlias = null;
                     $credited = true;
-                    if (isset($edge->node->attributes) &&
+                    if (
+                        isset($edge->node->attributes) &&
                         is_array($edge->node->attributes) &&
                         count($edge->node->attributes) > 0
-                       )
-                    {
+                    ) {
                         foreach ($edge->node->attributes as $attribute) {
                             if (!empty($attribute->text)) {
                                 if (strpos($attribute->text, "as ") !== false) {
@@ -1353,7 +1355,7 @@ EOF;
             return $this->creditsDirector;
         }
         $directorData = $this->creditHelper("director");
-        
+
         return $this->creditsDirector = $directorData;
     }
 
@@ -1369,7 +1371,7 @@ EOF;
             return $this->creditsCinematographer;
         }
         $cinematographerData = $this->creditHelper("cinematographer");
-        
+
         return $this->creditsCinematographer = $cinematographerData;
     }
 
@@ -1414,7 +1416,7 @@ EOF;
         $composerData = $this->creditHelper("composer");
         return $this->creditsComposer = $composerData;
     }
-    
+
     #-------------------------------------------------------------[ Stunts ]---
     /** Obtain the stunts credits of this title
      * @return array (array[0..n] of arrays[imdb,name,jobs[],attributes[],episode array(total, year, endYear)])
@@ -1428,7 +1430,7 @@ EOF;
         $stuntsData = $this->creditHelper("stunts");
         return $this->creditsStunts = $stuntsData;
     }
-    
+
     #-------------------------------------------------------------[ Thanks ]---
     /** Obtain thanks credits of this title
      * @return array (array[0..n] of arrays[imdb,name,jobs[],attributes[],episode array(total, year, endYear)])
@@ -1442,7 +1444,7 @@ EOF;
         $thanksData = $this->creditHelper("thanks");
         return $this->creditsThanks = $thanksData;
     }
-    
+
     #-------------------------------------------------------------[ Visual Effects ]---
     /** Obtain Visual Effects credits of this title
      * @return array (array[0..n] of arrays[imdb,name,jobs[],attributes[],episode array(total, year, endYear)])
@@ -1456,7 +1458,7 @@ EOF;
         $visualEffectsData = $this->creditHelper("visual_effects");
         return $this->creditsVisualEffects = $visualEffectsData;
     }
-    
+
         #-------------------------------------------------------------[ Special Effects ]---
     /** Obtain Special Effects credits of this title
      * @return array (array[0..n] of arrays[imdb,name,jobs[],attributes[],episode array(total, year, endYear)])
@@ -1537,8 +1539,8 @@ EOF;
                     return $this->seasonEpisodes;
                 }
                 if (is_array($seasonsData) && count($seasonsData) > 0) {
-                foreach ($seasonsData as $seasonsDataEdge) {
-                    if (empty($seasonsDataEdge->node->text)) {
+                    foreach ($seasonsData as $seasonsDataEdge) {
+                        if (empty($seasonsDataEdge->node->text)) {
                             return $this->seasonEpisodes;
                         }
                         $seasonYear = $seasonsDataEdge->node->text;
@@ -1636,7 +1638,6 @@ EOF;
     public function goof($spoil = false)
     {
         if (empty($this->goofs)) {
-
             $filter = $spoil === false ? ', filter: {spoilers: EXCLUDE_SPOILERS}' : '';
             $query = <<<EOF
 category {
@@ -1713,7 +1714,6 @@ EOF;
     public function trivia($spoil = false)
     {
         if (empty($this->trivias)) {
-
             $filter = $spoil === false ? ', filter: {spoilers: EXCLUDE_SPOILERS}' : '';
             $query = <<<EOF
 category {
@@ -1739,11 +1739,11 @@ EOF;
             if (count($data) > 0) {
                 foreach ($data as $edge) {
                     $names = array();
-                    if (isset($edge->node->relatedNames) &&
+                    if (
+                        isset($edge->node->relatedNames) &&
                         is_array($edge->node->relatedNames) &&
                         count($edge->node->relatedNames) > 0
-                       )
-                    {
+                    ) {
                         foreach ($edge->node->relatedNames as $name) {
                             $names[] = array(
                                 'name' => isset($name->nameText->text) ?
@@ -1798,7 +1798,7 @@ EOF;
      *                      [nameId] =>     (string) 2003944
      *                      [attribute] =>  (string) as Pat Simmons
      *              [comment] => Array()
-     *                  [0] => (string) Courtesy of Capitol Records 
+     *                  [0] => (string) Courtesy of Capitol Records
      * @see IMDB page /soundtrack
      */
     public function soundtrack()
@@ -1820,11 +1820,11 @@ EOF;
                     $credits = array();
                     $creditComments = array();
                     $crediters = array();
-                    if (isset($edge->node->comments) &&
+                    if (
+                        isset($edge->node->comments) &&
                         is_array($edge->node->comments) &&
                         count($edge->node->comments) > 0
-                       )
-                    {
+                    ) {
                         foreach ($edge->node->comments as $comment) {
                             if (!empty(trim(strip_tags($comment->plaidHtml)))) {
                                 $comment = $comment->plaidHtml;
@@ -1848,7 +1848,7 @@ EOF;
                                     $creditRaw = preg_replace($patterns, ',', $creditRaw);
                                     $creditRawParts = explode(",", $creditRaw);
                                     $creditRawParts = array_values(array_filter($creditRawParts));
-                                    // loop $creditRawParts array 
+                                    // loop $creditRawParts array
                                     foreach ($creditRawParts as $value) {
                                         // check if there is any text after the anchor tag
                                         $attribute = '';
@@ -1931,11 +1931,11 @@ EOF;
             if (count($data) > 0) {
                 foreach ($data as $edge) {
                     $movie = array();
-                    if (isset($edge->node->displayableProperty->qualifiersInMarkdownList) &&
+                    if (
+                        isset($edge->node->displayableProperty->qualifiersInMarkdownList) &&
                         is_array($edge->node->displayableProperty->qualifiersInMarkdownList) &&
                         count($edge->node->displayableProperty->qualifiersInMarkdownList) > 0
-                       )
-                    {
+                    ) {
                         foreach ($edge->node->displayableProperty->qualifiersInMarkdownList as $attribute) {
                             if (!empty($attribute->plainText)) {
                                 $movie[] = $attribute->plainText;
@@ -1947,7 +1947,6 @@ EOF;
                                         $edge->node->displayableProperty->value->plainText : null,
                         'movie' => $movie
                     );
-                    
                 }
             }
         }
@@ -2104,11 +2103,11 @@ EOF;
             if (count($edges) > 0) {
                 foreach ($edges as $edge) {
                     $language = array();
-                    if (isset($edge->node->externalLinkLanguages) &&
+                    if (
+                        isset($edge->node->externalLinkLanguages) &&
                         is_array($edge->node->externalLinkLanguages) &&
                         count($edge->node->externalLinkLanguages) > 0
-                       )
-                    {
+                    ) {
                         foreach ($edge->node->externalLinkLanguages as $lang) {
                             if (!empty($lang->text)) {
                                 $language[] = $lang->text;
@@ -2195,11 +2194,11 @@ EOF;
             if (!isset($data->title)) {
                 return $this->grosses;
             }
-            if (isset($data->title->rankedLifetimeGrosses->edges) &&
+            if (
+                isset($data->title->rankedLifetimeGrosses->edges) &&
                 is_array($data->title->rankedLifetimeGrosses->edges) &&
                 count($data->title->rankedLifetimeGrosses->edges) > 0
-               )
-            {
+            ) {
                 foreach ($data->title->rankedLifetimeGrosses->edges as $edge) {
                     if (!empty($edge->node->boxOfficeAreaType->text)) {
                         $this->grosses[] = array(
@@ -2301,11 +2300,11 @@ EOF;
             if (!isset($data->title)) {
                 return $this->mainPhoto;
             }
-            if (isset($data->title->images->edges) &&
+            if (
+                isset($data->title->images->edges) &&
                 is_array($data->title->images->edges) &&
                 count($data->title->images->edges) > 0
-               )
-            {
+            ) {
                 foreach ($data->title->images->edges as $edge) {
                     if (!empty($edge->node->url)) {
                         $imgUrl = str_replace('.jpg', '', $edge->node->url);
@@ -2337,7 +2336,7 @@ EOF;
      *      [0] array()
      *          [id] =>             (string) (without vi) 4030506521
      *          [name] =>           (string) (name of trailer) e.g. A Clockwork Orange
-     *          [runtime] =>        (int)    (in seconds!) 130 
+     *          [runtime] =>        (int)    (in seconds!) 130
      *          [description] =>    (string) (description text of this trailer)
      *          [titleName] =>      (string) (name of Title) e.g. A Clockwork Orange
      *          [titleYear] =>      (int)    1971
@@ -2392,11 +2391,11 @@ EOF;
             if (!isset($data->title)) {
                 return $this->trailers;
             }
-            if (isset($data->title->primaryVideos->edges) &&
+            if (
+                isset($data->title->primaryVideos->edges) &&
                 is_array($data->title->primaryVideos->edges) &&
                 count($data->title->primaryVideos->edges) > 0
-               )
-            {
+            ) {
                 foreach ($data->title->primaryVideos->edges as $edge) {
                     // check contentType is set and contentType == Trailer
                     if (isset($edge->node->contentType->displayName->value) && $edge->node->contentType->displayName->value !== "Trailer") {
@@ -2437,7 +2436,7 @@ EOF;
                                         . 'PIimdb-bluebutton-big,BottomRight,-1,-1_'
                                         . 'ZATrailer,4,123,16,196,verdenab,8,255,255,255,1_'
                                         . 'ZAon%2520IMDb,4,1,14,196,verdenab,7,255,255,255,1_'
-                                        . 'ZA' . $timeString .',164,1,14,36,verdenab,7,255,255,255,1_'
+                                        . 'ZA' . $timeString . ',164,1,14,36,verdenab,7,255,255,255,1_'
                                         . 'ZA' . $title . ',4,138,14,176,arialbd,7,255,255,255,1_.jpg';
                         } else {
                             // New style thumb
@@ -2542,11 +2541,11 @@ EOF;
             if (!isset($data->title)) {
                 return $this->videos;
             }
-            if (isset($data->title->videoStrip->edges) &&
+            if (
+                isset($data->title->videoStrip->edges) &&
                 is_array($data->title->videoStrip->edges) &&
                 count($data->title->videoStrip->edges) > 0
-               )
-            {
+            ) {
                 foreach ($data->title->videoStrip->edges as $edge) {
                     $thumbUrl = null;
                     $videoId = isset($edge->node->id) ?
@@ -2643,7 +2642,7 @@ EOF;
      *  ev0000133 (Critics Choice Awards)
      *  ev0000403 (London Critics Circle Film Awards)
      *  ev0000530 (People's Choice Awards, USA)
-     * @return array[festivalName][0..n] of 
+     * @return array[festivalName][0..n] of
      *      array[awardYear,awardWinner(bool),awardCategory,awardName,awardNotes
      *      array awardPerons[creditId,creditName,creditNote],awardOutcome] array total(win, nom)
      *  Array
@@ -2653,7 +2652,7 @@ EOF;
      *                   [0] => Array
      *                   (
      *                   [awardYear] => 1972
-     *                   [awardWinner] => 
+     *                   [awardWinner] =>
      *                   [awardCategory] => Best Picture
      *                   [awardName] => Oscar
      *                   [awardPerons] => Array
@@ -2736,11 +2735,11 @@ EOF;
                     $awardIsWinner === true ? $winnerCount++ : $nomineeCount++;
                     //credited persons
                     $names = array();
-                    if (isset($edge->node->awardedEntities->secondaryAwardNames) &&
+                    if (
+                        isset($edge->node->awardedEntities->secondaryAwardNames) &&
                         is_array($edge->node->awardedEntities->secondaryAwardNames) &&
                         count($edge->node->awardedEntities->secondaryAwardNames) > 0
-                       )
-                    {
+                    ) {
                         foreach ($edge->node->awardedEntities->secondaryAwardNames as $creditor) {
                             $nameThumbImageUrl = null;
                             $nameFullImageUrl = null;
@@ -2766,7 +2765,7 @@ EOF;
                             );
                         }
                     }
-                    
+
                     $this->awards[$eventName][] = array(
                         'awardYear' => isset($edge->node->award->eventEdition->year) ?
                                             $edge->node->award->eventEdition->year : null,
@@ -2805,7 +2804,7 @@ EOF;
         }
         return $this->soundMix;
     }
-    
+
     #----------------------------------------------------------[ Colorations ]---
     /**
      * Get movie colorations like color or Black and white
@@ -2819,7 +2818,7 @@ EOF;
         }
         return $this->colors;
     }
-    
+
     #----------------------------------------------------------[ Aspect ratio ]---
     /**
      * Get movie aspect ratio like 1.66:1 or 16:9
@@ -2833,7 +2832,7 @@ EOF;
         }
         return $this->aspectRatio;
     }
-    
+
     #----------------------------------------------------------[ Cameras ]---
     /**
      * Get cameras used in this title
@@ -2886,13 +2885,13 @@ EOF;
             if (!isset($data->title)) {
                 return $this->featuredReviews;
             }
-            if (isset($data->title->featuredReviews->edges) &&
+            if (
+                isset($data->title->featuredReviews->edges) &&
                 is_array($data->title->featuredReviews->edges) &&
                 count($data->title->featuredReviews->edges) > 0
-               )
-            {
+            ) {
                 foreach ($data->title->featuredReviews->edges as $edge) {
-                $this->featuredReviews[] = array(
+                    $this->featuredReviews[] = array(
                     'authorNickName' => isset($edge->node->author->nickName) ?
                                               $edge->node->author->nickName : null,
                     'authorRating' => isset($edge->node->authorRating) ?
@@ -2981,19 +2980,19 @@ EOF;
             if (!isset($data->title)) {
                 return $this->watchOption;
             }
-            if (isset($data->title->watchOptionsByCategory->categorizedWatchOptionsList) &&
+            if (
+                isset($data->title->watchOptionsByCategory->categorizedWatchOptionsList) &&
                 is_array($data->title->watchOptionsByCategory->categorizedWatchOptionsList) &&
                 count($data->title->watchOptionsByCategory->categorizedWatchOptionsList) > 0
-               )
-            {
+            ) {
                 foreach ($data->title->watchOptionsByCategory->categorizedWatchOptionsList as $item) {
                     $watchOptions = array();
                     $categoryName = strtolower(str_replace('/', '-', $item->categoryName->value));
-                    if (isset($item->watchOptions) &&
+                    if (
+                        isset($item->watchOptions) &&
                         is_array($item->watchOptions) &&
                         count($item->watchOptions) > 0
-                       )
-                    {
+                    ) {
                         foreach ($item->watchOptions as $option) {
                             $logoUrl = null;
                             if (!empty($option->provider->logos->icon->url)) {
@@ -3039,7 +3038,7 @@ EOF;
             if (!isset($data->title)) {
                 return $this->status;
             }
-            $this->status = isset($data->title->productionStatus->currentProductionStage->text) ? 
+            $this->status = isset($data->title->productionStatus->currentProductionStage->text) ?
                                   $data->title->productionStatus->currentProductionStage->text : null;
         }
         return $this->status;
@@ -3102,11 +3101,11 @@ EOF;
             if (!isset($data->title)) {
                 return $this->news;
             }
-            if (isset($data->title->news->edges) &&
+            if (
+                isset($data->title->news->edges) &&
                 is_array($data->title->news->edges) &&
                 count($data->title->news->edges) > 0
-               )
-            {
+            ) {
                 foreach ($data->title->news->edges as $edge) {
                     $thumbUrl = null;
                     if (!empty($edge->node->image->url)) {
@@ -3228,7 +3227,7 @@ EOF;
      */
     protected function companyCredits($category)
     {
-        $filter = ', filter: { categories: ["' .$category . '"] }';
+        $filter = ', filter: { categories: ["' . $category . '"] }';
         $query = <<<EOF
 company {
   id
@@ -3253,11 +3252,11 @@ EOF;
         if (count($data) > 0) {
             foreach ($data as $edge) {
                 $companyAttribute = array();
-                if (isset($edge->node->attributes) &&
+                if (
+                    isset($edge->node->attributes) &&
                     is_array($edge->node->attributes) &&
                     count($edge->node->attributes) > 0
-                   )
-                {
+                ) {
                     foreach ($edge->node->attributes as $attribute) {
                         $companyAttribute[] = $attribute->text;
                     }
@@ -3266,7 +3265,7 @@ EOF;
                     "name" => isset($edge->node->displayableProperty->value->plainText) ?
                                     $edge->node->displayableProperty->value->plainText : null,
                     "id" => isset($edge->node->company->id) ?
-                                str_replace('co', '', $edge->node->company->id ) : null,
+                                str_replace('co', '', $edge->node->company->id) : null,
                     "country" => isset($edge->node->countries[0]->text) ?
                                     $edge->node->countries[0]->text : null,
                     "attribute" => $companyAttribute,
@@ -3288,7 +3287,7 @@ EOF;
      */
     private function creditHelper($crewCategory)
     {
-        $filter = ', filter: { categories: ["' .$crewCategory . '"] }';
+        $filter = ', filter: { categories: ["' . $crewCategory . '"] }';
         $output = array();
         $query = <<<EOF
 name {
@@ -3322,11 +3321,11 @@ EOF;
         if (count($data) > 0) {
             foreach ($data as $edge) {
                 $jobs = array();
-                if (isset($edge->node->jobs) &&
+                if (
+                    isset($edge->node->jobs) &&
                     is_array($edge->node->jobs) &&
                     count($edge->node->jobs) > 0
-                   )
-                {
+                ) {
                     foreach ($edge->node->jobs as $value) {
                         if (!empty($value->text)) {
                             $jobs[] = $value->text;
@@ -3345,11 +3344,11 @@ EOF;
                     );
                 }
                 $attributes = array();
-                if (isset($edge->node->attributes) &&
+                if (
+                    isset($edge->node->attributes) &&
                     is_array($edge->node->attributes) &&
                     count($edge->node->attributes) > 0
-                   )
-                {
+                ) {
                     foreach ($edge->node->attributes as $attribute) {
                         if (!empty($attribute->text)) {
                             $attributes[] = $attribute->text;
@@ -3376,7 +3375,7 @@ EOF;
                     'jobs' => $jobs,
                     'attributes' => $attributes,
                     'episode' => $episodes,
-                    'titleFullImageUrl' =>$nameFullImageUrl,
+                    'titleFullImageUrl' => $nameFullImageUrl,
                     'titleThumbImageUrl' => $nameThumbImageUrl
                 );
             }
@@ -3452,7 +3451,6 @@ EOF;
             return false;
         }
         return $data;
-
     }
 
     #========================================================[ GraphQL Get All Episodes]===
@@ -3554,18 +3552,18 @@ EOF;
         if (!isset($data->title)) {
             return $arrayName;
         }
-        if (isset($data->title->technicalSpecifications->$type->items) &&
+        if (
+            isset($data->title->technicalSpecifications->$type->items) &&
             is_array($data->title->technicalSpecifications->$type->items) &&
             count($data->title->technicalSpecifications->$type->items) > 0
-           )
-        {
+        ) {
             foreach ($data->title->technicalSpecifications->$type->items as $item) {
                 $attributes = array();
-                if (isset($item->attributes) &&
+                if (
+                    isset($item->attributes) &&
                     is_array($item->attributes) &&
                     count($item->attributes) > 0
-                   )
-                {
+                ) {
                     foreach ($item->attributes as $attribute) {
                         if (!empty($attribute->text)) {
                             $attributes[] = $attribute->text;
@@ -3619,7 +3617,7 @@ EOF;
         $edges = array();
         while ($hasNextPage) {
             $data = $this->graphql->query($fullQuery, $queryName, ["id" => "tt$this->imdbID", "after" => $endCursor]);
-            if ( isset( $data->title->{$fieldName} ) ) {
+            if (isset($data->title->{$fieldName})) {
                 $edges = array_merge($edges, $data->title->{$fieldName}->edges);
                 $hasNextPage = $data->title->{$fieldName}->pageInfo->hasNextPage;
                 $endCursor = $data->title->{$fieldName}->pageInfo->endCursor;
@@ -3650,10 +3648,10 @@ query Redirect(\$id: ID!) {
 }
 EOF;
         $data = $this->graphql->query($query, "Redirect", ["id" => "tt$this->imdbID"]);
-        if (isset($data->title->meta->canonicalId) &&
+        if (
+            isset($data->title->meta->canonicalId) &&
             $data->title->meta->canonicalId != ''
-           )
-        {
+        ) {
             $titleImdbId = str_replace('tt', '', $data->title->meta->canonicalId);
             if ($titleImdbId  != $this->imdbID) {
                 // todo write to log?
@@ -3717,5 +3715,4 @@ EOF;
         }
         return $filter;
     }
-
 }

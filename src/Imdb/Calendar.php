@@ -8,10 +8,11 @@
 # under the terms of the GNU General Public License (see doc/LICENSE)       #
 #############################################################################
 
-namespace Lumiere\Vendor\Imdb;
+namespace Imdb;
 
-use Lumiere\Vendor\Psr\SimpleCache\CacheInterface;
-use Lumiere\Vendor\Imdb\Image;
+use Psr\SimpleCache\CacheInterface;
+use Psr\Log\LoggerInterface;
+use Imdb\Image;
 
 /**
  * Obtains information about upcoming movie releases as seen on IMDb
@@ -25,9 +26,9 @@ class Calendar extends MdbBase
     protected $newImageHeight;
 
     /**
-     * @param Config $config OPTIONAL override default config
-     * @param LoggerInterface $logger OPTIONAL override default logger `\Lumiere\Vendor\Imdb\Logger` with a custom one
-     * @param CacheInterface $cache OPTIONAL override the default cache with any PSR-16 cache.
+     * @param Config|null $config OPTIONAL override default config
+     * @param LoggerInterface|null $logger OPTIONAL override default logger `\Lumiere\Vendor\Imdb\Logger` with a custom one
+     * @param CacheInterface|null $cache OPTIONAL override the default cache with any PSR-16 cache.
      */
     public function __construct(?Config $config = null, ?LoggerInterface $logger = null, ?CacheInterface $cache = null)
     {

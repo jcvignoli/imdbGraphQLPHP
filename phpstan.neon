@@ -1,0 +1,9 @@
+includes:
+    - vendor/phpstan/phpstan/conf/bleedingEdge.neon
+parameters:
+    level: 5 # set 'max' or '9' to check mixed values
+    scanDirectories:
+        - src/Imdb/
+    tmpDir: tmp/cache/phpstan
+    paths:
+        - src/Imdb/

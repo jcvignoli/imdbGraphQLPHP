@@ -11,10 +11,32 @@
         }
     },
     "require": {
-        "php": ">=7.2",
+        "php": ">=8.1",
         "psr/log": "^3.0",
         "ext-curl": "*",
         "ext-json": "*",
         "psr/simple-cache": "^1.0"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "@stable",
+        "wp-coding-standards/wpcs": "@stable",
+        "phpstan/phpstan": "@stable",
+        "phan/phan": "@stable",
+        "lipemat/phpstan-wordpress": "@stable",
+        "phpstan/phpstan-strict-rules": "@stable",
+        "szepeviktor/phpstan-wordpress": "@stable",
+        "vimeo/psalm": "@stable",
+        "wapmorgan/php-deprecation-detector": "@stable"
+    },
+    "scripts": {
+        "phpcs": "vendor/bin/phpcs",
+        "phpstan": "vendor/bin/phpstan analyse",
+        "phanci": "vendor/bin/phan"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "phpstan/extension-installer": true
+        }
     }
 }

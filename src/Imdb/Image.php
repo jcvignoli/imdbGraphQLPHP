@@ -110,7 +110,7 @@ class Image
      * @parameter $fullImageWidth the width in pixels of the large original image
      * @parameter $fullImageHeight the height in pixels of the large original image
      * @parameter $newImageHeight the height in pixels of the desired cropt/resized thumb image
-     * @return int newImageWidth
+     * @return float newImageWidth
      */
     public function thumbUrlNewWidth($fullImageWidth, $fullImageHeight, $newImageHeight)
     {

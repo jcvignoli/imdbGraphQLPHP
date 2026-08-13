@@ -10,6 +10,7 @@
 
 namespace Imdb;
 
+use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
 use Imdb\Image;
 
@@ -26,9 +27,9 @@ class Trailers extends MdbBase
     protected $newImageHeight;
 
     /**
-     * @param Config $config OPTIONAL override default config
-     * @param LoggerInterface $logger OPTIONAL override default logger `\Imdb\Logger` with a custom one
-     * @param CacheInterface $cache OPTIONAL override the default cache with any PSR-16 cache.
+     * @param Config|null $config OPTIONAL override default config
+     * @param LoggerInterface|null $logger OPTIONAL override default logger `\Imdb\Logger` with a custom one
+     * @param CacheInterface|null $cache OPTIONAL override the default cache with any PSR-16 cache.
      */
     public function __construct(?Config $config = null, ?LoggerInterface $logger = null, ?CacheInterface $cache = null)
     {

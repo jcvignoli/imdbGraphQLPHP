@@ -10,8 +10,8 @@
 
 namespace Imdb;
 
-use Psr\SimpleCache\CacheInterface;
 use Psr\Log\LoggerInterface;
+use Psr\SimpleCache\CacheInterface;
 use Imdb\Image;
 
 /**
@@ -40,11 +40,11 @@ class Calendar extends MdbBase
 
     /**
      * Get upcoming movie releases as seen on IMDb
-     * @parameter $region This defines which country's releases are returned like DE, NL, US
-     * @parameter $type This defines which type is returned, MOVIE, TV or TV_EPISODE
-     * @parameter $startDateOverride This defines the startDate override like +3 or -5 of default todays day
-     * @parameter $endDateOverride This defines the endDate override like +3 or -5, default + 1 year
-     * @parameter $filter This defines if disablePopularityFilter is set or not, set to false shows all releases,
+     * @parameter string $region This defines which country's releases are returned like DE, NL, US
+     * @parameter string $type This defines which type is returned, MOVIE, TV or TV_EPISODE
+     * @parameter int $startDateOverride This defines the startDate override like +3 or -5 of default todays day
+     * @parameter int $endDateOverride This defines the endDate override like +3 or -5, default + 1 year
+     * @parameter string $filter This defines if disablePopularityFilter is set or not, set to false shows all releases,
      * true only returns populair releases so less results within the given date span
      * there seems to be a limit of 100 titles but i did get more titles so i really don't know
      * @return array categorized by release date ASC
@@ -60,7 +60,7 @@ class Calendar extends MdbBase
      *                  [1] =>      (string) Chris Evans
      *              [imgUrl] => (string) https://m.media-amazon.com/images/M/MV5Bc@._V1_QL75_SX50_CR0,0,140,207_.jpg
      */
-    public function comingSoon($region = "US", $type = "MOVIE", $startDateOverride = 0, $endDateOverride = 0, $filter = "true")
+    public function comingSoon(string $region = "US", string $type = "MOVIE", int $startDateOverride = 0, int $endDateOverride = 0, string $filter = "true"): array
     {
         $calendar = array();
         $startDate = date("Y-m-d");
@@ -126,19 +126,15 @@ EOF;
             count($data->comingSoon->edges) > 0
         ) {
             foreach ($data->comingSoon->edges as $edge) {
-                $title = isset($edge->node->titleText->text) ?
-                            $edge->node->titleText->text : null;
+                $title = $edge->node->titleText->text;
                 if ($title === null) {
                     continue;
                 }
                 //release date
                 $dateParts = array(
-                    'month' => isset($edge->node->releaseDate->month) ?
-                                    $edge->node->releaseDate->month : null,
-                    'day' => isset($edge->node->releaseDate->day) ?
-                                $edge->node->releaseDate->day : null,
-                    'year' => isset($edge->node->releaseDate->year) ?
-                                    $edge->node->releaseDate->year : null
+                    'month' => $edge->node->releaseDate->month,
+                    'day' => $edge->node->releaseDate->day,
+                    'year' => $edge->node->releaseDate->year
                 );
                 $releaseDate = $this->buildDateString($dateParts);
                 if ($releaseDate === false) {
@@ -187,7 +183,7 @@ EOF;
     /**
      * Get upcoming releases from big streaming providers for current month.
      * See https://www.imdb.com/list/ls549391228/ (Netflix)
-     * @parameter $listProviderId This is the streaming provider list id like "549391228" (without ls)
+     * @parameter string $listProviderId This is the streaming provider list id like "549391228" (without ls)
      * Possible providerIds:
      *      549391228 (Netflix)
      *      549615961 (HBO MAX)
@@ -234,7 +230,7 @@ EOF;
      *                      [nameId] => (string) 1293885 (without nm)
      *                      [name] =>   (string) Bobby Moynihan
      */
-    public function comingSoonStreaming($listProviderId)
+    public function comingSoonStreaming(string $listProviderId): array
     {
         $calendarStreaming = array();
         $sortBy = $this->config->streamSortBy;
@@ -346,8 +342,7 @@ EOF;
                             $temp[] = array(
                                 'nameId' => isset($credit->name->id) ?
                                                 str_replace('nm', '', $credit->name->id) : null,
-                                'name' => isset($credit->name->nameText->text) ?
-                                                $credit->name->nameText->text : null
+                                'name' => $credit->name->nameText->text
                             );
                         }
                         $credits[$category] = $temp;
@@ -357,24 +352,15 @@ EOF;
                 $items[] = array(
                     'id' => isset($edge->node->item->id) ?
                                 str_replace('tt', '', $edge->node->item->id) : null,
-                    'title' => isset($edge->node->item->titleText->text) ?
-                                    $edge->node->item->titleText->text : null,
-                    'type' => isset($edge->node->item->titleType->text) ?
-                                    $edge->node->item->titleType->text : null,
-                    'year' => isset($edge->node->item->releaseYear->year) ?
-                                    $edge->node->item->releaseYear->year : null,
-                    'description' => isset($edge->node->description->originalText->plainText) ?
-                                        $edge->node->description->originalText->plainText : null,
-                    'runtime' => isset($edge->node->item->runtime->seconds) ?
-                                    $edge->node->item->runtime->seconds : null,
-                    'rating' => isset($edge->node->item->ratingsSummary->aggregateRating) ?
-                                    $edge->node->item->ratingsSummary->aggregateRating : null,
-                    'votes' => isset($edge->node->item->ratingsSummary->voteCount) ?
-                                    $edge->node->item->ratingsSummary->voteCount : null,
-                    'metacritic' => isset($edge->node->item->metacritic->metascore->score) ?
-                                        $edge->node->item->metacritic->metascore->score : null,
-                    'plot' => isset($edge->node->item->plot->plotText->plainText) ?
-                                    $edge->node->item->plot->plotText->plainText : null,
+                    'title' => $edge->node->item->titleText->text,
+                    'type' => $edge->node->item->titleType->text,
+                    'year' => $edge->node->item->releaseYear->year,
+                    'description' => $edge->node->description->originalText->plainText,
+                    'runtime' => $edge->node->item->runtime->seconds,
+                    'rating' => $edge->node->item->ratingsSummary->aggregateRating,
+                    'votes' => $edge->node->item->ratingsSummary->voteCount,
+                    'metacritic' => $edge->node->item->metacritic->metascore->score,
+                    'plot' => $edge->node->item->plot->plotText->plainText,
                     'thumbUrl' => $imgUrl,
                     'credits' => $credits
                 );
@@ -383,13 +369,10 @@ EOF;
         $calendarStreaming = array(
             'listId' => isset($data->list->id) ?
                               str_replace('ls', '', $data->list->id) : null,
-            'listName' => isset($data->list->name->originalText) ?
-                                $data->list->name->originalText : null,
-            'listCreateDate' => isset($data->list->createdDate) ?
-                                      $data->list->createdDate : null,
-            'listLastModifiedDate ' => isset($data->list->lastModifiedDate) ?
-                                             $data->list->lastModifiedDate : null,
-            'items' => $items
+            'listName' => $data->list->name->originalText,
+            'listCreateDate' => $data->list->createdDate,
+            'listLastModifiedDate ' => $data->list->lastModifiedDate,
+            'items' => $items ?? array()
         );
         return $calendarStreaming;
     }
@@ -397,9 +380,9 @@ EOF;
     /**
      * build date string
      * @param array $dateParts input date
-     * @return string or false
+     * @return string|false false if no data
      */
-    private function buildDateString($dateParts)
+    private function buildDateString(array $dateParts): string|bool
     {
         if (!empty($dateParts['month']) && !empty($dateParts['day']) && !empty($dateParts['year'])) {
             return $dateParts['month'] . '/' .

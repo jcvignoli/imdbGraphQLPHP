@@ -125,7 +125,7 @@ class Request
     private function callbackCurlOptHeaderFunction($ch, $str)
     {
         $len = strlen($str);
-        if ($len) {
+        if ( $len > 0 ) {
             $this->responseHeaders[] = $str;
         }
         return $len;

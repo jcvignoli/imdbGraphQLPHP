@@ -10,6 +10,7 @@
 
 namespace Imdb;
 
+use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
 use Imdb\Image;
 
@@ -26,9 +27,9 @@ class News extends MdbBase
     protected $newImageHeight;
 
     /**
-     * @param Config $config OPTIONAL override default config
-     * @param LoggerInterface $logger OPTIONAL override default logger `\Imdb\Logger` with a custom one
-     * @param CacheInterface $cache OPTIONAL override the default cache with any PSR-16 cache.
+     * @param Config|null $config OPTIONAL override default config
+     * @param LoggerInterface|null $logger OPTIONAL override default logger `\Imdb\Logger` with a custom one
+     * @param CacheInterface|null $cache OPTIONAL override the default cache with any PSR-16 cache.
      */
     public function __construct(?Config $config = null, ?LoggerInterface $logger = null, ?CacheInterface $cache = null)
     {
@@ -42,32 +43,23 @@ class News extends MdbBase
      * Get the latest news for Movie, tv, top, celebrity or indie
      * Thumbnail size: fixed 500x281
      * max 250 items are returned, this covers about a year
-     * @ parameter string $listType determines which list to return
-     * possible values for $listType:
-     *  CELEBRITY
-     *  INDIE
-     *  MOVIE
-     *  TOP
-     *  TV
      *
-     * @return
-     * Array
-     *   (
-     *      [0] => Array
-     *          (
-     *          [id] =>             (string) (without ni)
-     *          [title] =>          (string) news item title
-     *          [author] =>         (string)
-     *          [date] =>           (string) iso date string
-     *          [extUrl] =>         (string)
-     *          [exturlLabel] =>    (string) label used for extUrl
-     *          [textHtml] =>       (string)
-     *          [textText] =>       (string)
-     *          [thumbnailUrl] =>   (string)
-     *          )
-     *  )
+     * @param string $listType determines which list to return
+     *                         possible values: CELEBRITY, INDIE, MOVIE, TOP, TV
+     *
+     * @return array<int, array{
+     *     id: string|null,
+     *     title: string|null,
+     *     author: string|null,
+     *     date: string|null,
+     *     extUrl: string|null,
+     *     exturlLabel: string|null,
+     *     textHtml: string|null,
+     *     textText: string|null,
+     *     thumbnailUrl: string|null
+     * }>
      */
-    public function newsList($listType = "MOVIE")
+    public function newsList(string $listType = "MOVIE"): array
     {
         $newsListItems = array();
         $query = <<<EOF

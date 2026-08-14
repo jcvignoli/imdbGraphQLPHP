@@ -14,7 +14,7 @@ class Logger implements LoggerInterface
 {
     use LoggerTrait;
 
-    public function __construct(protected $enabled = true)
+    public function __construct(protected bool $enabled = true)
     {
     }
 
@@ -23,7 +23,7 @@ class Logger implements LoggerInterface
      *
      * @param mixed $level
      * @param string $message
-     * @param array $context
+     * @param array<mixed> $context
      * @return void
      */
     public function log($level, Stringable|string $message, array $context = []): void

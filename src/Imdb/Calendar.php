@@ -21,9 +21,9 @@ use Imdb\Image;
  */
 class Calendar extends MdbBase
 {
-    protected $imageFunctions;
-    protected $newImageWidth;
-    protected $newImageHeight;
+    protected Image $imageFunctions;
+    protected int $newImageWidth;
+    protected int $newImageHeight;
 
     /**
      * @param Config|null $config OPTIONAL override default config
@@ -47,18 +47,13 @@ class Calendar extends MdbBase
      * @parameter string $filter This defines if disablePopularityFilter is set or not, set to false shows all releases,
      * true only returns populair releases so less results within the given date span
      * there seems to be a limit of 100 titles but i did get more titles so i really don't know
-     * @return array categorized by release date ASC
-     *      [11-15-2024] => (array)
-     *          [0] => Array
-     *              [title] =>  (string) Red One
-     *              [imdbid] => (string) 14948432
-     *              [genres] => (array)
-     *                  [0] =>      (string) Action
-     *                  [1] =>      (string) Adventure
-     *              [cast] => Array
-     *                  [0] =>      (string) Dwayne Johnson
-     *                  [1] =>      (string) Chris Evans
-     *              [imgUrl] => (string) https://m.media-amazon.com/images/M/MV5Bc@._V1_QL75_SX50_CR0,0,140,207_.jpg
+     * @return array<string, list<array{
+     *     title: string,
+     *     imdbid: string,
+     *     genres: list<string>,
+     *     cast: list<string>,
+     *     imgUrl: string
+     * }>>
      */
     public function comingSoon(string $region = "US", string $type = "MOVIE", int $startDateOverride = 0, int $endDateOverride = 0, string $filter = "true"): array
     {
@@ -196,39 +191,29 @@ EOF;
      * @config options
      *      $streamSortBy, $streamSortOrder, $calendarThumbnailWidth, $calendarThumbnailHeight
      *
-     * @return array ()
-     *  [listId] =>                 (string) 549391228 (without ls)
-     *  [listName] =>               (string) What's New on Netflix in November 2024
-     *  [listCreateDate] =>         (string)2024-10-23T21:14:59Z
-     *  [listLastModifiedDate ] =>  (string)2024-10-23T21:42:30Z
-     *  [items] => Array()
-     *      [0] => Array()
-     *          [id] =>             (string) 33130884 (without tt)
-     *          [title] =>          (string) Barbie Mysteries: The Great Horse Chase
-     *          [type] =>           (string) TV Series
-     *          [year] =>           (int) 2024
-     *          [description] =>    (string) Season 1 Available November 1
-     *          [runtime] =>        (int) 1320 (Seconds!)
-     *          [rating] =>         (float) 6.7
-     *          [votes] =>          (int) 36
-     *          [metacritic] =>     (int) 75
-     *          [plot] =>           (string) Barbie "Brooklyn" Roberts and Barbie "Malibu" Roberts embark on an adventure-packed journey across Europe to rescue two stolen horses.
-     *          [thumbUrl] =>       (string) https://m.media-amazon.com/images/M/MV5BOTg3MDg2ZTYtMjgzNy00MmViLWJjOWItYzQ4YWNmOWQ1ZGM0XkEyXkFqcGc@._V1_QL75_SX140_CR0,2,140,207_.jpg
-     *          [credits] => Array() categorized by index like Stars and Director max 3 elements in each category
-     *              [Director] => Array()
-     *                  [0] => Array()
-     *                      [nameId] => (string) 4638466 (without nm)
-     *                      [name] =>   (string) Joanna Pardos
-     *              [Stars] => Array()
-     *                  [0] => Array()
-     *                      [nameId] => (string) 0046033 (without nm)
-     *                      [name] =>   (string) Diedrich Bader
-     *                  [1] => Array()
-     *                      [nameId] => (string) 1312566 (without nm)
-     *                      [name] =>   (string) Kari Wahlgren
-     *                  [2] => Array()
-     *                      [nameId] => (string) 1293885 (without nm)
-     *                      [name] =>   (string) Bobby Moynihan
+     * @return array{
+     *     listId: string,
+     *     listName: string,
+     *     listCreateDate: string,
+     *     listLastModifiedDate: string,
+     *     items: list<array{
+     *         id: string,
+     *         title: string,
+     *         type: string,
+     *         year: int,
+     *         description: string,
+     *         runtime: int,
+     *         rating: float,
+     *         votes: int,
+     *         metacritic: int,
+     *         plot: string,
+     *         thumbUrl: string,
+     *         credits: array<string, list<array{
+     *             nameId: string,
+     *             name: string
+     *         }>>
+     *     }>
+     * }|array{}
      */
     public function comingSoonStreaming(string $listProviderId): array
     {
@@ -371,7 +356,7 @@ EOF;
                               str_replace('ls', '', $data->list->id) : null,
             'listName' => $data->list->name->originalText,
             'listCreateDate' => $data->list->createdDate,
-            'listLastModifiedDate ' => $data->list->lastModifiedDate,
+            'listLastModifiedDate' => $data->list->lastModifiedDate,
             'items' => $items ?? array()
         );
         return $calendarStreaming;
@@ -379,7 +364,7 @@ EOF;
 
     /**
      * build date string
-     * @param array $dateParts input date
+     * @param array<string, string> $dateParts input date
      * @return string|false false if no data
      */
     private function buildDateString(array $dateParts): string|bool

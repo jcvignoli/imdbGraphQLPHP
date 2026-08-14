@@ -20,9 +20,9 @@ use Imdb\Image;
  */
 class NameSearchAdvanced extends MdbBase
 {
-    protected $imageFunctions;
-    protected $newImageWidth;
-    protected $newImageHeight;
+    protected Image $imageFunctions;
+    protected int $newImageWidth;
+    protected int $newImageHeight;
 
     /**
      * @param Config|null $config OPTIONAL override default config
@@ -54,36 +54,32 @@ class NameSearchAdvanced extends MdbBase
      *
      * @param string $birthPlace input searchTerm to search names with specific birth places
      *
-     * @return array of Names
-     * array[]
-     *  [totalFoundResults] => (int) 2 Total found from search result,
-     *      this will not be the total results from this method as it is limited by config setting nameSearchAdvancedAmount
-     *  [names] => Array()
-     *      [0] => Array()
-     *          [imdbid] => (string) 0001228 (without nm)
-     *          [name] =>   (string) Peter Fonda
-     *          [bio] =>    (string) Name bio text
-     *          [professions] => Array()
-     *              [0] => (string) Actor
-     *              [1] => (string) Director
-     *              [2] => (string) Writer
-     *          [knownFor] => Array()
-     *              [0] => Array()
-     *                  [titleId] =>    (string) 0064276 (without tt)
-     *                  [title] =>      (string) Easy Rider
-     *                  [year] =>       (int) 1969
-     *                  [endYear] =>    (int) (will be null if not available)
-     *          [imgUrl] => (string) ImageUrl for thumbnail
+     * @return array{
+     *     totalFoundResults: int,
+     *     names: list<array{
+     *         imdbid: string,
+     *         name: string,
+     *         bio: string,
+     *         professions: list<string>,
+     *         knownFor: list<array{
+     *             titleId: string,
+     *             title: string,
+     *             year: int,
+     *             endYear: int|null
+     *         }>,
+     *         imgUrl: string
+     *     }>
+     * }|array{}
      */
     public function advancedNameSearch(
-        $searchTerm = '',
-        $birthDay = '',
-        $birthDateRangeStart = '',
-        $birthDateRangeEnd = '',
-        $deathDateRangeStart = '',
-        $deathDateRangeEnd = '',
-        $birthPlace = ''
-    ) {
+        string $searchTerm = '',
+        string $birthDay = '',
+        string $birthDateRangeStart = '',
+        string $birthDateRangeEnd = '',
+        string $deathDateRangeStart = '',
+        string $deathDateRangeEnd = '',
+        string $birthPlace = ''
+    ): array {
 
         $results = array();
         $names = array();
@@ -239,17 +235,17 @@ EOF;
      * @param string $deathDateRangeStart
      * @param string $deathDateRangeEnd
      * @param string $birthPlace
-     * @return string constraints or false
+     * @return string|false constraints or false
      */
     private function buildConstraints(
-        $searchTerm,
-        $birthDay,
-        $birthDateRangeStart,
-        $birthDateRangeEnd,
-        $deathDateRangeStart,
-        $deathDateRangeEnd,
-        $birthPlace
-    ) {
+        string $searchTerm,
+        string $birthDay,
+        string $birthDateRangeStart,
+        string $birthDateRangeEnd,
+        string $deathDateRangeStart,
+        string $deathDateRangeEnd,
+        string $birthPlace
+    ): string|bool {
         $constraint = '{';
 
         // Name search input
@@ -274,7 +270,7 @@ EOF;
             $constraint .= ' birthPlaceConstraint: {birthPlace: "' . $birthPlace . '"}';
         }
 
-        if ($constraint == '{') {
+        if ($constraint === '{') {
             return false;
         }
 
@@ -290,9 +286,9 @@ EOF;
     /**
      * Check if provided date is valid
      * @param string $date input date
-     * @return boolean true or false
+     * @return bool
      */
-    private function validateDate($date)
+    private function validateDate(string $date): bool
     {
         $d = \DateTime::createFromFormat('Y-m-d', $date);
         return $d && $d->format('Y-m-d') === $date;
@@ -300,15 +296,15 @@ EOF;
 
     /**
      * Check if input birthday is not empty and valid
-     * @param string $date iso date string ('--04-24')
-     * @return $date|string
+     * @param string $birthDate iso date string ('--04-24')
+     * @return bool|string
      */
-    private function checkBirthDay($birthDate)
+    private function checkBirthDay(string $birthDate): string|bool
     {
         $parts = explode('-', $birthDate);
-        if (count($parts) == 4) {
+        if (count($parts) === 4) {
             return '--' . $parts[2] . '-' . $parts[3];
-        } elseif (count($parts) == 2) {
+        } elseif (count($parts) === 2) {
             return '--' . $parts[0] . '-' . $parts[1];
         } else {
             return false;
@@ -318,11 +314,11 @@ EOF;
     /**
      * Check if input birth dates not empty and valid
      * @param string $startDate (searches between startDate and present date) iso date string ('1975-01-01')
-     * @param $endDate (searches between endDate and earlier) iso date string ('1975-01-01')
-     * @param $birthDay input birhtday string like "--10-19" or "10-19"
-     * @return string constraints or false
+     * @param string $endDate (searches between endDate and earlier) iso date string ('1975-01-01')
+     * @param string $birthDay input birhtday string like "--10-19" or "10-19"
+     * @return string|false constraints or false
      */
-    private function checkBirthDates($startDate, $endDate, $birthDay)
+    private function checkBirthDates(string $startDate, string $endDate, string $birthDay): string|bool
     {
         if (!empty($birthDay) || !empty($startDate) || !empty($endDate)) {
             $constraint = 'birthDateConstraint: {';
@@ -370,10 +366,10 @@ EOF;
     /**
      * Check if input death dates not empty and valid
      * @param string $startDate (searches between startDate and present date) iso date string ('1975-01-01')
-     * @param $endDate (searches between endDate and earlier) iso date string ('1975-01-01')
-     * @return string constraints or false
+     * @param string $endDate (searches between endDate and earlier) iso date string ('1975-01-01')
+     * @return string|false constraints or false
      */
-    private function checkDeathDates($startDate, $endDate)
+    private function checkDeathDates(string $startDate, string $endDate): string|bool
     {
         if (!empty($startDate) || !empty($endDate)) {
             $constraint = 'deathDateConstraint: {';

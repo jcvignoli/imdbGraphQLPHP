@@ -12,6 +12,7 @@ namespace Imdb;
 
 use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
+use stdClass;
 
 /**
  * Accessing Movie information through GraphQL
@@ -22,38 +23,29 @@ use Psr\SimpleCache\CacheInterface;
 class GraphQL
 {
     /**
-     * @var CacheInterface
-     */
-    private $cache;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    /**
-     * @var Config
-     */
-    private $config;
-
-    /**
      * GraphQL constructor.
      * @param CacheInterface $cache
      * @param LoggerInterface $logger
      * @param Config $config
      */
-    public function __construct($cache, $logger, $config)
+    public function __construct(private CacheInterface $cache, private LoggerInterface $logger, private Config $config)
     {
         $this->cache = $cache;
         $this->logger = $logger;
         $this->config = $config;
     }
 
-    public function query($query, $qn = null, $variables = array())
+    /**
+     * @param string $query
+     * @param string|null $qn
+     * @param array<string, string> $variables
+     * @return stdClass
+     */
+    public function query(string $query, ?string $qn = null, array $variables = array()): stdClass
     {
-        $key = "gql.$qn." . ($variables ? json_encode($variables) : '') . md5($query) . ".json";
+        $key = "gql.$qn." . ( count($variables) > 0 ? json_encode($variables) : '') . md5($query) . ".json";
         $fromCache = $this->cache->get($key);
-        if ($fromCache != null) {
+        if ($fromCache !== null) {
             return json_decode($fromCache);
         }
         // strip spaces from query due to hosters request limit
@@ -66,10 +58,10 @@ class GraphQL
     /**
      * @param string $query
      * @param string|null $queryName
-     * @param array $variables
-     * @return \stdClass
+     * @param array<string, string> $variables
+     * @return stdClass
      */
-    private function doRequest($query, $queryName = null, $variables = array())
+    private function doRequest(string $query, ?string $queryName = null, array $variables = array()): stdClass
     {
         $request = new Request('https://api.graphql.imdb.com/', $this->config);
         $request->addHeaderLine("Content-Type", "application/json");
@@ -89,7 +81,7 @@ class GraphQL
         );
         $this->logger->info("[GraphQL] Requesting {$queryName}");
         $request->post($payload);
-        if (200 == $request->getStatus()) {
+        if (200 === $request->getStatus()) {
             $responseObj = json_decode($request->getResponseBody());
 
             // Ensure response contains expected data property
@@ -106,7 +98,7 @@ class GraphQL
                 $imdbErrorID = !isset($variables['id']) ? 'n/a' : $variables['id'];
                 $this->logger->error("Failed to retrieve query [{$queryName}] , IMDb id [{$imdbErrorID}]");
             }
-            return new \stdClass();
+            return new stdClass();
         }
     }
 }

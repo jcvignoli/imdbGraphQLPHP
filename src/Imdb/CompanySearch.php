@@ -22,14 +22,12 @@ class CompanySearch extends MdbBase
      * The results can be used as input for advancedTitleSearch class to get titles based on this company
      * Or the results can be used as input for Company class to get company info
      *
-     * @return array[]
-     * Array
-     * (
-     *      [id] =>         (string) 0185428
-     *      [name] =>       (string) Warner Brothers Entertainment
-     *      [country] =>    (string) United States
-     *      [type] =>       (string) Distributor
-     * )
+     * @return list<array{
+     *     id: string,
+     *     name: string,
+     *     country: string,
+     *     type: string
+     * }>
      */
     public function searchCompany($company)
     {

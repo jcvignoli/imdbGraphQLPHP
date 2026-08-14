@@ -96,7 +96,7 @@ class Title extends MdbBase
     protected ?string $mainMovietype = null;
     protected ?string $mainTitle = null;
     protected ?string $mainOriginalTitle = null;
-    protected int $mainYear = -1;
+    protected ?int $mainYear = -1;
     protected ?int $mainEndYear = -1;
     protected int $mainTop250 = 0;
     protected float $mainRating = 0.0;
@@ -152,7 +152,7 @@ class Title extends MdbBase
     protected array $compCreditsSpecial = array();
     /** @var CompCredits */
     protected array $compCreditsOther = array();
-    /** @var array<array<array{titleId: string|null, titleName: string|null, titleType: string, year: string|null, endYear: string, seriesName: string, description: string|null}>> */
+    /** @var array<array<array{titleId: string|null, titleName: string|null, titleType: string|null, year: string|null, endYear: string|null, seriesName: string|null, description: string|null}>> */
     protected array $connections = array();
     /** @var array<list<array{label: string, url: string, language: list<string>}>|string> */
     protected array $externalSites = array();
@@ -264,11 +264,12 @@ class Title extends MdbBase
         return $this->mainOriginalTitle ;
     }
 
-    /** Get year
-     * @return int year
+    /**
+     * Get year
+     * @return int|null year
      * @see IMDB page / (TitlePage)
      */
-    public function year(): int
+    public function year(): ?int
     {
         if ($this->mainYear === -1) {
             $this->titleYear();
@@ -276,7 +277,8 @@ class Title extends MdbBase
         return $this->mainYear;
     }
 
-    /** Get end-year
+    /**
+     * Get end-year
      * if production spanned multiple years, usually for series
      * @return int endyear|null
      * @see IMDB page / (TitlePage)
@@ -2084,7 +2086,7 @@ EOF;
 
     #-------------------------------------------------------[ Connections ]---
     /** Info about connections or references with other titles
-     * @return array<array<array{titleId: string|null, titleName: string|null, titleType: string, year: string|null, endYear: string, seriesName: string, description: string|null}>>
+     * @return array<array<array{titleId: string|null, titleName: string|null, titleType: string|null, year: string|null, endYear: string|null, seriesName: string|null, description: string|null}>>
      * @see IMDB page /companycredits
      */
     public function connection(): array
@@ -2132,12 +2134,12 @@ EOF;
                     $this->connections[$categoryId][] = array(
                         'titleId' => isset($edge->node->associatedTitle->id) ?
                                         str_replace('tt', '', $edge->node->associatedTitle->id) : null,
-                        'titleName' => $edge->node->associatedTitle->titleText->text,
-                        'titleType' => $edge->node->associatedTitle->titleType->text,
-                        'year' => $edge->node->associatedTitle->releaseYear->year,
-                        'endYear' => $edge->node->associatedTitle->releaseYear->endYear,
-                        'seriesName' => $edge->node->associatedTitle->series->series->titleText->text,
-                        'description' => $edge->node->description->plainText
+                        'titleName' => $edge->node->associatedTitle->titleText?->text,
+                        'titleType' => $edge->node->associatedTitle->titleType?->text,
+                        'year' => $edge->node->associatedTitle->releaseYear?->year,
+                        'endYear' => $edge->node->associatedTitle->releaseYear?->endYear,
+                        'seriesName' => $edge->node->associatedTitle?->series?->series?->titleText?->text,
+                        'description' => $edge->node->description?->plainText
                     );
                 }
             }
@@ -3181,8 +3183,8 @@ EOF;
         $this->mainOriginalTitle  = isset($data->title->originalTitleText->text) ?
                                           trim(str_replace('"', ':', trim($data->title->originalTitleText->text, '"'))) : null;
         $this->mainMovietype = $data->title->titleType->text;
-        $this->mainYear = $data->title->releaseYear->year;
-        $this->mainEndYear = $data->title->releaseYear->endYear;
+        $this->mainYear = $data->title->releaseYear?->year;
+        $this->mainEndYear = $data->title->releaseYear?->endYear;
     }
 
     #========================================================[ photo/poster ]===

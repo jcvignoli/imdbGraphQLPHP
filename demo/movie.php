@@ -11,27 +11,27 @@
 
 require __DIR__ . "/../vendor/autoload.php";
 
-if (isset ($_GET["mid"]) && preg_match('/^[0-9]+$/', $_GET["mid"])) {
-  $config = new \Imdb\Config();
-  $config->cacheUse = true;
-  $config->cacheStore = true;
-  $config->language = 'en-US,en';
-  $logger = null; //new \Imdb\Logger();
-  $movie = new \Imdb\Title($_GET["mid"], $config, $logger );
+if (isset($_GET["mid"]) && preg_match('/^[0-9]+$/', $_GET["mid"])) {
+    $config = new \Imdb\Config();
+    $config->cacheUse = true;
+    $config->cacheStore = true;
+    $config->language = 'en-US,en';
+    $logger = null; //new \Imdb\Logger();
+    $movie = new \Imdb\Title($_GET["mid"], $config, $logger);
 
-  $imdb_host = 'www.imdb.com';
-  $mTitle = $movie->title();
+    $imdb_host = 'www.imdb.com';
+    $mTitle = $movie->title();
 
   # Handle year strictly (string, int, or array)
-  $mYearRaw = $movie->year();
-  if (is_array($mYearRaw)) {
-    $mYear = implode('–', array_filter($mYearRaw));
-  } else {
-    $mYear = $mYearRaw ? (string)$mYearRaw : '';
-  }
+    $mYearRaw = $movie->year();
+    if (is_array($mYearRaw)) {
+        $mYear = implode('–', array_filter($mYearRaw));
+    } else {
+        $mYear = $mYearRaw ? (string)$mYearRaw : '';
+    }
 
-  $mainUrl = 'https://' . $imdb_host . '/title/tt' . sprintf('%07d', $_GET["mid"]);
-?>
+    $mainUrl = 'https://' . $imdb_host . '/title/tt' . sprintf('%07d', $_GET["mid"]);
+    ?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -46,11 +46,11 @@ if (isset ($_GET["mid"]) && preg_match('/^[0-9]+$/', $_GET["mid"])) {
       <div class="photo mb-10 text-center">
         <?php
           $photo_url = $movie->photoLocalurl();
-          if (!empty($photo_url)) {
+        if (!empty($photo_url)) {
             echo '<img src="' . htmlspecialchars($photo_url) . '" alt="Cover">';
-          } else {
+        } else {
             echo "No photo available";
-          }
+        }
         ?>
       </div>
       <table class="table">
@@ -65,7 +65,7 @@ if (isset ($_GET["mid"]) && preg_match('/^[0-9]+$/', $_GET["mid"])) {
         # AKAs
         $aka = $movie->alsoknow();
         if (!empty($aka) && is_array($aka)) {
-        ?>
+            ?>
         <tr>
           <td><b>Also known as:</b></td>
           <td>
@@ -76,8 +76,8 @@ if (isset ($_GET["mid"]) && preg_match('/^[0-9]+$/', $_GET["mid"])) {
                 <th>Country</th>
 
               </tr>
-              <?php foreach ($aka as $ak) { 
-              ?>
+              <?php foreach ($aka as $ak) {
+                    ?>
                 <tr>
                   <td><?php echo htmlspecialchars($ak["title"]); ?></td>
                   <td><?php echo htmlspecialchars($ak["language"] ?? ''); ?></td>
@@ -88,47 +88,47 @@ if (isset ($_GET["mid"]) && preg_match('/^[0-9]+$/', $_GET["mid"])) {
             </table>
           </td>
         </tr>
-        <?php 
-        } 
+            <?php
+        }
         ?>
 
-        <?php 
+        <?php
         # Movie Type
         $mType = $movie->movietype();
         if (!empty($mType)) {
-        ?>
+            ?>
         <tr>
           <td class="mw-120"><b>Type:</b></td>
           <td><?php echo htmlspecialchars(is_array($mType) ? implode(', ', $mType) : $mType); ?></td>
         </tr>
-        <?php 
-        } 
+            <?php
+        }
         ?>
 
         <?php
         # Keywords
         $keywords = $movie->keyword();
         if (!empty($keywords)) {
-        ?>
+            ?>
         <tr>
           <td><b>Keywords:</b></td>
           <td><?php echo htmlspecialchars(is_array($keywords) ? implode(', ', $keywords) : $keywords); ?></td>
         </tr>
-        <?php 
-        } 
+            <?php
+        }
         ?>
 
         <?php
         # Episode
         $episodes = $movie->episode();
         if (!empty($episodes)) {
-        ?>
+            ?>
         <tr>
           <td><b>Episode:</b></td>
           <td><?php echo htmlspecialchars(is_array($episodes) ? implode(', ', $episodes) : (string)$episodes); ?></td>
         </tr>
-        <?php 
-        } 
+            <?php
+        }
         ?>
 
         <?php # Year ?>
@@ -143,14 +143,14 @@ if (isset ($_GET["mid"]) && preg_match('/^[0-9]+$/', $_GET["mid"])) {
         # Runtime
         $runtime = $movie->runtime();
         if (!empty($runtime)) {
-          $rTime = is_array($runtime) ? ($runtime[0]['time'] ?? $runtime[0] ?? '') : $runtime;
-        ?>
+            $rTime = is_array($runtime) ? ($runtime[0]['time'] ?? $runtime[0] ?? '') : $runtime;
+            ?>
         <tr>
           <td><b>Runtime:</b></td>
           <td><?php echo htmlspecialchars((string)$rTime); ?> minutes</td>
         </tr>
-        <?php 
-        } 
+            <?php
+        }
         ?>
 
         <?php
@@ -174,7 +174,7 @@ if (isset ($_GET["mid"]) && preg_match('/^[0-9]+$/', $_GET["mid"])) {
               </table>
             </td>
           </tr>
-        <?php
+            <?php
         }
         ?>
 
@@ -182,141 +182,126 @@ if (isset ($_GET["mid"]) && preg_match('/^[0-9]+$/', $_GET["mid"])) {
         # Ratings
         $ratv = $movie->rating();
         if (!empty($ratv)) {
-        ?>
+            ?>
         <tr>
           <td ><b>Rating:</b></td>
           <td><?php echo htmlspecialchars((string)$ratv); ?></td>
         </tr>
-        <?php 
-        } 
+            <?php
+        }
         ?>
 
         <?php
         # Votes
         $votes = $movie->votes();
         if (!empty($votes)) {
-        ?>
+            ?>
         <tr>
           <td><b>Votes:</b></td>
           <td><?php echo htmlspecialchars((string)$votes); ?></td>
         </tr>
-        <?php 
-        } 
+            <?php
+        }
         ?>
 
         <?php
         # Languages
         $languages = $movie->language();
         if (!empty($languages)) {
-        ?>
+            ?>
         <tr>
           <td><b>Languages:</b></td>
           <td><?php echo htmlspecialchars(is_array($languages) ? implode(', ', $languages) : $languages); ?></td>
         </tr>
-        <?php 
-        } 
+            <?php
+        }
         ?>
 
         <?php
         # Country
         $country = $movie->country();
         if (!empty($country)) {
-        ?>
+            ?>
         <tr>
           <td><b>Country:</b></td>
           <td><?php echo htmlspecialchars(is_array($country) ? implode(', ', $country) : $country); ?></td>
         </tr>
-        <?php 
-        } 
+            <?php
+        }
         ?>
 
         <?php
         # Genre
         $genres = $movie->genre();
-        if (count($genres)>0) {
-        ?>
+        if (count($genres) > 0) {
+            ?>
         <tr>
           <td><b>Genres:</b></td>
           <td><ul><?php
-          foreach( $genres as $genre ) {
-           echo '<li>' . htmlspecialchars($genre ["mainGenre"]) . '</li>';
-           }
-           ?></ul></td>
+            foreach ($genres as $genre) {
+                echo '<li>' . htmlspecialchars($genre ["mainGenre"]) . '</li>';
+            }
+            ?></ul></td>
         </tr>
-        <?php 
-        } 
+            <?php
+        }
         ?>
 
         <?php
         # Sub Genre
-        if (count($genres)>0) {
-        ?>
+        if (count($genres) > 0) {
+            ?>
         <tr>
           <td><b>Sub genres:</b></td>
           <td><ul><?php
-          foreach( $genres as $genre ) {
-          foreach( $genre["subGenre"] as $subgenre ){
-           echo '<li>' . htmlspecialchars($subgenre) . '</li>';
-           }
-           }
-           ?></ul></td>
+            foreach ($genres as $genre) {
+                foreach ($genre["subGenre"] as $subgenre) {
+                    echo '<li>' . htmlspecialchars($subgenre) . '</li>';
+                }
+            }
+            ?></ul></td>
         </tr>
-        <?php 
-        } 
-        ?>
-
-        <?php
-        # Colors
-        $cols = $movie->color();
-        if (count($cols)>0) {
-        ?>
-        <tr>
-          <td><b>Colors:</b></td>
-          <td><ul><?php
-          foreach( $cols as $col ) {
-           echo '<li>' . htmlspecialchars($col['type']) . '</li>';
-           }
-           ?></ul></td>
-        </tr>
-        <?php 
-        } 
+            <?php
+        }
         ?>
 
         <?php
         # Sound
         $sounds = $movie->sound();
-        if (count($sounds)>0) {
-        ?>
+        if (count($sounds) > 0) {
+            ?>
         <tr>
           <td><b>Sound:</b></td>
           <td><ul><?php
-          foreach( $sounds as $sound ) {
-           echo '<li>' . htmlspecialchars($sound['type']) . '</li>';
-           }
-           ?></ul></td>
+            foreach ($sounds as $sound) {
+                echo '<li>' . htmlspecialchars($sound['type']) . '</li>';
+            }
+            ?></ul></td>
         </tr>
-        <?php 
-        } 
+            <?php
+        }
         ?>
 
         <?php
         # Tagline
         $tagline = $movie->tagline();
         if (!empty($tagline)) {
-        ?>
+            ?>
         <tr>
           <td><b>Tagline:</b></td>
           <td><?php echo htmlspecialchars(is_array($tagline) ? implode(', ', $tagline) : $tagline); ?></td>
         </tr>
-        <?php 
-        } 
+            <?php
+        }
         ?>
 
         <?php
         # Staff Section Handler
-        $render_staff = function($title, $staffList) {
-          if (empty($staffList) || !is_array($staffList)) return;
-        ?>
+        $render_staff = function ($title, $staffList) {
+            if (empty($staffList) || !is_array($staffList)) {
+                return;
+            }
+            ?>
         <tr>
           <td><b><?php echo htmlspecialchars($title); ?>:</b></td>
           <td>
@@ -325,30 +310,30 @@ if (isset ($_GET["mid"]) && preg_match('/^[0-9]+$/', $_GET["mid"])) {
                 <th class="mw-200">Name</th>
                 <th class="mw-200">Role</th>
               </tr>
-              <?php foreach ($staffList as $person) { 
-                if (is_array($person)) {
-                  $pId   = $person['imdb'] ?? $person['id'] ?? $person['mid'] ?? $person['nm'] ?? '';
-                  $pName = $person['name'] ?? $person['person']['name'] ?? '';
-                  $pRole = $person['role'] ?? $person['character'] ?? $person['job'] ?? '';
-                } elseif (is_object($person)) {
-                  $pId   = method_exists($person, 'imdbid') ? $person->imdbid() : '';
-                  $pName = method_exists($person, 'name') ? $person->name() : '';
-                  $pRole = method_exists($person, 'role') ? $person->role() : '';
-                } else {
-                  $pId   = '';
-                  $pName = (string)$person;
-                  $pRole = '';
-                }
+              <?php foreach ($staffList as $person) {
+                    if (is_array($person)) {
+                        $pId   = $person['imdb'] ?? $person['id'] ?? $person['mid'] ?? $person['nm'] ?? '';
+                        $pName = $person['name'] ?? $person['person']['name'] ?? '';
+                        $pRole = $person['role'] ?? $person['character'] ?? $person['job'] ?? '';
+                    } elseif (is_object($person)) {
+                        $pId   = method_exists($person, 'imdbid') ? $person->imdbid() : '';
+                        $pName = method_exists($person, 'name') ? $person->name() : '';
+                        $pRole = method_exists($person, 'role') ? $person->role() : '';
+                    } else {
+                        $pId   = '';
+                        $pName = (string)$person;
+                        $pRole = '';
+                    }
 
-                $pNameStr = is_array($pName) ? implode(', ', $pName) : (string)$pName;
-                $pRoleStr = is_array($pRole) ? implode(', ', $pRole) : (string)$pRole;
-              ?>
+                    $pNameStr = is_array($pName) ? implode(', ', $pName) : (string)$pName;
+                    $pRoleStr = is_array($pRole) ? implode(', ', $pRole) : (string)$pRole;
+                    ?>
                 <tr>
                   <td>
                     <?php if (!empty($pId)) { ?>
                       <a href="person.php?mid=<?php echo htmlspecialchars(preg_replace('/^nm/', '', (string)$pId)); ?>"><?php echo htmlspecialchars($pNameStr); ?></a>
                     <?php } else { ?>
-                      <?php echo htmlspecialchars($pNameStr); ?>
+                        <?php echo htmlspecialchars($pNameStr); ?>
                     <?php } ?>
                   </td>
                   <td><?php echo !empty($pRoleStr) ? htmlspecialchars($pRoleStr) : '&nbsp;'; ?></td>
@@ -357,7 +342,7 @@ if (isset ($_GET["mid"]) && preg_match('/^[0-9]+$/', $_GET["mid"])) {
             </table>
           </td>
         </tr>
-        <?php 
+            <?php
         };
 
         # Directors, Writers, Producers, Music, Cast
@@ -366,171 +351,172 @@ if (isset ($_GET["mid"]) && preg_match('/^[0-9]+$/', $_GET["mid"])) {
         $render_staff("Produced By", $movie->producer());
         $render_staff("Music", $movie->composer());
         $render_staff("Cast", $movie->cast());
-        ?>
+    ?>
 
         <?php
         # Plot outline
         $plotoutline = $movie->plotoutline();
         if (!empty($plotoutline)) {
-        ?>
+            ?>
         <tr>
           <td><b>Plot Outline:</b></td>
           <td><?php echo htmlspecialchars(is_array($plotoutline) ? implode(', ', $plotoutline) : $plotoutline); ?></td>
         </tr>
-        <?php 
-        } 
+            <?php
+        }
         ?>
 
         <?php
         # Plot
         $plot = $movie->plot();
         if (!empty($plot) && is_array($plot)) {
-        ?>
+            ?>
         <tr>
           <td><b>Plot:</b></td>
           <td><ul>
-          <?php foreach($plot as $p) { ?>
+            <?php foreach ($plot as $p) { ?>
             <li><?php echo htmlspecialchars(is_array($p) ? implode(', ', $p) : $p); ?></li>
-          <?php } ?>
+            <?php } ?>
           </ul></td>
         </tr>
-        <?php 
-        } 
+            <?php
+        }
         ?>
 
         <?php
         # Taglines
         $taglines = $movie->tagline();
         if (!empty($taglines) && is_array($taglines)) {
-        ?>
+            ?>
         <tr>
           <td><b>Taglines:</b></td>
           <td><ul>
-          <?php foreach($taglines as $t) { ?>
+            <?php foreach ($taglines as $t) { ?>
             <li><?php echo htmlspecialchars(is_array($t) ? implode(', ', $t) : $t); ?></li>
-          <?php } ?>
+            <?php } ?>
           </ul></td>
         </tr>
-        <?php 
-        } 
+            <?php
+        }
         ?>
 
         <?php
         # Episodes List
         $episodes = $movie->episode();
         if (!empty($episodes) && is_array($episodes)) {
-        ?>
+            ?>
         <tr>
           <td><b>Episodes:</b></td>
           <td>
-          <?php
-          foreach ($episodes as $season => $ep) {
-            if (is_array($ep)) {
-              foreach ($ep as $episodedata) {
-                if (!is_array($episodedata)) continue;
-                $epTitle  = $episodedata['title'] ?? 'Episode';
-                $epImdb   = preg_replace('/^tt/', '', $episodedata['imdbid'] ?? $episodedata['id'] ?? '');
-                $epSeason = $episodedata['season'] ?? $season;
-                $epNum    = $episodedata['episode'] ?? '';
-                $epAir    = $episodedata['airdate'] ?? '';
-                $epPlot   = $episodedata['plot'] ?? '';
+            <?php
+            foreach ($episodes as $season => $ep) {
+                if (is_array($ep)) {
+                    foreach ($ep as $episodedata) {
+                        if (!is_array($episodedata)) {
+                            continue;
+                        }
+                        $epTitle  = $episodedata['title'] ?? 'Episode';
+                        $epImdb   = preg_replace('/^tt/', '', $episodedata['imdbid'] ?? $episodedata['id'] ?? '');
+                        $epSeason = $episodedata['season'] ?? $season;
+                        $epNum    = $episodedata['episode'] ?? '';
+                        $epAir    = $episodedata['airdate'] ?? '';
+                        $epPlot   = $episodedata['plot'] ?? '';
 
-                echo '<b>Season ' . htmlspecialchars((string)$epSeason) . ', Episode ' . htmlspecialchars((string)$epNum) . ': ';
-                if (!empty($epImdb)) {
-                  echo '<a href="' . htmlspecialchars($_SERVER["PHP_SELF"]) . '?mid=' . htmlspecialchars((string)$epImdb) . '">' . htmlspecialchars((string)$epTitle) . '</a>';
-                } else {
-                  echo htmlspecialchars((string)$epTitle);
+                        echo '<b>Season ' . htmlspecialchars((string)$epSeason) . ', Episode ' . htmlspecialchars((string)$epNum) . ': ';
+                        if (!empty($epImdb)) {
+                            echo '<a href="' . htmlspecialchars($_SERVER["PHP_SELF"]) . '?mid=' . htmlspecialchars((string)$epImdb) . '">' . htmlspecialchars((string)$epTitle) . '</a>';
+                        } else {
+                            echo htmlspecialchars((string)$epTitle);
+                        }
+                        echo '</b> (<b>Original Air Date: ' . htmlspecialchars((string)$epAir) . '</b>)<br>' . htmlspecialchars((string)$epPlot) . '<br/><br/>' . "\n";
+                    }
                 }
-                echo '</b> (<b>Original Air Date: ' . htmlspecialchars((string)$epAir) . '</b>)<br>' . htmlspecialchars((string)$epPlot) . '<br/><br/>' . "\n";
-              }
             }
-          }
-          ?>
+            ?>
           </td>
         </tr>
-        <?php 
-        } 
+            <?php
+        }
         ?>
 
         <?php
         # Locations
         $locs = $movie->location();
-        if (count($locs)>0) {
-        ?>
+        if (count($locs) > 0) {
+            ?>
         <tr>
           <td><b>Filming Locations:</b></td>
-          <td><ul><?php 
-          foreach( $locs as $loc ) {
-          
-          echo '<li>' . htmlspecialchars($loc['real']) . '</li>';
-          }?></ul></td>
+          <td><ul><?php
+            foreach ($locs as $loc) {
+                echo '<li>' . htmlspecialchars($loc['real']) . '</li>';
+            }?></ul></td>
         </tr>
-        <?php 
-        } 
+            <?php
+        }
         ?>
 
         <?php
         # Quotes
         $quotes = $movie->quote();
-        if (isset($quotes[0]) && count($quotes[0])>0) {
-          $qText = $quotes[0][0];
-        ?>
+        if (isset($quotes[0]) && count($quotes[0]) > 0) {
+            $qText = $quotes[0][0];
+            ?>
         <tr>
           <td><b>Movie Quotes:</b></td>
           <td><?php echo $qText; ?></td>
         </tr>
-        <?php 
+            <?php
         } else { ?>
         <tr>
           <td><b>Movie Quotes:</b></td>
           <td>No movie quotes</td>
         </tr>
-        <?php 
+            <?php
         }
         ?>
 
         <?php
         # Trailer
         $trailers = $movie->trailer(true);
-        if (count($trailers)>0) {
-        ?>
+        if (count($trailers) > 0) {
+            ?>
         <tr>
           <td><b>Trailers:</b></td>
           <td>
-          <?php
-            foreach($trailers as $t) { ?>
-                <a href="<?php echo htmlspecialchars($t['videoUrl']); ?>"><?php echo htmlspecialchars($t['name']); ?></a><br>
             <?php
+            foreach ($trailers as $t) { ?>
+                <a href="<?php echo htmlspecialchars($t['videoUrl']); ?>"><?php echo htmlspecialchars($t['name']); ?></a><br>
+                <?php
             }
-          ?>
+            ?>
           </td>
         </tr>
-        <?php 
-        } 
+            <?php
+        }
         ?>
 
         <?php
         # Crazy Credits
         $crazy = $movie->crazyCredit();
         if (!empty($crazy) && is_array($crazy)) {
-          $cc = count($crazy);
-        ?>
+            $cc = count($crazy);
+            ?>
         <tr>
           <td><b>Crazy Credits:</b></td>
           <td>We know about <?php echo $cc; ?> <i>Crazy Credits</i>. One of them reads:<br><?php echo htmlspecialchars(is_array($crazy[0]) ? implode(', ', $crazy[0]) : $crazy[0]); ?></td>
         </tr>
-        <?php 
-        } 
+            <?php
+        }
         ?>
 
         <?php
         # Goofs
         $goofs = $movie->goof();
-        if (count($goofs)>0) {
-          $gc = count($goofs);
-          $firstGoof = $goofs[ array_key_first($goofs) ][0] ?? [];
-          $gContent = $firstGoof["content"];
-        ?>
+        if (count($goofs) > 0) {
+            $gc = count($goofs);
+            $firstGoof = $goofs[ array_key_first($goofs) ][0] ?? [];
+            $gContent = $firstGoof["content"];
+            ?>
         <tr>
           <td><b>Goofs:</b></td>
           <td>
@@ -538,8 +524,8 @@ if (isset ($_GET["mid"]) && preg_match('/^[0-9]+$/', $_GET["mid"])) {
             <b><?php echo htmlspecialchars($gContent); ?></b>
           </td>
         </tr>
-        <?php 
-        } 
+            <?php
+        }
         ?>
 
         <?php
@@ -547,8 +533,8 @@ if (isset ($_GET["mid"]) && preg_match('/^[0-9]+$/', $_GET["mid"])) {
         $get_trivia = $movie->trivia();
         $trivia = $get_trivia[ array_key_first($get_trivia) ];
         if (!empty($trivia) && is_array($trivia)) {
-          $tc = count($trivia);
-        ?>
+            $tc = count($trivia);
+            ?>
         <tr>
           <td><b>Trivia:</b></td>
           <td>
@@ -556,26 +542,28 @@ if (isset ($_GET["mid"]) && preg_match('/^[0-9]+$/', $_GET["mid"])) {
             <ul>
               <?php
                 for ($i = 0; $i < 5; ++$i) {
-                  if (empty($trivia[$i])) break;
-                  $t = $trivia[$i]['content'];
-                  $t = preg_replace('/https\:\/\/' . str_replace(".", "\.", $imdb_host) . '\/name\/nm(\d{7,8})/', 'person.php?mid=\\1', $t);
-                  $t = preg_replace('/https\:\/\/' . str_replace(".", "\.", $imdb_host) . '\/title\/tt(\d{7,8})/', 'movie.php?mid=\\1', $t);
-              ?>
+                    if (empty($trivia[$i])) {
+                        break;
+                    }
+                    $t = $trivia[$i]['content'];
+                    $t = preg_replace('/https\:\/\/' . str_replace(".", "\.", $imdb_host) . '\/name\/nm(\d{7,8})/', 'person.php?mid=\\1', $t);
+                    $t = preg_replace('/https\:\/\/' . str_replace(".", "\.", $imdb_host) . '\/title\/tt(\d{7,8})/', 'movie.php?mid=\\1', $t);
+                    ?>
               <li><?php echo $t; ?></li>
-              <?php } ?>
+                <?php } ?>
             </ul>
           </td>
         </tr>
-        <?php 
-        } 
+            <?php
+        }
         ?>
 
         <?php
         # Soundtracks
         $soundtracks = $movie->soundtrack();
         if (!empty($soundtracks) && is_array($soundtracks)) {
-          $sc = count($soundtracks);
-        ?>
+            $sc = count($soundtracks);
+            ?>
         <tr>
           <td><b>Soundtracks:</b></td>
           <td>
@@ -586,19 +574,19 @@ if (isset ($_GET["mid"]) && preg_match('/^[0-9]+$/', $_GET["mid"])) {
                 <th class="mw-200">Credits</th>
               </tr>
               <?php foreach ($soundtracks as $soundtrack) {
-                $stName = $soundtrack["soundtrack"];
-                $credits = $soundtrack["credits"];
-              ?>
+                    $stName = $soundtrack["soundtrack"];
+                    $credits = $soundtrack["credits"];
+                    ?>
                 <tr>
                   <td><?php echo htmlspecialchars($stName); ?></td>
-                  <td><?php echo implode( ', ', $credits ); ?></td>
+                  <td><?php echo implode(', ', $credits); ?></td>
                 </tr>
               <?php } ?>
             </table>
           </td>
         </tr>
-        <?php 
-        } 
+            <?php
+        }
         ?>
       </table>
     <p class="text-center"><a href="index.html">Go back</a></p>

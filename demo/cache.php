@@ -13,29 +13,44 @@
 
 require __DIR__ . "/../vendor/autoload.php";
 
-use \Imdb\Title;
-use \Imdb\Person;
-use \Imdb\Config;
+use Imdb\Title;
+use Imdb\Name;
+use Imdb\Config;
 
 $config = new Config();
 $config->language = 'en-US,en';
 $config->cacheUse = true;
 $config->cacheStore = true;
-$results = array();
-if (is_dir($config->cacheDir)) {
-  $files = glob($config->cacheDir . '{title.tt*,name.nm*}', GLOB_BRACE);
-  foreach ($files as $file) {
-    if (preg_match('!^title\.tt(\d{7,8})$!i', basename($file), $match)) {
-      $results[] = new Title($match[1]);
-    }
-    if (preg_match('!^name\.nm(\d{7,8})$!i', basename($file), $match)) {
-      $results[] = new Person($match[1]);
-    }
-  }
-}
-?>
 
-<!DOCTYPE html>
+$results = [];
+$seenIds = [];
+
+if (is_dir($config->cacheDir)) {
+    // Traverse cache directory recursively
+    $dirIterator = new RecursiveDirectoryIterator($config->cacheDir, RecursiveDirectoryIterator::SKIP_DOTS);
+    $iterator = new RecursiveIteratorIterator($dirIterator);
+
+    foreach ($iterator as $fileInfo) {
+        $filename = $fileInfo->getFilename();
+
+        // Match Title IDs (tt followed by digits)
+        if (preg_match('~tt(\d+)~i', $filename, $match)) {
+            $id = $match[1];
+            if (!isset($seenIds['tt_' . $id])) {
+                $seenIds['tt_' . $id] = true;
+                $results[] = new Title($id);
+            }
+        // Match Person IDs (nm followed by digits)
+        } elseif (preg_match('~nm(\d+)~i', $filename, $match)) {
+            $id = $match[1];
+            if (!isset($seenIds['nm_' . $id])) {
+                $seenIds['nm_' . $id] = true;
+                $results[] = new Name($id);
+            }
+        }
+    }
+}
+?><!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -43,9 +58,9 @@ if (is_dir($config->cacheDir)) {
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
-    <?php if (empty($results)): ?>
+    <?php if (empty($results)) : ?>
       <h2 class="text-center">Nothing in cache</h2>
-    <?php else: ?>
+    <?php else : ?>
       <h2 class="text-center">Cache Contents</h2>
       <table class="table">
         <tr>
@@ -53,23 +68,21 @@ if (is_dir($config->cacheDir)) {
           <th>Type</th>
           <th>IMDb</th>
         </tr>
-        <?php foreach ($results as $res): ?>
-            <?php if (get_class($res) === 'Imdb\Title'): ?>
+        <?php foreach ($results as $res) : ?>
+            <?php if ($res instanceof Title) : ?>
             <tr>
               <td><?php echo $res->title() ?></td>
               <td><?php echo $res->movietype() ?></td>
               <td class="text-center">
                 <a href="movie.php?mid=<?php echo $res->imdbid() ?>">Cache</a> |
-                <a href="<?php echo $res->main_url() ?>">IMDb</a>
               </td>
             </tr>
-            <?php else: ?>
+            <?php elseif ($res instanceof Name) : ?>
             <tr>
               <td><?php echo $res->name() ?></td>
               <td>Person</td>
               <td class="text-center">
                 <a href="person.php?mid=<?php echo $res->imdbid() ?>">Cache</a> |
-                <a href="<?php echo $res->main_url() ?>">IMDb</a>
               </td>
             </tr>
             <?php endif; ?>

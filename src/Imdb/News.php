@@ -22,9 +22,9 @@ use Imdb\Image;
  */
 class News extends MdbBase
 {
-    protected $imageFunctions;
-    protected $newImageWidth;
-    protected $newImageHeight;
+    protected Image $imageFunctions;
+    protected int $newImageWidth;
+    protected int $newImageHeight;
 
     /**
      * @param Config|null $config OPTIONAL override default config

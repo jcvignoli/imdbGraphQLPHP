@@ -22,9 +22,9 @@ use Imdb\Image;
  */
 class Trailers extends MdbBase
 {
-    protected $imageFunctions;
-    protected $newImageWidth;
-    protected $newImageHeight;
+    protected Image $imageFunctions;
+    protected int $newImageWidth;
+    protected int $newImageHeight;
 
     /**
      * @param Config|null $config OPTIONAL override default config
@@ -41,24 +41,19 @@ class Trailers extends MdbBase
 
     /**
      * Get the latest trailers as seen on IMDb https://www.imdb.com/trailers/
-     * @return
-     * Array
-     *   (
-     *      [0] => Array
-     *          (
-     *              [videoId] =>                    (string) (without vi)
-     *              [titleId] =>                    (string) (without tt)
-     *              [title] =>                      (string)
-     *              [trailerCreateDate] =>          (string iso date) 2024-11-17T13:16:18.708Z
-     *              [trailerRuntime] =>             (int) (in seconds!)
-     *              [playbackUrl] =>                (string) This url will playback in browser only)
-     *              [thumbnailUrl] =>               (string) (thumbnail (140x207) image of the title)
-     *              [releaseDate] =>                (string) (date string: December 4, 2024)
-     *              [contentType] =>                (string ) like Trailer Season 1 [OV]
-     *          )
-     *  )
+     * @return array<int, array{
+     *     videoId: string,
+     *     titleId: string,
+     *     title: string,
+     *     trailerCreateDate: string,
+     *     trailerRuntime: int,
+     *     playbackUrl: string,
+     *     thumbnailUrl: string,
+     *     releaseDate: string,
+     *     contentType: string
+     * }>
      */
-    public function recentVideo()
+    public function recentVideo(): array
     {
         $recentVideoResults = array();
         $query = <<<EOF
@@ -143,24 +138,30 @@ EOF;
 
     /**
      * Get trending trailers as seen on IMDb https://www.imdb.com/trailers/
-     * @return
-     * Array
-     *   (
-     *      [0] => Array
-     *          (
-     *              [videoId] =>            (string) (without vi)
-     *              [titleId] =>            (string) (without tt)
-     *              [title] =>              (string)
-     *              [trailerCreateDate] =>  (string iso date) 2024-11-17T13:16:18.708Z
-     *              [trailerRuntime] =>     (int) (in seconds!)
-     *              [playbackUrl] =>        (string) This url will playback in browser only)
-     *              [thumbnailUrl] =>       (string) (thumbnail (140x207)image of the title)
-     *              [releaseDate] =>        (string) (date string: December 4, 2024)
-     *              [contentType] =>        (string ) like Trailer Season 1 [OV]
-     *          )
-     *  )
+     *
+     * Array Structure Details:
+     * - videoId: String without 'vi' prefix
+     * - titleId: String without 'tt' prefix
+     * - trailerCreateDate: ISO 8601 date string (e.g., "2024-11-17T13:16:18.708Z")
+     * - trailerRuntime: Duration in seconds
+     * - playbackUrl: Browser-only playback link
+     * - thumbnailUrl: 140x207 image URL
+     * - releaseDate: Date string (e.g., "December 4, 2024")
+     * - contentType: Type description (e.g., "Trailer Season 1 [OV]")
+     *
+     * @return list<array{
+     *     videoId: string,
+     *     titleId: string,
+     *     title: string,
+     *     trailerCreateDate: string,
+     *     trailerRuntime: int,
+     *     playbackUrl: string,
+     *     thumbnailUrl: string,
+     *     releaseDate: string,
+     *     contentType: string
+     * }>
      */
-    public function trendingVideo()
+    public function trendingVideo(): array
     {
         $trendingVideoResults = array();
         $query = <<<EOF
@@ -231,7 +232,7 @@ EOF;
                                                 $edge->latestTrailer->createdDate : null,
                     'trailerRuntime' => isset($edge->latestTrailer->runtime->value) ?
                                             $edge->latestTrailer->runtime->value : null,
-                    'playbackUrl' => !empty($videoId) ?
+                    'playbackUrl' => is_string($videoId) ?
                                             'https://www.imdb.com/video/vi' . $videoId . '/' : null,
                     'thumbnailUrl' => $thumbUrl,
                     'releaseDate' => isset($edge->releaseDate->displayableProperty->value->plainText) ?

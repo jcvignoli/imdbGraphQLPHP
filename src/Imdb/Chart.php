@@ -22,9 +22,9 @@ use Imdb\Image;
  */
 class Chart extends MdbBase
 {
-    protected $imageFunctions;
-    protected $newImageWidth;
-    protected $newImageHeight;
+    protected Image $imageFunctions;
+    protected int $newImageWidth;
+    protected int $newImageHeight;
 
     /**
      * @param Config|null $config OPTIONAL override default config
@@ -53,22 +53,17 @@ class Chart extends MdbBase
      *   TOP_250_TV
      *       Overall IMDb Top 250 TV List
      *
-     * @return array
-     * Array
-     *   (
-     *      [0] => Array
-     *          (
-     *              [title]             (string) Breaking Bad
-     *              [imdbid]            (string) 0903747
-     *              [year]              (int) 2008
-     *              [rank]              (int) 1
-     *              [rating]            (float) 9.5
-     *              [votes]             (int) 2178109
-     *              [runtimeSeconds] => (int) 2700
-     *              [runtimeText] =>    (string) 45m
-     *              [imgUrl] =>         (string) (140x207 set in config)
-     *          )
-     *  )
+     * @return list<array{
+     *     title: string,
+     *     imdbid: string,
+     *     year: int|null,
+     *     rank: int,
+     *     rating: float,
+     *     votes: int,
+     *     runtimeSeconds: int|null,
+     *     runtimeText: string|null,
+     *     imgUrl: string|null
+     * }>
      */
     public function top250Title(string $listType = "TOP_250"): array
     {
@@ -152,28 +147,18 @@ EOF;
 
     /**
      * Get top250 Names lists (Not seen on IMDb afaik)
-     * @return array
-     * Array
-     *   (
-     *      [0] => Array
-     *          (
-     *              [name]      (string) jenifer lopez
-     *              [imdbid]    (string) 0903747
-     *              [rank]      (int)1
-     *              [credits]   (array)
-     *                  [0] => Actress
-     *                  [1] => Producer
-     *                  [2] => Director
-     *                  [3] => Writer
-     *                  [4] => Self
-     *                  [5] => Thanks
-     *              [knownFor]  (array)
-     *                  [id] => 2258337
-     *                  [title] => Eega
-     *                  [year] => 2012
-     *              [imgUrl]    (string) (140x207 set in config)
-     *          )
-     *  )
+     * @return list<array{
+     *     name: string,
+     *     imdbid: string,
+     *     rank: int,
+     *     credits: list<string>,
+     *     knownFor: array{
+     *         id: string|null,
+     *         title: string|null,
+     *         year: int|null
+     *     }|null,
+     *     imgUrl: string|null
+     * }>
      */
     public function top250Name(): array
     {
@@ -276,28 +261,18 @@ EOF;
 
     /**
      * Get most popular Names lists as seen on https://imdb.com/chart/starmeter
-     * @return array
-     * Array
-     *   (
-     *      [0] => Array
-     *          (
-     *              [name]      (string) jenifer lopez
-     *              [imdbid]    (string) 0903747
-     *              [rank]      (int)1
-     *              [credits]   (array)
-     *                  [0] => Actress
-     *                  [1] => Producer
-     *                  [2] => Director
-     *                  [3] => Writer
-     *                  [4] => Self
-     *                  [5] => Thanks
-     *              [knownFor]  (array)
-     *                  [id] => 2258337
-     *                  [title] => Eega
-     *                  [year] => 2012
-     *              [imgUrl]    (string) (140x207 set in config)
-     *          )
-     *  )
+     * @return list<array{
+     *     name: string,
+     *     imdbid: string,
+     *     rank: int,
+     *     credits: list<string>,
+     *     knownFor: array{
+     *         id: string|null,
+     *         title: string|null,
+     *         year: int|null
+     *     }|null,
+     *     imgUrl: string|null
+     * }>
      */
     public function mostPopularName()
     {
@@ -424,22 +399,18 @@ EOF;
      *   TOP_RATED_TV_SHOWS
      *       Top Rated IMDb TV List
      *
-     * @return array
-     *   (
-     *      [0] => Array
-     *          (
-     *          [title]             (string) The Substance
-     *          [imdbid]            (string) 17526714
-     *          [year]              (int) 2024
-     *          [runtimeSeconds]    (int) 8460
-     *          [runtimeText]       (string) 2h 21m
-     *          [rank]              (int) 1
-     *          [genre]             (array) every index an genre
-     *          [rating]            (float) 7.5
-     *          [votes]             (int) 124556
-     *          [imgUrl]            (string) (140x207 set in config)
-     *          )
-     *  )
+     * @return list<array{
+     *     title: string,
+     *     imdbid: string,
+     *     year: int|null,
+     *     runtimeSeconds: int|null,
+     *     runtimeText: string|null,
+     *     rank: int,
+     *     genre: list<string>,
+     *     rating: float|null,
+     *     votes: int,
+     *     imgUrl: string|null
+     * }>
      */
     public function mostPopularTitle(string $listType = "MOST_POPULAR_MOVIES", ?string $genreId = null): array
     {
@@ -544,25 +515,30 @@ EOF;
      * Get topBoxWeekend list as seen on https://www.imdb.com/chart/boxoffice/
      * max 10 results! more is not possible
      * Thumbnail is set in config for the whole class, default 140x207
-     * @return array
-     *      [weekendStartDate] => 2024-11-29
-     *      [weekendEndDate] => 2024-12-01
-     *      [titles] => Array
-     *          [0] => Array()
-     *              [title]                 (string)
-     *              [id]                    (string) 13622970
-     *              [rating]                (float) 7.1
-     *              [votes]                 (int) 17669
-     *              [LifetimeGrossAmount]   (int) 221000000
-     *              [LifetimeGrossCurrency] (string) USD
-     *              [weekendGrossAmount]    (int) 135500000
-     *              [weekendGrossCurrency]  (string) USD
-     *              [weeksReleased]         (int)
-     *              [imgUrl]                (string)
+     * @return array{
+     *     weekendStartDate: string|null,
+     *     weekendEndDate: string|null,
+     *     titles: list<array{
+     *         title: string,
+     *         id: string|null,
+     *         rating: float|null,
+     *         votes: int|null,
+     *         LifetimeGrossAmount: int|null,
+     *         LifetimeGrossCurrency: string|null,
+     *         weekendGrossAmount: int|null,
+     *         weekendGrossCurrency: string|null,
+     *         weeksReleased: int|null,
+     *         imgUrl: string|null
+     *     }>
+     * }
      */
     public function topBoxOffice(): array
     {
-        $boxOfficeResults = array();
+        $boxOfficeResults = array(
+            'weekendStartDate' => null,
+            'weekendEndDate' => null,
+            'titles' => array()
+        );
         $results = array();
         $query = <<<EOF
 query BoxOffice{
@@ -608,7 +584,7 @@ query BoxOffice{
 EOF;
         $data = $this->graphql->query($query, "BoxOffice");
         if (!isset($data->boxOfficeWeekendChart)) {
-            return array();
+            return $boxOfficeResults;
         }
         if (
             isset($data->boxOfficeWeekendChart->edges) &&
@@ -660,15 +636,15 @@ EOF;
      * Get amount of weeks between input date and current date
      * @param string $startDate like '1/2/2013' (month/day/year)
      * @param string $endDate current date! like '1/2/2013' (month/day/year)
-     * @return float number of weeks
+     * @return int number of weeks
      */
-    public function datediffInWeeks(string $startDate, string $endDate): float
+    public function datediffInWeeks(string $startDate, string $endDate): int
     {
         if ($startDate > $endDate) {
             return $this->datediffInWeeks($endDate, $startDate);
         }
         $first = \DateTime::createFromFormat('m/d/Y', $startDate);
         $second = \DateTime::createFromFormat('m/d/Y', $endDate);
-        return ceil($first->diff($second)->days / 7);
+	return (int) ceil($first->diff($second)->days / 7);
     }
 }

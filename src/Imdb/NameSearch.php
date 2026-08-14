@@ -18,9 +18,9 @@ class NameSearch extends MdbBase
     /**
      * Search IMDb for names matching $searchTerms
      * @param string $searchTerms
-     * @return array of names
+     * @return list<array<string, mixed>>
      */
-    public function search($searchTerms)
+    public function search(string $searchTerms): array
     {
         $amount = $this->config->nameSearchAmount;
         $results = array();

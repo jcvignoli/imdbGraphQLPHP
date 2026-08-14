@@ -21,10 +21,11 @@ use Imdb\Image;
  */
 class TitleCombined extends MdbBase
 {
-    protected $imageFunctions;
-    protected $newImageWidth;
-    protected $newImageHeight;
-    protected $main = array();
+    protected Image $imageFunctions;
+    protected int $newImageWidth;
+    protected int $newImageHeight;
+    /** @var array{title: string, originalTitle: string, imdbid: string, reDirectId: string|false, movieType: string, year: int|string|null, endYear: int|string|null, imgThumb: string, imgFull: string, runtime: int, rating: float, genre: list<array{mainGenre: string|null, subGenre: list<string>}>, plotoutline: string, credits: array<string, list<array{name: string, imdbid: string}>>}|array{} */
+    protected array $main = array();
 
     /**
      * @param string $id IMDb ID. e.g. 285331 for https://www.imdb.com/title/tt0285331/
@@ -43,83 +44,30 @@ class TitleCombined extends MdbBase
 
     /**
      * This method will only get main values of a imdb title (inside the black top part of the imdb page)
-     * @return Array
-        * (
-            * [title] => A Clockwork Orange
-            * [originalTitle] => A Clockwork Orange
-            * [imdbid] => 0066921
-            * [reDirectId] => (redirected ID or false)
-            * [movieType] => Movie
-            * [year] => 1971
-            * [endYear] =>
-            * [imgThumb] => https://m.media-amazon.com/images/M/MV5BMTY3MjM1Mzc4N15BMl5BanBnXkFtZTgwODM0NzAxMDE@._V1_QL75_SX190_CR0,0,190,281_.jpg (190x281 pixels)
-            * [imgFull] => https://m.media-amazon.com/images/M/MV5BMTY3MjM1Mzc4N15BMl5BanBnXkFtZTgwODM0NzAxMDE@._V1_QL100_SX1000_.jpg (max 1000 pixels)
-            * [runtime] => 136
-            * [rating] => 8.2
-            * [genre] => Array
-                * (
-                    * [0] => Array
-                        * (
-                            * [mainGenre] => Crime
-                            * [subGenre] => Array
-                                * (
-                                * )
-                        * )
-                    * [1] => Array
-                        * (
-                            * [mainGenre] => Sci-Fi
-                            * [subGenre] => Array
-                                * (
-                                    * [0] => dystopian sci fi
-                                * )
-                        * )
-                * )
-            * [plotoutline] => Alex DeLarge and his droogs barbarize a decaying near-future.
-            * [credits] => Array
-                * (
-                    * [Director] => Array
-                        * (
-                            * [0] => Array
-                                * (
-                                    * [name] => Stanley Kubrick
-                                    * [imdbid] => 0000040
-                                * )
-                        * )
-                    * [Writer] => Array
-                        * (
-                            * [0] => Array
-                                * (
-                                    * [name] => Stanley Kubrick
-                                    * [imdbid] => 0000040
-                                * )
-                            * [1] => Array
-                                * (
-                                    * [name] => Anthony Burgess
-                                    * [imdbid] => 0121256
-                                * )
-                        * )
-                    * [Star] => Array
-                        * (
-                            * [0] => Array
-                                * (
-                                    * [name] => Malcolm McDowell
-                                    * [imdbid] => 0000532
-                                * )
-                            * [1] => Array
-                                * (
-                                    * [name] => Patrick Magee
-                                    * [imdbid] => 0535861
-                                * )
-                            * [2] => Array
-                                * (
-                                    * [name] => Michael Bates
-                                    * [imdbid] => 0060988
-                                * )
-                        * )
-                * )
-        * )
+     * @return array{
+     *     title: string,
+     *     originalTitle: string,
+     *     imdbid: string,
+     *     reDirectId: string|false,
+     *     movieType: string,
+     *     year: int|string|null,
+     *     endYear: int|string|null,
+     *     imgThumb: string,
+     *     imgFull: string,
+     *     runtime: int,
+     *     rating: float,
+     *     genre: list<array{
+     *         mainGenre: string|null,
+     *         subGenre: list<string>
+     *     }>,
+     *     plotoutline: string,
+     *     credits: array<string, list<array{
+     *         name: string,
+     *         imdbid: string
+     *     }>>
+     * }
      */
-    public function main()
+    public function main(): array
     {
         $query = <<<EOF
 query TitleCombinedMain(\$id: ID!) {
@@ -229,9 +177,11 @@ EOF;
     /**
      * Setup cover photo (thumbnail and big variant)
      * @param object $primaryImage primary image object found in main()
+     * @param bool $thumb
+     * @return string|null
      * @see IMDB page / (TitlePage)
      */
-    private function populatePoster($primaryImage, $thumb)
+    private function populatePoster(object $primaryImage, bool $thumb): ?string
     {
         if (isset($primaryImage->url)) {
             $img = str_replace('.jpg', '', $primaryImage->url);
@@ -249,13 +199,17 @@ EOF;
 
     #--------------------------------------------------------------[ Genre(s) ]---
     /** Get all genres the movie is registered for
-     * @param array $genreArray found genres array from main()
-     * @return array genres (array[0..n] of mainGenre| string, subGenre| array())
+     * @param list<\stdClass> $genreArray found genres array from main()
+     * @return list<array{
+     *     mainGenre: string|null,
+     *     subGenre: list<string>
+     * }>|array{}
      * @see IMDB page / (TitlePage)
      */
-    private function genre($genreArray)
+    private function genre(array $genreArray): array
     {
-        if (is_array($genreArray) && count($genreArray) > 0) {
+    	$mainGenres = array();
+        if (count($genreArray) > 0) {
             foreach ($genreArray as $edge) {
                 $subGenres = array();
                 if (
@@ -275,27 +229,26 @@ EOF;
                     'subGenre' => $subGenres
                 );
             }
-            return $mainGenres;
         }
-        return array();
+        return $mainGenres;
     }
 
     #----------------------------------------------------------------[ PrincipalCredits ]---
-    /*
-    * Get the PrincipalCredits for this title
-    * @param array $principalCredits principal credits array from main()
-    * @return array creditsPrincipal[category][Director, Writer, Creator, Stars] (array[0..n] of array[name,imdbid])
-    */
-    private function principalCredits($principalCredits)
+    /**
+     * Get the PrincipalCredits for this title
+     * @param list<\stdClass> $principalCredits principal credits array from main()
+     * @return array<string, list<array{name: string, imdbid: string}>> creditsPrincipal[category][Director, Writer, Creator, Stars]
+     */
+    private function principalCredits(array $principalCredits): array
     {
         $creditsPrincipal = array();
-        if (is_array($principalCredits) && count($principalCredits) > 0) {
+        if (count($principalCredits) > 0) {
             foreach ($principalCredits as $value) {
                 $category = 'Unknown';
                 $credits = array();
                 if (!empty($value->credits[0]->category->text)) {
                     $category = $value->credits[0]->category->text;
-                    if ($category == "Actor" || $category == "Actress") {
+                    if ($category === "Actor" || $category === "Actress") {
                         $category = "Star";
                     }
                 }
@@ -312,7 +265,7 @@ EOF;
                                             str_replace('nm', '', $credit->name->id) : null
                         );
                     }
-                } elseif ($category == 'Unknown') {
+                } elseif ($category === 'Unknown') {
                     continue;
                 }
                 $creditsPrincipal[$category] = $credits;
@@ -326,13 +279,13 @@ EOF;
      * Check if imdbid is redirected to another id or not
      * Sometimes it happens that imdb redirects an existing id to a new id
      * @param string $titleImdbId the returned imdbid from Graphql call
-     * @return string $titleImdbId (the new redirected imdbId) or false (no redirect)
+     * @return string|false $titleImdbId (the new redirected imdbId) or false (no redirect)
      * @see IMDB page / (TitlePage)
      */
-    private function checkRedirect($titleImdbId)
+    private function checkRedirect(string $titleImdbId): string|bool
     {
         $titleImdbId = str_replace('tt', '', $titleImdbId);
-        if ($titleImdbId  != $this->imdbID) {
+        if ($titleImdbId  !== $this->imdbID) {
             // todo write to log?
             return $titleImdbId;
         } else {

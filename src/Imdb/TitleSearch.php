@@ -15,7 +15,7 @@ class TitleSearch extends MdbBase
     /**
      * Search IMDb for titles matching $searchTerms
      * @param string $searchTerms
-     * @param string $types input search types like "MOVIE" or "MOVIE,TV" (separate by comma if more then one)
+     * @param string|null $types input search types like "MOVIE" or "MOVIE,TV" (separate by comma if more then one)
      * Default for $types: null (search within all types)
      * Possible values for $types:
      *  MOVIE
@@ -32,7 +32,7 @@ class TitleSearch extends MdbBase
      *
      * @return array<int, array<string, string|Title>>
      */
-    public function search($searchTerms, $types = null, $startDate = '', $endDate = '')
+    public function search(string $searchTerms, ?string $types = null, string $startDate = '', string $endDate = ''): array
     {
         $amount = $this->config->titleSearchAmount;
         $results = array();
@@ -140,9 +140,9 @@ EOF;
     /**
      * Check if provided date is valid
      * @param string $date input date
-     * @return boolean true or false
+     * @return bool
      */
-    private function validateDate($date)
+    private function validateDate(string $date): bool
     {
         $d = \DateTime::createFromFormat('Y-m-d', $date);
         return $d && $d->format('Y-m-d') === $date;
@@ -151,10 +151,10 @@ EOF;
     /**
      * Check if input date is not empty and valid
      * @param string $startDate (searches between startDate and present date) iso date string ('1975-01-01')
-     * @param $endDate (searches between endDate and earlier) iso date string ('1975-01-01')
-     * @return array startDate|string, endDate|string or null
+     * @param string $endDate (searches between endDate and earlier) iso date string ('1975-01-01')
+     * @return array<string, string>|bool
      */
-    private function checkReleaseDates($startDate, $endDate)
+    private function checkReleaseDates(string $startDate, string $endDate): array|bool
     {
         if (empty(trim($startDate)) && empty(trim($endDate))) {
             return array(

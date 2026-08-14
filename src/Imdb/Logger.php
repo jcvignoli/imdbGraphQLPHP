@@ -3,6 +3,7 @@
 namespace Imdb;
 
 use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerTrait;
 use Stringable;
 
 /**
@@ -11,118 +12,10 @@ use Stringable;
  */
 class Logger implements LoggerInterface
 {
-    protected $enabled;
+    use LoggerTrait;
 
-    public function __construct($enabled = true)
+    public function __construct(protected $enabled = true)
     {
-        $this->enabled = $enabled;
-    }
-
-    /**
-     * System is unusable.
-     *
-     * @param string $message
-     * @param array $context
-     * @return void
-     */
-    public function emergency(Stringable|string $message, array $context = []): void
-    {
-        $this->log('emergency', $message, $context);
-    }
-
-    /**
-     * Action must be taken immediately.
-     *
-     * Example: Entire website down, database unavailable, etc. This should
-     * trigger the SMS alerts and wake you up.
-     *
-     * @param string $message
-     * @param array $context
-     * @return void
-     */
-    public function alert(Stringable|string $message, array $context = []): void
-    {
-        $this->log('alert', $message, $context);
-    }
-
-    /**
-     * Critical conditions.
-     *
-     * Example: Application component unavailable, unexpected exception.
-     *
-     * @param string $message
-     * @param array $context
-     * @return void
-     */
-    public function critical(Stringable|string $message, array $context = []): void
-    {
-        $this->log('critical', $message, $context);
-    }
-
-    /**
-     * Runtime errors that do not require immediate action but should typically
-     * be logged and monitored.
-     *
-     * @param string $message
-     * @param array $context
-     * @return void
-     */
-    public function error(Stringable|string $message, array $context = []): void
-    {
-        $this->log('error', $message, $context);
-    }
-
-    /**
-     * Exceptional occurrences that are not errors.
-     *
-     * Example: Use of deprecated APIs, poor use of an API, undesirable things
-     * that are not necessarily wrong.
-     *
-     * @param string $message
-     * @param array $context
-     * @return void
-     */
-    public function warning(Stringable|string $message, array $context = []): void
-    {
-        $this->log('debug', $message, $context);
-    }
-
-    /**
-     * Normal but significant events.
-     *
-     * @param string $message
-     * @param array $context
-     * @return void
-     */
-    public function notice(Stringable|string $message, array $context = []): void
-    {
-        $this->log('debug', $message, $context);
-    }
-
-    /**
-     * Interesting events.
-     *
-     * Example: User logs in, SQL logs.
-     *
-     * @param string $message
-     * @param array $context
-     * @return void
-     */
-    public function info(Stringable|string $message, array $context = []): void
-    {
-        $this->log('debug', $message, $context);
-    }
-
-    /**
-     * Detailed debug information.
-     *
-     * @param string $message
-     * @param array $context
-     * @return void
-     */
-    public function debug(Stringable|string $message, array $context = []): void
-    {
-        $this->log('debug', $message, $context);
     }
 
     /**

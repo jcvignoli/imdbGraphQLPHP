@@ -26,53 +26,84 @@ use Imdb\Image;
 class Name extends MdbBase
 {
     // "Name" page:
-    protected $imageFunctions;
-    protected $mainPoster = null;
-    protected $mainPosterThumb = null;
-    protected $fullName = null;
-    protected $birthday = array();
-    protected $deathday = array();
-    protected $age = null;
-    protected $professions = array();
-    protected $popRank = array();
-    protected $mainPhoto = array();
-    protected $videos = array();
-    protected $news = array();
+    protected Image $imageFunctions;
+    protected ?string $mainPoster = null;
+    protected ?string $mainPosterThumb = null;
+    protected ?string $fullName = null;
+    /** @var array<string, string> */
+    protected array $birthday = array();
+    /** @var array<string, string> */
+    protected array $deathday = array();
+    protected ?int $age = null;
+    /** @var array<string, string> */
+    protected array $professions = array();
+    /** @var array<string, string> */
+    protected array $popRank = array();
+    /** @var array<string, string> */
+    protected array $mainPhoto = array();
+    /** @var array<string, string> */
+    protected array $videos = array();
+    /** @var array<string, string> */
+    protected array $news = array();
 
     // "Bio" page:
-    protected $birthName = null;
-    protected $nickName = array();
-    protected $akaName = array();
-    protected $bodyheight = array();
-    protected $spouses = array();
-    protected $children = array();
-    protected $parents = array();
-    protected $relatives = array();
-    protected $bioBio = array();
-    protected $bioTrivia = array();
-    protected $bioQuotes = array();
-    protected $bioTrademark = array();
-    protected $bioSalary = array();
+    protected ?string $birthName = null;
+    /** @var array<string, string> */
+    protected array $nickName = array();
+    /** @var array<string, string> */
+    protected array $akaName = array();
+    /** @var array<string, string> */
+    protected array $bodyheight = array();
+    /** @var array<string, string> */
+    protected array $spouses = array();
+    /** @var array<string, string> */
+    protected array $children = array();
+    /** @var array<string, string> */
+    protected array $parents = array();
+    /** @var array<string, string> */
+    protected array $relatives = array();
+    /** @var array<string, string> */
+    protected array $bioBio = array();
+    /** @var array<string, string> */
+    protected array $bioTrivia = array();
+    /** @var array<string, string> */
+    protected array $bioQuotes = array();
+    /** @var array<string, string> */
+    protected array $bioTrademark = array();
+    /** @var array<string, string> */
+    protected array $bioSalary = array();
 
     // "Publicity" page:
-    protected $pubPrints = array();
-    protected $pubMovies = array();
-    protected $pubPortrayal = array();
-    protected $pubArticle = array();
-    protected $pubInterview = array();
-    protected $pubMagazine = array();
-    protected $pubPictorial = array();
+    /** @var array<string, string> */
+    protected array $pubPrints = array();
+    /** @var array<string, string> */
+    protected array $pubMovies = array();
+    /** @var array<string, string> */
+    protected array $pubPortrayal = array();
+    /** @var array<string, string> */
+    protected array $pubArticle = array();
+    /** @var array<string, string> */
+    protected array $pubInterview = array();
+    /** @var array<string, string> */
+    protected array $pubMagazine = array();
+    /** @var array<string, string> */
+    protected array $pubPictorial = array();
 
     // "OtherWorks" page:
-    protected $otherWorks = array();
+    /** @var array<string, string> */
+    protected array $otherWorks = array();
 
     // "External Sites" page:
-    protected $externalSites = array();
+    /** @var array<string, string> */
+    protected array $externalSites = array();
 
     // "Credits" page:
-    protected $awards = array();
-    protected $creditKnownFor = array();
-    protected $credits = array();
+    /** @var array<string, string> */
+    protected array $awards = array();
+    /** @var array<string, string> */
+    protected array $creditKnownFor = array();
+    /** @var array<string, string> */
+    protected array $credits = array();
 
     #----------------------------------------------------------[ Helper for NameSearch class ]---
     /**
@@ -116,7 +147,7 @@ class Name extends MdbBase
      * @return string|null name full name of the person
      * @see IMDB person page / (Main page)
      */
-    public function name()
+    public function name(): ?string
     {
         if (empty($this->fullName)) {
             $query = <<<EOF
@@ -185,8 +216,8 @@ EOF;
             $image = $req->getResponseBody();
         } else {
             $ctype = $req->getResponseHeader("Content-Type");
-            $this->debugScalar("*photoerror* at " . __FILE__ . " line " . __LINE__ . ": " . $photo_url . ": Content Type is '$ctype'");
-            if (substr($ctype, 0, 4) == 'text') {
+            $this->debugScalar("*photoerror* at " . __FILE__ . " line " . __LINE__ . ": " . $photoUrl . ": Content Type is '$ctype'");
+            if (substr($ctype, 0, 4) === 'text') {
                 $this->debugScalar("Details: <PRE>" . $req->getResponseBody() . "</PRE>\n");
             }
             return false;
@@ -216,8 +247,10 @@ EOF;
             $ext = "_big";
         }
         if (!is_dir($this->config->photoroot)) {
-            $this->debugScalar("<BR>***ERROR*** The configured image directory does not exist!<BR>");
-            return false;
+            if ( mkdir($this->config->photoroot, 0777, true) === false ) {
+                    $this->debugScalar('<br>***ERROR*** The configured image directory does not exist and couldn\'t be created.');
+	            return false;
+	    }
         }
         $path = $this->config->photoroot . "nm{$this->imdbid()}" . "{$ext}.jpg";
         if (file_exists($path)) {
@@ -239,7 +272,7 @@ EOF;
      * @return string birthname
      * @see IMDB person page /bio
      */
-    public function birthname()
+    public function birthname(): ?string
     {
         if (empty($this->birthName)) {
             $query = <<<EOF
@@ -438,10 +471,10 @@ EOF;
 
     #------------------------------------------------------------------[ Age ]---
     /** Get the age of the person
-     * @return int age
+     * @return int|null age
      * @see IMDB person page / (Main page)
      */
-    public function age()
+    public function age(): ?int
     {
         if (empty($this->age)) {
             $query = <<<EOF

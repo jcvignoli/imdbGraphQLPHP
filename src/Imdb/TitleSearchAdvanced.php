@@ -20,9 +20,9 @@ use Imdb\Image;
  */
 class TitleSearchAdvanced extends MdbBase
 {
-    protected $imageFunctions;
-    protected $newImageWidth;
-    protected $newImageHeight;
+    protected Image $imageFunctions;
+    protected int $newImageWidth;
+    protected int $newImageHeight;
 
     /**
      * @param Config|null $config OPTIONAL override default config
@@ -234,30 +234,30 @@ EOF;
 
     /**
      * Check input parameters and build constraints
-     * @param string $searchTerm
-     * @param string $genres
-     * @param string $types
-     * @param string $creditId
-     * @param string $startDate
-     * @param string $endDate
-     * @param string $countryId
-     * @param string $languageId
-     * @param string $keywords
-     * @param string $companyId
-     * @return string constraints or false
+     * @param string|null $searchTerm
+     * @param string|null $genres
+     * @param string|null $types
+     * @param string|null $creditId
+     * @param string|null $startDate
+     * @param string|null $endDate
+     * @param string|null $countryId
+     * @param string|null $languageId
+     * @param string|null $keywords
+     * @param string|null $companyId
+     * @return string|bool constraints or false
      */
     private function buildConstraints(
-        $searchTerm,
-        $genres,
-        $types,
-        $creditId,
-        $startDate,
-        $endDate,
-        $countryId,
-        $languageId,
-        $keywords,
-        $companyId
-    ) {
+        ?string $searchTerm,
+        ?string $genres,
+        ?string $types,
+        ?string $creditId,
+        ?string $startDate,
+        ?string $endDate,
+        ?string $countryId,
+        ?string $languageId,
+        ?string $keywords,
+        ?string $companyId
+    ): string|bool {
         $constraint = '{';
 
         // Title search input
@@ -319,7 +319,7 @@ EOF;
             $constraint .= 'creditedCompanyConstraint:{anyCompanyIds:["' . $checkedCompanyId . '"]}';
         }
 
-        if ($constraint == '{') {
+        if ($constraint === '{') {
             return false;
         }
 
@@ -335,35 +335,23 @@ EOF;
     /**
      * Check if there is at least one, possible more input items
      * @param string $items if multiple items separate by , (Horror,Action etc)
-     * @return $items double quoted and separated by comma if more then one
+     * @return string|false $items double quoted and separated by comma if more then one
      */
-    private function checkItems($items)
+    private function checkItems(string $items): string|bool
     {
         if (empty(trim($items))) {
             return false;
         }
-        if (stripos($items, ',') !== false) {
-            $itemsParts = explode(",", $items);
-            $itemsOutput = '';
-            foreach ($itemsParts as $key => $value) {
-                $itemsOutput .= trim($value);
-                end($itemsParts);
-                if ($key !== key($itemsParts)) {
-                    $itemsOutput .= '","';
-                }
-            }
-            return $itemsOutput;
-        } else {
-            return trim($items);
-        }
+        $parts = array_map('trim', explode(',', $items));
+        return implode('","', $parts);
     }
 
     /**
      * Check if provided date is valid
      * @param string $date input date
-     * @return boolean true or false
+     * @return bool
      */
-    private function validateDate($date)
+    private function validateDate(string $date): bool
     {
         $d = \DateTime::createFromFormat('Y-m-d', $date);
         return $d && $d->format('Y-m-d') === $date;
@@ -371,11 +359,11 @@ EOF;
 
     /**
      * Check if input dates not empty and valid
-     * @param string $startDate (searches between startDate and present date) iso date string ('1975-01-01')
-     * @param $endDate (searches between endDate and earlier) iso date string ('1975-01-01')
-     * @return string constraints or false
+     * @param string|null $startDate (searches between startDate and present date) iso date string ('1975-01-01')
+     * @param string|null $endDate (searches between endDate and earlier) iso date string ('1975-01-01')
+     * @return string|false constraints or false
      */
-    private function checkDates($startDate, $endDate)
+    private function checkDates(?string $startDate, ?string $endDate): string|bool
     {
         if (!empty($startDate) || !empty($endDate)) {
             $constraint = 'releaseDateConstraint:{';

@@ -2,6 +2,10 @@
 History for imdbGraphQLPHP
 ====================
 
+v3.0
+-------------------
+* Refatored to include typehints in params and returns, reincludd demo from original imdbphp (usefull for tests!), using phpstan/phan/phpcs/phpdd as analytical tools, removed src/psr files (cache and log) that are automatically included in composer.json. Bugs addressed.
+
 v2.1.4
 -------------------
 * TitleSearch class fixed bug $year wrong typehint and nullable not added, Thansk @jcvignoli

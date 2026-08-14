@@ -22,55 +22,55 @@ class Config
      * server. It doesn't need to be under documentroot.
      * @var string
      */
-    public $cacheDir = './cache/';
+    public string $cacheDir = './cache/';
 
     /**
      * Use cached pages if available?
-     * @var boolean
+     * @var bool
      */
-    public $cacheUse = false;
+    public bool $cacheUse = false;
 
     /**
      * Store the pages retrieved for later use?
-     * @var boolean
+     * @var bool
      */
-    public $cacheStore = false;
+    public bool $cacheStore = false;
 
     /**
      * Use zip compression for caching the retrieved html-files?
      * @see $converttozip if you're changing from false to true
-     * @var boolean
+     * @var bool
      */
-    public $cacheUseZip = true;
+    public bool $cacheUseZip = true;
 
     /**
      * Convert non-zip cache-files to zip
      * You might want to use this if you weren't gzipping your cache files, but now are. They will be rewritten when they're used
-     * @var boolean
+     * @var bool
      */
-    public $cacheConvertZip = false;
+    public bool $cacheConvertZip = false;
 
     /**
      * Cache expiration time - cached pages older than this value (in seconds) will
      * be automatically deleted.
      * If 0 cached pages will never expire
-     * @var integer
+     * @var int
      */
-    public $cacheExpire = 604800;
+    public int $cacheExpire = 604800;
 
     /**
      * Where to store images retrieved from the IMDB site by the method photoLocalurl().
      * This needs to be under documentroot to be able to display them on your pages.
      * @var string
      */
-    public $photodir = './images/';
+    public string $photodir = './images/';
 
     /**
      * URL corresponding to photodir, i.e. the URL to the images, i.e. start at
      * your servers DOCUMENT_ROOT when specifying absolute path
      * @var string
      */
-    public $photoroot = './images/';
+    public string $photoroot = './images/';
 
 
     #========================================================[ Localization options ]===
@@ -78,7 +78,7 @@ class Config
      * @var boolean useLocalization set true to use localization
      * leave this to false if you want US American English
      */
-    public $useLocalization = false;
+    public bool $useLocalization = false;
 
     /**
      * @var string country set country code
@@ -92,7 +92,7 @@ class Config
      * ES (Spain)
      * MX (Mexico)
      */
-    public $country = "DE";
+    public string $country = "DE";
 
     /**
      * @var string language set language code
@@ -106,14 +106,14 @@ class Config
      * es-ES (Spanisch Spain)
      * es-MX (Spanisch Mexico)
      */
-    public $language = "de-DE";
+    public string $language = "de-DE";
 
     #========================================================[ TitleSearch options ]===
     /**
      * amount of search results for Title search
      * @var int default: 10
      */
-    public $titleSearchAmount = 10;
+    public int $titleSearchAmount = 10;
 
 
     #========================================================[ NameSearch options ]===
@@ -121,7 +121,7 @@ class Config
      * amount of search results for Name search
      * @var int default: 10
      */
-    public $nameSearchAmount = 10;
+    public int $nameSearchAmount = 10;
 
 
     #========================================================[ KeywordSearch options ]===
@@ -129,7 +129,7 @@ class Config
      * amount of search results for Keyword search
      * @var int default: 30
      */
-    public $keywordSearchAmount = 30;
+    public int $keywordSearchAmount = 30;
 
 
     #========================================================[ CompanySearch options ]===
@@ -137,7 +137,7 @@ class Config
      * amount of search results for Company search
      * @var int default: 30
      */
-    public $companySearchAmount = 30;
+    public int $companySearchAmount = 30;
 
 
     #========================================================[ TitleSearchAdvanced options ]===
@@ -145,11 +145,11 @@ class Config
      * amount of search results
      * @var int (should be 250 or less, more is not very useful)
      */
-    public $titleSearchAdvancedAmount = 250;
+    public int $titleSearchAdvancedAmount = 250;
 
     /**
      * Sort by options
-     * @var ENUM with double quotes.
+     * @var string ENUM with double quotes.
      * Possible values:
      *
      * BOX_OFFICE_GROSS_DOMESTIC
@@ -210,11 +210,11 @@ class Config
      *      https://help.imdb.com/article/contribution/titles/title-formatting/G56U5ERK7YY47CQB
      *      ASC: Earlier (older) titles will be first.
      */
-    public $sortBy = "POPULARITY";
+    public string $sortBy = "POPULARITY";
 
     /**
      * Sort order options
-     * @var ENUM
+     * @var string ENUM
      * Possible values:
      *
      * ASC
@@ -223,7 +223,7 @@ class Config
      * DESC
      *      Descending order e.g. 3,2,1
      */
-    public $sortOrder = "ASC";
+    public string $sortOrder = "ASC";
 
 
     #========================================================[ NameSearchAdvanced options ]===
@@ -231,7 +231,7 @@ class Config
      * amount of search results (Default: 250)
      * @var int (should be 250 or less, more is not very useful)
      */
-    public $nameSearchAdvancedAmount = 250;
+    public int $nameSearchAdvancedAmount = 250;
 
     /**
      * Sort by options
@@ -255,11 +255,11 @@ class Config
      *      ASC: Lower popularity score means that the name is more popular, so the most popular names will be first.
      *
      */
-    public $nameSortBy = "POPULARITY";
+    public string $nameSortBy = "POPULARITY";
 
     /**
      * Sort order options (Default: ASC
-     * @var ENUM
+     * @var string ENUM
      * Possible values:
      *
      * ASC
@@ -268,7 +268,7 @@ class Config
      * DESC
      *      Descending order e.g. 3,2,1
      */
-    public $nameSortOrder = "ASC";
+    public string $nameSortOrder = "ASC";
 
 
     #========================================================[ Calendar class options ]===
@@ -293,11 +293,11 @@ class Config
      *      ASC: Lower popularity score means that the name is more popular, so the most popular names will be first.
      *
      */
-    public $streamSortBy = "LIST_ORDER";
+    public string $streamSortBy = "LIST_ORDER";
 
     /**
      * Sort order options (Default: ASC
-     * @var ENUM
+     * @var string ENUM
      * Possible values:
      *
      * ASC
@@ -306,7 +306,7 @@ class Config
      * DESC
      *      Descending order e.g. 3,2,1
      */
-    public $streamSortOrder = "ASC";
+    public string $streamSortOrder = "ASC";
 
     #========================================================[ Thumbnail options ]===
 
@@ -317,7 +317,7 @@ class Config
      * @var int pixels
      * Keep ratio in mind, square thumbnails don't work
      */
-    public $photoThumbnailWidth = 190;
+    public int $photoThumbnailWidth = 190;
 
     /**
      * photo() thumbnail height
@@ -325,7 +325,7 @@ class Config
      * @var int pixels
      * Keep ratio in mind, square thumbnails don't work
      */
-    public $photoThumbnailHeight = 281;
+    public int $photoThumbnailHeight = 281;
 
     #----------------------------------------[Title class Recommendation thumbnail]---
     /**
@@ -334,7 +334,7 @@ class Config
      * @var int pixels
      * Keep ratio in mind, square thumbnails don't work
      */
-    public $recommendationThumbnailWidth = 140;
+    public int $recommendationThumbnailWidth = 140;
 
     /**
      * recommendation() thumbnail height
@@ -342,7 +342,7 @@ class Config
      * @var int pixels
      * Keep ratio in mind, square thumbnails don't work
      */
-    public $recommendationThumbnailHeight = 207;
+    public int $recommendationThumbnailHeight = 207;
 
     #----------------------------------------[Title class Cast thumbnail]---
     /**
@@ -351,7 +351,7 @@ class Config
      * @var int pixels
      * Keep ratio in mind, square thumbnails don't work
      */
-    public $castThumbnailWidth = 32;
+    public int $castThumbnailWidth = 32;
 
     /**
      * cast() thumbnail height
@@ -359,7 +359,7 @@ class Config
      * @var int pixels
      * Keep ratio in mind, square thumbnails don't work
      */
-    public $castThumbnailHeight = 44;
+    public int $castThumbnailHeight = 44;
 
     #----------------------------------------[Title class Episodes thumbnail]---
     /**
@@ -368,7 +368,7 @@ class Config
      * @var int pixels
      * Keep ratio in mind, square thumbnails don't work
      */
-    public $episodeThumbnailWidth = 224;
+    public int $episodeThumbnailWidth = 224;
 
     /**
      * episode() thumbnail height
@@ -376,7 +376,7 @@ class Config
      * @var int pixels
      * Keep ratio in mind, square thumbnails don't work
      */
-    public $episodeThumbnailHeight = 126;
+    public int $episodeThumbnailHeight = 126;
 
     #----------------------------------------[Title and Name class mainphoto thumbnail]---
     /**
@@ -384,7 +384,7 @@ class Config
      * Default value: 100
      * @var int pixels
      */
-    public $mainphotoThumbnailHeight = 100;
+    public int $mainphotoThumbnailHeight = 100;
 
     #---------------------------------------[Name class Photo thumbnail]---
     /**
@@ -393,7 +393,7 @@ class Config
      * @var int pixels
      * Keep ratio in mind, square thumbnails don't work
      */
-    public $namePhotoThumbnailWidth = 140;
+    public int $namePhotoThumbnailWidth = 140;
 
     /**
      * photo() thumbnail height
@@ -401,7 +401,7 @@ class Config
      * @var int pixels
      * Keep ratio in mind, square thumbnails don't work
      */
-    public $namePhotoThumbnailHeight = 207;
+    public int $namePhotoThumbnailHeight = 207;
 
     #---------------------------------------[Trailers and Chart class Photo thumbnail]---
     /**
@@ -410,7 +410,7 @@ class Config
      * @var int pixels
      * Keep ratio in mind, square thumbnails don't work
      */
-    public $thumbnailWidth = 140;
+    public int $thumbnailWidth = 140;
 
     /**
      * ALL methods thumbnail height
@@ -418,7 +418,7 @@ class Config
      * @var int pixels
      * Keep ratio in mind, square thumbnails don't work
      */
-    public $thumbnailHeight = 207;
+    public int $thumbnailHeight = 207;
 
     #---------------------------------------[Calendar class thumbnail]---
     /**
@@ -427,7 +427,7 @@ class Config
      * @var int pixels
      * Keep ratio in mind square thumbnails don't work
      */
-    public $calendarThumbnailWidth = 140;
+    public int $calendarThumbnailWidth = 140;
 
     /**
      * All methods thumbnail height
@@ -435,7 +435,7 @@ class Config
      * @var int pixels
      * Keep ratio in mind, square thumbnails don't work
      */
-    public $calendarThumbnailHeight = 207;
+    public int $calendarThumbnailHeight = 207;
 
     #---------------------------------------[NameSearchAdvanced class thumbnail]---
     /**
@@ -444,7 +444,7 @@ class Config
      * @var int pixels
      * Keep ratio in mind square thumbnails don't work
      */
-    public $nameSearchAdvancedThumbnailWidth = 140;
+    public int $nameSearchAdvancedThumbnailWidth = 140;
 
     /**
      * All methods thumbnail height
@@ -452,7 +452,7 @@ class Config
      * @var int pixels
      * Keep ratio in mind, square thumbnails don't work
      */
-    public $nameSearchAdvancedThumbnailHeight = 207;
+    public int $nameSearchAdvancedThumbnailHeight = 207;
 
     #---------------------------------------[TitleSearchAdvanced class thumbnail]---
     /**
@@ -461,7 +461,7 @@ class Config
      * @var int pixels
      * Keep ratio in mind square thumbnails don't work
      */
-    public $titleSearchAdvancedThumbnailWidth = 140;
+    public int $titleSearchAdvancedThumbnailWidth = 140;
 
     /**
      * All methods thumbnail height
@@ -469,24 +469,24 @@ class Config
      * @var int pixels
      * Keep ratio in mind, square thumbnails don't work
      */
-    public $titleSearchAdvancedThumbnailHeight = 207;
+    public int $titleSearchAdvancedThumbnailHeight = 207;
 
     #========================================================[ Debug / Expert options ]===
     /**
      * Enable debug mode?
-     * @var boolean
+     * @var bool
      */
-    public $debug = false;
+    public bool $debug = false;
 
     /**
      * Throw exceptions when a request to fetch some content fails?
-     * @var boolean
+     * @var bool
      */
-    public $throwHttpExceptions = true;
+    public bool $throwHttpExceptions = true;
 
     /**
      * Set curlopt_timout, this is the time out if curl has a connection problem
      * @var int
      */
-    public $curloptTimeout = 30;
+    public int $curloptTimeout = 30;
 }

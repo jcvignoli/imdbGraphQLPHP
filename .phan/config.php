@@ -66,7 +66,8 @@ return [
 	// your application should be included in this list.
 	'directory_list' => [
 		'src/Imdb',
-		'src/Psr',
+		'vendor/psr/log/src',
+		'vendor/psr/simple-cache/src',
 	],
 
 	// A list of files that should be parsed for class and
@@ -86,7 +87,8 @@ return [
 	//       should be added to the `directory_list` as
 	//       to `exclude_analysis_directory_list`.
 	'exclude_analysis_directory_list' => [
-		'src/Psr',
+		'vendor/psr/log/src',
+		'vendor/psr/simple-cache/src',
 	],
 
 	// No need to analyse.

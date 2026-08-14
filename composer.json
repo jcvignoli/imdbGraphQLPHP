@@ -17,6 +17,11 @@
         "ext-json": "*",
         "psr/simple-cache": "^1.0"
     },
+    "autoload": {
+        "psr-4": {
+            "Imdb\\": "src/Imdb/"
+        }
+    },
     "require-dev": {
         "squizlabs/php_codesniffer": "@stable",
         "wp-coding-standards/wpcs": "@stable",
@@ -31,7 +36,8 @@
     "scripts": {
         "phpcs": "vendor/bin/phpcs",
         "phpstan": "vendor/bin/phpstan analyse",
-        "phanci": "vendor/bin/phan"
+        "phanci": "vendor/bin/phan",
+        "phpdd": "vendor/bin/phpdd ./src"
     },
     "config": {
         "allow-plugins": {

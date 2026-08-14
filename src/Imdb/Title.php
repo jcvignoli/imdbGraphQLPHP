@@ -23,78 +23,162 @@ use Imdb\Image;
  * @author Izzy (izzysoft AT qumran DOT org)
  * @author Ed
  * @copyright (c) 2002-2004 by Giorgos Giagas and (c) 2004-2009 by Itzchak Rehberg and IzzySoft
+ *
+ * @phpstan-type ReturnPeople list<array{imdb: string, name: string, jobs: list<string>, attributes: list<string>, episode: array{total: int|null, year: int|null, endYear: int|null}|null, titleFullImageUrl: string|null, titleThumbImageUrl: string|null}>
+ * @phpstan-type CompCredits array<array{name: string, id: string, country: string, attribute: string, year: int}>
  */
 class Title extends MdbBase
 {
-    protected $imageFunctions;
-    protected $akas = array();
-    protected $releaseDates = array();
-    protected $countries = array();
-    protected $creditsCast = array();
-    protected $creditsPrincipal = array();
-    protected $creditsComposer = array();
-    protected $creditsStunts = array();
-    protected $creditsThanks = array();
-    protected $creditsVisualEffects = array();
-    protected $creditsSpecialEffects = array();
-    protected $creditsDirector = array();
-    protected $creditsProducer = array();
-    protected $creditsWriter = array();
-    protected $creditsCinematographer = array();
-    protected $languages = array();
-    protected $keywords = array();
-    protected $mainPoster = null;
-    protected $mainPosterThumb = null;
-    protected $mainPlotoutline = null;
-    protected $mainMovietype = null;
-    protected $mainTitle = null;
-    protected $mainOriginalTitle = null;
-    protected $mainYear = -1;
-    protected $mainEndYear = -1;
-    protected $mainTop250 = 0;
-    protected $mainRating = 0;
-    protected $mainRatingVotes = 0;
-    protected $mainMetacritics = array();
-    protected $mainRank = array();
-    protected $mainPhoto = array();
-    protected $trailers = array();
-    protected $videos = array();
-    protected $mainAwards = array();
-    protected $awards = array();
-    protected $genres = array();
-    protected $quotes = array();
-    protected $recommendations = array();
-    protected $runtimes = array();
-    protected $mpaas = array();
-    protected $parentsGuide = array();
-    protected $plot = array();
-    protected $seasonEpisodes = array();
-    protected $soundtracks = array();
-    protected $taglines = array();
-    protected $trivias = array();
-    protected $isOngoing = null;
-    protected $goofs = array();
-    protected $crazyCredits = array();
-    protected $locations = array();
-    protected $compCreditsProd = array();
-    protected $compCreditsDist = array();
-    protected $compCreditsSpecial = array();
-    protected $compCreditsOther = array();
-    protected $connections = array();
-    protected $externalSites = array();
-    protected $productionBudget = array();
-    protected $grosses = array();
-    protected $alternateversions = array();
-    protected $soundMix = array();
-    protected $colors = array();
-    protected $aspectRatio = array();
-    protected $cameras = array();
-    protected $featuredReviews = array();
-    protected $faqs = array();
-    protected $isAdult = null;
-    protected $watchOption = array();
-    protected $status = null;
-    protected $news = array();
+    protected Image $imageFunctions;
+    /** @var array<string, string> */
+    protected array $akas = array();
+    /** @var array<string, string> */
+    protected array $releaseDates = array();
+    /** @var array<string, string> */
+    protected array $countries = array();
+    /** @var array<string, string> */
+    protected array $creditsCast = array();
+    /** @var array<string, string> */
+    protected array $creditsPrincipal = array();
+    /**
+     * @var array<mixed>
+     * @phpstan-var ReturnPeople
+     */
+    protected array $creditsComposer = array();
+    /**
+     * @var array<mixed>
+     * @phpstan-var ReturnPeople
+     */
+    protected array $creditsStunts = array();
+    /**
+     * @var array<mixed>
+     * @phpstan-var ReturnPeople
+     */
+    protected array $creditsThanks = array();
+    /**
+     * @var array<mixed>
+     * @phpstan-var ReturnPeople
+     */
+    protected array $creditsVisualEffects = array();
+    /**
+     * @var array<mixed>
+     * @phpstan-var ReturnPeople
+     */
+    protected array $creditsSpecialEffects = array();
+    /**
+     * @var array<mixed>
+     * @phpstan-var ReturnPeople
+     */
+    protected array $creditsDirector = array();
+    /**
+     * @var array<mixed>
+     * @phpstan-var ReturnPeople
+     */
+    protected array $creditsProducer = array();
+    /**
+     * @var array<mixed>
+     * @phpstan-var ReturnPeople
+     */
+    protected array $creditsWriter = array();
+    /**
+     * @var array<mixed>
+     * @phpstan-var ReturnPeople
+     */
+    protected array $creditsCinematographer = array();
+    /** @var string[] */
+    protected array $languages = array();
+    /** @var array<string, string> */
+    protected array $keywords = array();
+    protected ?string $mainPoster = null;
+    protected ?string $mainPosterThumb = null;
+    protected ?string $mainPlotoutline = null;
+    protected ?string $mainMovietype = null;
+    protected ?string $mainTitle = null;
+    protected ?string $mainOriginalTitle = null;
+    protected int $mainYear = -1;
+    protected ?int $mainEndYear = -1;
+    protected int $mainTop250 = 0;
+    protected float $mainRating = 0.0;
+    protected int $mainRatingVotes = 0;
+    /** @var array{url: string|null, score: int, reviewCount: int, reviews: array<int, array{reviewer: string|null, score: int, quote: string|null, siteName: string|null, siteUrl: string|null}>}|array{} */
+    protected array $mainMetacritics = array();
+    /** @var array{currentRank: int, changeDirection: string, difference: int}|array{} */
+    protected array $mainRank = array();
+    /** @var array<string, string> */
+    protected array $mainPhoto = array();
+    /** @var array<string, string> */
+    protected array $trailers = array();
+    /** @var array<string, string> */
+    protected array $videos = array();
+    /** @var array{award: string|null, nominations: int|null, wins: int|null}|array{} */
+    protected array $mainAwards = array();
+    /** @var array<string, array<string, int>|string> */
+    protected array $awards = array();
+    /** @var array<array-key, array{mainGenre: string|null, subGenre: list<string>}> */
+    protected array $genres = array();
+    /** @var list<string> */
+    protected array $quotes = array();
+    /** @var array<string, string> */
+    protected array $recommendations = array();
+    /** @var array<string, string> */
+    protected array $runtimes = array();
+    /** @var list<array{string, string, string|null}> */
+    protected array $mpaas = array();
+    /** @var array<string, array{severity: string, severityVotedFor: int, totalSeverityVotes: int, guideItems: list<array{ isSpoiler: bool, guideText: string}>}> */
+    protected array $parentsGuide = array();
+    /** @var array<string, string> */
+    protected array $plot = array();
+    /** @var array<int, array<int, list<array{ imdbid: string, title: string, airdate: string|null, airdateParts: array{ day: int|null, month: int|null, year: int|null }|null, plot: string|null, episode: int|string, imgUrl: string|null }>>> */
+    protected array $seasonEpisodes = array();
+    /** @var array<string, string> */
+    protected array $soundtracks = array();
+    /** @var array<string, string> */
+    protected array $taglines = array();
+    /** @var array<string, string> */
+    protected array $trivias = array();
+    protected ?bool $isOngoing = null;
+    /** @var array<int, list<array{ content: string, isSpoiler: bool }>> */
+    protected array $goofs = array();
+    /** @var array<string, string> */
+    protected array $crazyCredits = array();
+    /** @var list<array{real: string, movie: list<string>}> */
+    protected array $locations = array();
+    /** @var CompCredits */
+    protected array $compCreditsProd = array();
+    /** @var CompCredits */
+    protected array $compCreditsDist = array();
+    /** @var CompCredits */
+    protected array $compCreditsSpecial = array();
+    /** @var CompCredits */
+    protected array $compCreditsOther = array();
+    /** @var array<string, list<array{titleId: array<string>|string|null, titleName: string, titleType: string, year: string, endYear: string, seriesName: string, description: string}>|string> */
+    protected array $connections = array();
+    /** @var array<list<array{label: string, url: string, language: list<string>}>|string> */
+    protected array $externalSites = array();
+    /** @var array<string, string> */
+    protected array $productionBudget = array();
+    /** @var array<string, string> */
+    protected array $grosses = array();
+    /** @var array<string, string> */
+    protected array $alternateversions = array();
+    /** @var list<array<string, list<string>|string>> */
+    protected array $soundMix = array();
+    /** @var list<array<string, list<string>|string>> */
+    protected array $colors = array();
+    /** @var list<array<string, list<string>|string>> */
+    protected array $aspectRatio = array();
+    /** @var list<array{cameras: string, attributes: list<string>}> */
+    protected array $cameras = array();
+    /** @var array<string, string> */
+    protected array $featuredReviews = array();
+    /** @var array<string, string> */
+    protected array $faqs = array();
+    protected ?bool $isAdult = null;
+    /** @var array<string, string> */
+    protected array $watchOption = array();
+    protected ?string $status = null;
+    /** @var array<string, string> */
+    protected array $news = array();
 
     #----------------------------------------------------------[ Helper for TitleSearch class ]---
     /**
@@ -118,10 +202,10 @@ class Title extends MdbBase
         ?Config $config = null,
         ?LoggerInterface $logger = null,
         ?CacheInterface $cache = null
-    ) {
+    ): Title {
         $imdb = new Title($id, $config, $logger, $cache);
         $imdb->mainTitle = $title;
-        $imdb->mainYear = $year;
+        $imdb->mainYear = (int) $year;
         $imdb->mainMovietype = $type;
         return $imdb;
     }
@@ -146,7 +230,7 @@ class Title extends MdbBase
      * @see IMDB page / (TitlePage)
      * If no movietype has been defined explicitly, it returns 'Movie' -- so this is always set.
      */
-    public function movietype()
+    public function movietype(): string
     {
         if (empty($this->mainMovietype)) {
             $this->titleYear();
@@ -161,7 +245,7 @@ class Title extends MdbBase
      * @return string title movie title (name)
      * @see IMDB page / (TitlePage)
      */
-    public function title()
+    public function title(): string
     {
         if (empty($this->mainTitle)) {
             $this->titleYear();
@@ -173,7 +257,7 @@ class Title extends MdbBase
      * @return string mainOriginalTitle  movie original title
      * @see IMDB page / (TitlePage)
      */
-    public function originalTitle()
+    public function originalTitle(): string
     {
         if (empty($this->mainOriginalTitle)) {
             $this->titleYear();
@@ -182,12 +266,12 @@ class Title extends MdbBase
     }
 
     /** Get year
-     * @return string year
+     * @return int year
      * @see IMDB page / (TitlePage)
      */
-    public function year()
+    public function year(): int
     {
-        if ($this->mainYear == -1) {
+        if ($this->mainYear === -1) {
             $this->titleYear();
         }
         return $this->mainYear;
@@ -198,9 +282,9 @@ class Title extends MdbBase
      * @return int endyear|null
      * @see IMDB page / (TitlePage)
      */
-    public function endyear()
+    public function endyear(): ?int
     {
-        if ($this->mainEndYear == -1) {
+        if ($this->mainEndYear === -1) {
             $this->titleYear();
         }
         return $this->mainEndYear;
@@ -209,10 +293,10 @@ class Title extends MdbBase
     #---------------------------------------------------------------[ Runtime ]---
     /**
      * Retrieve all runtimes and their descriptions
-     * @return array<array{time: integer, country: string|null, annotations: array()}>
-     * time is the length in minutes, country optionally exists for alternate cuts, annotations is an array of comments
+     * @return array<array{time: int|float|null, country: string|null, annotations: list<string>}>
+     *		time is the length in minutes, country optionally exists for alternate cuts, annotations is an array of comments
      */
-    public function runtime()
+    public function runtime(): array
     {
         if (empty($this->runtimes)) {
             $query = <<<EOF
@@ -272,12 +356,12 @@ EOF;
     #----------------------------------------------------------[ Movie Rating ]---
     /**
      * Get movie rating
-     * @return int/float or 0
+     * @return int|float or 0
      * @see IMDB page / (TitlePage)
      */
-    public function rating()
+    public function rating(): int|float
     {
-        if ($this->mainRating == 0) {
+        if ($this->mainRating === 0.0) {
             $query = <<<EOF
 query Rating(\$id: ID!) {
   title(id: \$id) {
@@ -300,9 +384,9 @@ EOF;
      * @return int
      * @see IMDB page / (TitlePage)
      */
-    public function votes()
+    public function votes(): int
     {
-        if ($this->mainRatingVotes == 0) {
+        if ($this->mainRatingVotes === 0) {
             $query = <<<EOF
 query RatingVotes(\$id: ID!) {
   title(id: \$id) {
@@ -322,9 +406,9 @@ EOF;
 
     /**
      * Metacritic data like score and reviews
-     * @return array(url:string, score:int, reviewCount:int, reviews:array(reviewer:string, score:int, quote:string, siteName:string, siteUrl:string))
+     * @return array{url: string|null, score: int, reviewCount: int, reviews: array<int, array{reviewer: string|null, score: int, quote: string|null, siteName: string|null, siteUrl: string|null}>}|array{}
      */
-    public function metacritic()
+    public function metacritic(): array
     {
         if (empty($this->mainMetacritics)) {
             $query = <<<EOF
@@ -355,7 +439,7 @@ query Metacritic(\$id: ID!) {
 EOF;
             $data = $this->graphql->query($query, "Metacritic", ["id" => "tt$this->imdbID"]);
             if (!isset($data->title->metacritic)) {
-                return $this->mainMetacritics;
+                return [];
             }
             $reviews = array();
             if (
@@ -365,20 +449,18 @@ EOF;
             ) {
                 foreach ($data->title->metacritic->reviews->edges as $edge) {
                     $reviews[] = array(
-                        'reviewer' => isset($edge->node->reviewer) ? $edge->node->reviewer : null,
-                        'score' => isset($edge->node->score) ? $edge->node->score : 0,
-                        'quote' => isset($edge->node->quote->value) ? $edge->node->quote->value : null,
-                        'siteName' => isset($edge->node->site) ? $edge->node->site : null,
-                        'siteUrl' => isset($edge->node->url) ? $edge->node->url : null
+                        'reviewer' => $edge->node->reviewer,
+                        'score' => $edge->node->score ?? 0,
+                        'quote' => $edge->node->quote->value,
+                        'siteName' => $edge->node->site,
+                        'siteUrl' => $edge->node->url
                     );
                 }
             }
             $this->mainMetacritics = array(
-                    'url' => isset($data->title->metacritic->url) ? $data->title->metacritic->url : null,
-                    'score' => isset($data->title->metacritic->metascore->score) ?
-                                     $data->title->metacritic->metascore->score : 0,
-                    'reviewCount' => isset($data->title->metacritic->metascore->reviewCount) ?
-                                           $data->title->metacritic->metascore->reviewCount : 0,
+                    'url' => $data->title->metacritic->url,
+                    'score' => $data->title->metacritic->metascore->score ?? 0,
+                    'reviewCount' => $data->title->metacritic->metascore->reviewCount ?? 0,
                     'reviews' => $reviews
                 );
         }
@@ -388,10 +470,10 @@ EOF;
     #----------------------------------------------------------[ Popularity ]---
     /**
      * Get movie popularity rank
-     * @return array(currentRank: int, changeDirection: string, difference: int)
+     * @return array{currentRank: int, changeDirection: string, difference: int}|array{}
      * @see IMDB page / (TitlePage)
      */
-    public function rank()
+    public function rank(): array
     {
         if (empty($this->mainRank)) {
             $query = <<<EOF
@@ -424,11 +506,11 @@ EOF;
     #----------------------------------------------------------[ FAQ ]---
     /**
      * Get movie frequently asked questions, it includes questions with and without answer
-     * @param $spoil boolean (true or false) to include spoilers or not, isSpoiler indicates if this question is spoiler or not
-     * @return array of array(question: string, answer: string, isSpoiler: boolean)
+     * @param bool $spoil include spoilers or not, isSpoiler indicates if this question is spoiler or not
+     * @return array<array{question: string, answer: string, isSpoiler: bool}>
      * @see IMDB page / (Faq)
      */
-    public function faq($spoil = false)
+    public function faq(bool $spoil = false): array
     {
         if (empty($this->faqs)) {
             $filter = $spoil === false ? ', filter: {spoilers: EXCLUDE_SPOILERS}' : '';
@@ -445,10 +527,8 @@ EOF;
             if (count($data) > 0) {
                 foreach ($data as $edge) {
                     $this->faqs[] = array(
-                        'question' => isset($edge->node->question->plainText) ?
-                                            $edge->node->question->plainText : null,
-                        'answer' => isset($edge->node->answer->plainText) ?
-                                        $edge->node->answer->plainText : null,
+                        'question' => $edge->node->question->plainText,
+                        'answer' => $edge->node->answer->plainText,
                         'isSpoiler' => $edge->node->isSpoiler
                     );
                 }
@@ -464,7 +544,7 @@ EOF;
      * @return array<array{title: string, imdbid: string, rating: int, img: string, year: int}>
      * @see IMDB page / (TitlePage)
      */
-    public function recommendation()
+    public function recommendation(): array
     {
         if (empty($this->recommendations)) {
             $query = <<<EOF
@@ -533,10 +613,10 @@ EOF;
 
     #--------------------------------------------------------[ Language Stuff ]---
     /** Get all spoken languages spoken in this title
-     * @return array languages (array[0..n] of strings)
+     * @return string[]
      * @see IMDB page / (TitlePage)
      */
-    public function language()
+    public function language(): array
     {
         if (empty($this->languages)) {
             $query = <<<EOF
@@ -565,16 +645,16 @@ EOF;
                     }
                 }
             }
-            return $this->languages;
         }
+        return $this->languages;
     }
 
     #--------------------------------------------------------------[ Genre(s) ]---
     /** Get all genres the movie is registered for
-     * @return array genres (array[0..n] of mainGenre| string, subGenre| array())
+     * @return array<array-key, array{mainGenre: string|null, subGenre: list<string>}>
      * @see IMDB page / (TitlePage)
      */
-    public function genre()
+    public function genre(): array
     {
         if (empty($this->genres)) {
             $query = <<<EOF
@@ -632,10 +712,10 @@ EOF;
 
     #--------------------------------------------------------[ Plot (Outline) ]---
     /** Get the main Plot outline for the movie as displayed on top of title page
-     * @return string plotoutline
+     * @return string|null plotoutline
      * @see IMDB page / (TitlePage)
      */
-    public function plotoutline()
+    public function plotoutline(): ?string
     {
         if (empty($this->mainPlotoutline)) {
             $query = <<<EOF
@@ -660,11 +740,11 @@ EOF;
     #--------------------------------------------------------[ Photo specific ]---
     /**
      * Get the main photo image url for thumbnail or full size
-     * @param boolean $thumb get the thumbnail (height: 281) or large (max 1000 pixels)
+     * @param bool $thumb get the thumbnail (height: 281) or large (max 1000 pixels)
      * @return string|false photo (string URL if found, FALSE otherwise)
      * @see IMDB page / (TitlePage)
      */
-    public function photo($thumb = true)
+    public function photo(bool $thumb = true): string|bool
     {
         if (empty($this->mainPoster)) {
             $this->populatePoster();
@@ -684,12 +764,12 @@ EOF;
     /**
      * Save the poster/cover image to disk
      * @param string $path where to store the file
-     * @param boolean $thumb get the thumbnail or the
+     * @param bool $thumb get the thumbnail or the
      *        bigger variant (max width 1000 pixels - FALSE)
      * @return boolean success
      * @see IMDB page / (TitlePage)
      */
-    public function savephoto($path, $thumb = true)
+    public function savephoto(string $path, bool $thumb = true): bool
     {
         $photoUrl = $this->photo($thumb);
         if (!$photoUrl) {
@@ -706,8 +786,8 @@ EOF;
             $image = $req->getResponseBody();
         } else {
             $ctype = $req->getResponseHeader("Content-Type");
-            $this->debugScalar("*photoerror* at " . __FILE__ . " line " . __LINE__ . ": " . $photo_url . ": Content Type is '$ctype'");
-            if (substr($ctype, 0, 4) == 'text') {
+            $this->debugScalar("*photoerror* at " . __FILE__ . " line " . __LINE__ . ": " . $photoUrl . ": Content Type is '$ctype'");
+            if (substr($ctype, 0, 4) === 'text') {
                 $this->debugScalar("Details: <PRE>" . $req->getResponseBody() . "</PRE>\n");
             }
             return false;
@@ -723,12 +803,12 @@ EOF;
     }
 
     /** Get the URL for the movies cover image
-     * @param boolean $thumb get the thumbnail (default) or the
+     * @param bool $thumb get the thumbnail (default) or the
      *        bigger variant (max width 1000 pixels - FALSE)
-     * @return mixed url (string URL or FALSE if none)
+     * @return string|bool url (string URL or FALSE if none)
      * @see IMDB page / (TitlePage)
      */
-    public function photoLocalurl($thumb = true)
+    public function photoLocalurl(bool $thumb = true): string|bool
     {
         if ($thumb) {
             $ext = "";
@@ -756,10 +836,10 @@ EOF;
     #-------------------------------------------------[ Country of Origin ]---
     /**
      * Get country of origin
-     * @return array country (array[0..n] of string)
+     * @return list<string>
      * @see IMDB page / (TitlePage)
      */
-    public function country()
+    public function country(): array
     {
         if (empty($this->countries)) {
             $query = <<<EOF
@@ -795,10 +875,10 @@ EOF;
     #-------------------------------------------------[ Release dates ]---
     /**
      * Get all release dates for this title
-     * @return releaseDates array[0..n] of array[country, day, month, year, array attributes]
+     * @return array<int<0, max>|string, array{country: mixed, day: mixed, month: mixed, year: mixed, attributes: list<mixed>}|string>
      * @see IMDB page / (TitlePage)
      */
-    public function releaseDate()
+    public function releaseDate(): array
     {
         if (empty($this->releaseDates)) {
             $query = <<<EOF
@@ -848,11 +928,11 @@ EOF;
     /**
      * Get movie's alternative names
      * The first item in the list will be the original title
-     * @return array<array{title: string, country: string, countryId: string, language: string, languageId: string, comment: array()}>
+     * @return array<array{title: string, country: string, countryId: string, language: string|null, languageId: string, comment: array<string>|null}>
      * Ordered Ascending by Country
      * @see IMDB page ReleaseInfo
      */
-    public function alsoknow()
+    public function alsoknow(): array
     {
         if (empty($this->akas)) {
             $filter = ', sort: {order: ASC by: COUNTRY}';
@@ -918,10 +998,10 @@ EOF;
     #-------------------------------------------------------[ MPAA / PG / FSK ]---
     /**
      * Get the MPAA rating / Parental Guidance / Age rating for this title by country
-     * @return array array[0..n] of array[country,rating,comment of array()] comment whithout brackets
+     * @return list<array{string, string, string|null}> comment whithout brackets
      * @see IMDB Parental Guidance page / (parentalguide)
      */
-    public function mpaa()
+    public function mpaa(): array
     {
         if (empty($this->mpaas)) {
             $query = <<<EOF
@@ -963,19 +1043,18 @@ EOF;
 
     #-------------------------------------------------------[ ParentsGuide ]---
     /** Info for parents like Violence, Drugs. Alcohol etc
-     * @param $spoil boolean if true spoilers are also included.
-     * @return array categorized array of array()
-     *  [nudity] => Array
-     *      [severity] =>           (string) None (like mild,severe,none etc)
-     *      [severityVotedFor] =>   (int) 34 (how many people voted for this severity)
-     *      [totalSeverityVotes] => (int) 64 (total amount of voters)
-     *      [guideItems] => Array()
-     *          [0] => Array()
-     *              [isSpoiler] => (boolean) (indicates if entry is a spoiler or not)
-     *              [guideText] => (string) A couple in swimwear are seen lying in a sexualised pose together.
-     * @see IMDB page /parentsguide
+     * @param bool $spoil boolean if true spoilers are also included.
+     * @return array<string, array{
+     *     severity: string,
+     *     severityVotedFor: int,
+     *     totalSeverityVotes: int,
+     *     guideItems: list<array{
+     *         isSpoiler: bool,
+     *         guideText: string
+     *     }>
+     * }>
      */
-    public function parentsGuide($spoil = false)
+    public function parentsGuide(bool $spoil = false): array
     {
         $filter = '';
         if ($spoil === false) {
@@ -1054,9 +1133,9 @@ EOF;
      * @return int position a number between 1..250 if ranked, 0 otherwise
      * @author Ed
      */
-    public function top250()
+    public function top250(): int
     {
-        if ($this->mainTop250 == 0) {
+        if ($this->mainTop250 === 0) {
             $query = <<<EOF
 query TopRated(\$id: ID!) {
   title(id: \$id) {
@@ -1080,11 +1159,14 @@ EOF;
 
     #=====================================================[ /plotsummary page ]===
     /** Get movie plots without Spoilers
-     * @param $spoil boolean if true spoilers are also included, default: false.
-     * @return array array[0..n] string plot, string author]
+     * @param bool $spoil boolean if true spoilers are also included, default: false.
+     * @return list<array{
+     *     plot: string,
+     *     author: string
+     * }>
      * @see IMDB page /plotsummary
      */
-    public function plot($spoil = false)
+    public function plot(bool $spoil = false): array
     {
         if (empty($this->plot)) {
             $filter = $spoil === false ? ',filter:{spoilers:EXCLUDE_SPOILERS}' : '';
@@ -1133,7 +1215,7 @@ EOF;
      * @return string[] taglines
      * @see IMDB page /taglines
      */
-    public function tagline()
+    public function tagline(): array
     {
         if (empty($this->taglines)) {
             $query = <<<EOF
@@ -1170,12 +1252,15 @@ EOF;
 
     #=====================================================[ /fullcredits page ]===
     #----------------------------------------------------------------[ PrincipalCredits ]---
-    /*
-    * Get the PrincipalCredits for this title (limited to 3 items per category)
-    * @return array creditsPrincipal[category][Director, Writer, Creator, Stars] (array[0..n] of array[name,imdbid])
-    * Not all categories are always available
-    */
-    public function principalCredits()
+    /**
+     * Get the PrincipalCredits for this title (limited to 3 items per category)
+     * @return array<string, list<array{
+     *     name: string,
+     *     imdbid: string
+     * }>>
+     * Not all categories are always available
+     */
+    public function principalCredits(): array
     {
         if (empty($this->creditsPrincipal)) {
             $query = <<<EOF
@@ -1211,7 +1296,7 @@ EOF;
                     $credits = array();
                     if (!empty($value->credits[0]->category->text)) {
                         $category = $value->credits[0]->category->text;
-                        if ($category == "Actor" || $category == "Actress") {
+                        if ($category === "Actor" || $category === "Actress") {
                             $category = "Star";
                         }
                     }
@@ -1228,7 +1313,7 @@ EOF;
                                                 str_replace('nm', '', $credit->name->id) : null
                             );
                         }
-                    } elseif ($category == 'Unknown') {
+                    } elseif ($category === 'Unknown') {
                             continue;
                     }
                     $this->creditsPrincipal[$category] = $credits;
@@ -1239,24 +1324,20 @@ EOF;
     }
 
     #----------------------------------------------------------------[ Actors]---
-    /*
+    /**
      * Get the actors/cast members for this title
-     * @return array cast (array[0..n] of array[imdb,name,name_alias,credited,array character,array comments,thumb])
-     * e.g.
-     * <pre>
-     * array (
-     *  'imdb' => '0922035',
-     *  'name' => 'Dominic West', // Actor's name on imdb,
-     *  'name_alias' => alias name (as D west),
-     *  'credited' => true\false False if stated (uncredited),
-     *  'character' => array "Det. James 'Jimmy' McNulty",
-     *  'comment' => array comments like archive voice etc,
-     *  'thumb' => 'https://ia.media-imdb.com/images/M/MV5BMTY5NjQwNDY2OV5BMl5BanBnXkFtZTcwMjI2ODQ1MQ@@._V1_SY44_CR0,0,32,44_AL_.jpg',
-     * )
-     * </pre>
+     * @return list<array{
+     *     imdb: string|null,
+     *     name: string|null,
+     *     alias: string|null,
+     *     credited: bool,
+     *     character: list<string>,
+     *     comment: list<string>,
+     *     thumb: string|null
+     * }>
      * @see IMDB page /fullcredits
      */
-    public function cast()
+    public function cast(): array
     {
         if (empty($this->creditsCast)) {
             $filter = ', filter:{categories:["cast"]}';
@@ -1339,17 +1420,18 @@ EOF;
                     );
                 }
             }
-            return $this->creditsCast;
         }
+        return $this->creditsCast;
     }
 
     #-------------------------------------------------------------[ Directors ]---
     /**
      * Get the director(s) of the movie
-     * @return array director (array[0..n] of arrays[imdb,name,jobs[],attributes[],episode array(total, year, endYear)])
+     * @return array<mixed>
+     * @phpstan-return ReturnPeople
      * @see IMDB page /fullcredits
      */
-    public function director()
+    public function director(): array
     {
         if (!empty($this->creditsDirector)) {
             return $this->creditsDirector;
@@ -1362,10 +1444,11 @@ EOF;
     #-------------------------------------------------------------[ Cinematographers ]---
     /**
      * Get the cinematographer of the title
-     * @return array creditsCinematographer (array[0..n] of arrays[imdb,name,jobs[],attributes[],episode array(total, year, endYear)])
+     * @return array<mixed>
+     * @phpstan-return ReturnPeople
      * @see IMDB page /fullcredits
      */
-    public function cinematographer()
+    public function cinematographer(): array
     {
         if (!empty($this->creditsCinematographer)) {
             return $this->creditsCinematographer;
@@ -1377,10 +1460,11 @@ EOF;
 
     #---------------------------------------------------------------[ Writers ]---
     /** Get the writer(s)
-     * @return array writers (array[0..n] of arrays[imdb,name,jobs[],attributes[],episode array(total, year, endYear)])
+     * @return array<mixed>
+     * @phpstan-return ReturnPeople
      * @see IMDB page /fullcredits
      */
-    public function writer()
+    public function writer(): array
     {
         if (!empty($this->creditsWriter)) {
             return $this->creditsWriter;
@@ -1391,10 +1475,11 @@ EOF;
 
     #-------------------------------------------------------------[ Producers ]---
     /** Obtain the producer credits of this title
-     * @return array (array[0..n] of arrays[imdb,name,jobs[],attributes[],episode array(total, year, endYear)])
+     * @return array<mixed>
+     * @phpstan-return ReturnPeople
      * @see IMDB page /fullcredits
      */
-    public function producer()
+    public function producer(): array
     {
         if (!empty($this->creditsProducer)) {
             return $this->creditsProducer;
@@ -1405,10 +1490,11 @@ EOF;
 
     #-------------------------------------------------------------[ Composers ]---
     /** Obtain the composer(s) ("Original Music by...")
-     * @return array composer (array[0..n] of arrays[imdb,name,jobs[],attributes[],episode array(total, year, endYear)])
+     * @return array<mixed>
+     * @phpstan-return ReturnPeople
      * @see IMDB page /fullcredits
      */
-    public function composer()
+    public function composer(): array
     {
         if (!empty($this->creditsComposer)) {
             return $this->creditsComposer;
@@ -1419,10 +1505,11 @@ EOF;
 
     #-------------------------------------------------------------[ Stunts ]---
     /** Obtain the stunts credits of this title
-     * @return array (array[0..n] of arrays[imdb,name,jobs[],attributes[],episode array(total, year, endYear)])
+     * @return array<mixed>
+     * @phpstan-return ReturnPeople
      * @see IMDB page /fullcredits
      */
-    public function stunts()
+    public function stunts(): array
     {
         if (!empty($this->creditsStunts)) {
             return $this->creditsStunts;
@@ -1433,10 +1520,11 @@ EOF;
 
     #-------------------------------------------------------------[ Thanks ]---
     /** Obtain thanks credits of this title
-     * @return array (array[0..n] of arrays[imdb,name,jobs[],attributes[],episode array(total, year, endYear)])
+     * @return array<mixed>
+     * @phpstan-return ReturnPeople
      * @see IMDB page /fullcredits
      */
-    public function thanks()
+    public function thanks(): array
     {
         if (!empty($this->creditsThanks)) {
             return $this->creditsThanks;
@@ -1447,10 +1535,11 @@ EOF;
 
     #-------------------------------------------------------------[ Visual Effects ]---
     /** Obtain Visual Effects credits of this title
-     * @return array (array[0..n] of arrays[imdb,name,jobs[],attributes[],episode array(total, year, endYear)])
+     * @return array<mixed>
+     * @phpstan-return ReturnPeople
      * @see IMDB page /fullcredits
      */
-    public function visualEffects()
+    public function visualEffects(): array
     {
         if (!empty($this->creditsVisualEffects)) {
             return $this->creditsVisualEffects;
@@ -1461,10 +1550,11 @@ EOF;
 
         #-------------------------------------------------------------[ Special Effects ]---
     /** Obtain Special Effects credits of this title
-     * @return array (array[0..n] of arrays[imdb,name,jobs[],attributes[],episode array(total, year, endYear)])
+     * @return array<mixed>
+     * @phpstan-return ReturnPeople
      * @see IMDB page /fullcredits
      */
-    public function specialEffects()
+    public function specialEffects(): array
     {
         if (!empty($this->creditsSpecialEffects)) {
             return $this->creditsSpecialEffects;
@@ -1480,7 +1570,7 @@ EOF;
      * @return string[]
      * @see IMDB page /crazycredits
      */
-    public function crazyCredit()
+    public function crazyCredit(): array
     {
         if (empty($this->crazyCredits)) {
             $query = <<<EOF
@@ -1504,32 +1594,25 @@ EOF;
     #--------------------------------------------------------[ Episodes Array ]---
     /**
      * Get the series episode(s)
-     * @return array episodes
-     * array(1) {
-     *   [1]=>
-     *   array(13) {
-     *       [1]=>          //can be seasonnumber, year or -1 (Unknown)
-     *       array(6) {
-     *       ["imdbid"]=>   string "1495166"
-     *       ["title"]=>    string "Pilot"
-     *       ["airdate"]=>  string "7 jun. 2010"
-     *       [airdateParts] => Array
-     *                   (
-     *                       [day] =>   int 7
-     *                       [month] => int 6
-     *                       [year] =>  int 2010
-     *                   )
-     *       ["plot"]=>     string
-     *       ["episode"]=>  string //can be episodenumber or -1 (Unknown)
-     *       ["imgUrl"]=>   string
-     *       }
-     *   }
      * @see IMDB page /episodes
-     * @param $thumb boolean true: thumbnail (cropped from center 224x126), false: large (max width 1000 pixels)
-     * @param $yearbased This gives user control if returned episodes are yearbased or season based
+     * @param bool $thumb boolean true: thumbnail (cropped from center 224x126), false: large (max width 1000 pixels)
+     * @param int $yearbased This gives user control if returned episodes are yearbased or season based
      * @version The outer array keys reflects the real season seasonnumber! Episodes can start at 0 (pilot episode)
+     * @return array<int, array<int, list<array{
+     *     imdbid: string,
+     *     title: string,
+     *     airdate: string|null,
+     *     airdateParts: array{
+     *         day: int|null,
+     *         month: int|null,
+     *         year: int|null
+     *     }|null,
+     *     plot: string|null,
+     *     episode: int|string,
+     *     imgUrl: string|null
+     * }>>>
      */
-    public function episode($thumb = true, $yearbased = 0)
+    public function episode(bool $thumb = true, int $yearbased = 0): array
     {
         if ($this->movietype() === "TV Series" || $this->movietype() === "TV Mini Series") {
             if (empty($this->seasonEpisodes)) {
@@ -1545,7 +1628,7 @@ EOF;
                         }
                         $seasonYear = $seasonsDataEdge->node->text;
                         $filter = $this->buildFilter($seasonYear);
-                        if ($seasonYear == "Unknown") { //this is intended capitol
+                        if ($seasonYear === "Unknown") { //this is intended capitol
                             $seasonYear = -1;
                         }
                         // Get all episodes
@@ -1565,14 +1648,14 @@ EOF;
                             if (isset($edge->node->series->displayableEpisodeNumber->episodeNumber->episodeNumber)) {
                                 $epNumber = $edge->node->series->displayableEpisodeNumber->episodeNumber->episodeNumber;
                                 // Unknown episodes get a number to keep them separate.
-                                if ($epNumber == "unknown") {
+                                if ($epNumber === "unknown") {
                                     $epNumber = -1;
                                 }
                             }
                             $imgUrl = null;
                             if (!empty($edge->node->primaryImage->url)) {
                                 $img = str_replace('.jpg', '', $edge->node->primaryImage->url);
-                                if ($thumb == true) {
+                                if ($thumb === true) {
                                     $fullImageWidth = $edge->node->primaryImage->width;
                                     $fullImageHeight = $edge->node->primaryImage->height;
                                     $newImageWidth = $this->config->episodeThumbnailWidth;
@@ -1609,9 +1692,9 @@ EOF;
     #-----------------------------------------------------------[ IsOngoing TV Series ]---
      /**
      * Boolean flag if this is a still running tv series or ended
-     * @return boolean: false if ended, true if still running or null (not a tv series)
+     * @return bool false if ended, true if still running or null (not a tv series)
      */
-    public function isOngoing()
+    public function isOngoing(): bool
     {
         $query = <<<EOF
 query IsOngoing(\$id: ID!) {
@@ -1623,19 +1706,21 @@ query IsOngoing(\$id: ID!) {
 }
 EOF;
         $data = $this->graphql->query($query, "IsOngoing", ["id" => "tt$this->imdbID"]);
-        $this->isOngoing = isset($data->title->episodes->isOngoing) ?
-                                 $data->title->episodes->isOngoing : null;
-        return $this->isOngoing;
+        $this->isOngoing = $data->title->episodes->isOngoing;
+        return (bool) $this->isOngoing;
     }
 
     #===========================================================[ /goofs page ]===
     #-----------------------------------------------------------[ Goofs Array ]---
     /** Get the goofs
-     * @param $spoil boolean if true spoilers are also included.
-     * @return array goofs (array[categoryId] of array[content, isSpoiler]
+     * @param bool $spoil boolean if true spoilers are also included.
+     * @return array<int, list<array{
+     *     content: string,
+     *     isSpoiler: bool
+     * }>>
      * @see IMDB page /goofs
      */
-    public function goof($spoil = false)
+    public function goof(bool $spoil = false): array
     {
         if (empty($this->goofs)) {
             $filter = $spoil === false ? ', filter: {spoilers: EXCLUDE_SPOILERS}' : '';
@@ -1674,10 +1759,10 @@ EOF;
 
     #==========================================================[ /quotes page ]===
     /** Get the quotes for a given movie
-     * @return array quote array[string quote];
+     * @return list<string>
      * @see IMDB page /quotes
      */
-    public function quote()
+    public function quote(): array
     {
         if (empty($this->quotes)) {
             $query = <<<EOF
@@ -1707,11 +1792,11 @@ EOF;
     #==========================================================[ /trivia page ]===
     /**
      * Get the trivia info
-     * @param boolean $spoil if true spoilers are also included.
-     * @return array (array[categoryId] of array[content, names: array(name, id), trademark, isSpoiler]
+     * @param bool $spoil if true spoilers are also included.
+     * @return array<string, non-empty-list<array{content: (array<string>|string|null), names: list<array{name: mixed, id: array<string>|string|null}>, trademark: mixed, isSpoiler: mixed}>|string>
      * @see IMDB page /trivia
      */
-    public function trivia($spoil = false)
+    public function trivia(bool $spoil = false): array
     {
         if (empty($this->trivias)) {
             $filter = $spoil === false ? ', filter: {spoilers: EXCLUDE_SPOILERS}' : '';
@@ -1778,30 +1863,22 @@ EOF;
     #======================================================[ Soundtrack ]===
     /**
      * Get the soundtrack listing
-     * @return array soundtracks
-     * [credits]: all credit lines as text, each in one element
-     * [creditSplit]: credits split by type, name, nameId and attribute
-     * [comments]: if not a credited person, it is considered comment as plain text
-     * Array()
-     *      [0] => Array()
-     *          [soundtrack] => (string) Dangerous
-     *          [credits] => Array()
-     *              [0] => (string) Performed by The Doobie Brothers
-     *              [1] => (string) Written by Patrick Simmons (as Pat Simmons)
-     *              [2] => (string) Published by Soquel Songs and ASCAP
-     *              [3] => (string) Courtesy of Capitol Records
-     *          [creditSplit] => Array()
-     *              [creditors] => Array()
-     *                  [0] => Array()
-     *                      [creditType] => (string) Written by
-     *                      [name] =>       (string) Patrick Simmons
-     *                      [nameId] =>     (string) 2003944
-     *                      [attribute] =>  (string) as Pat Simmons
-     *              [comment] => Array()
-     *                  [0] => (string) Courtesy of Capitol Records
+     * @return list<array{
+     *     soundtrack: string,
+     *     credits: list<string>,
+     *     creditSplit: array{
+     *         creditors: list<array{
+     *             creditType: string|null,
+     *             name: string,
+     *             nameId: string|null,
+     *             attribute: string|null
+     *         }>,
+     *         comment: list<string>
+     *     }
+     * }>
      * @see IMDB page /soundtrack
      */
-    public function soundtrack()
+    public function soundtrack(): array
     {
         if (empty($this->soundtracks)) {
             $query = <<<EOF
@@ -1847,7 +1924,7 @@ EOF;
                                     );
                                     $creditRaw = preg_replace($patterns, ',', $creditRaw);
                                     $creditRawParts = explode(",", $creditRaw);
-                                    $creditRawParts = array_values(array_filter($creditRawParts));
+                                    $creditRawParts = array_values(array_filter($creditRawParts, fn($value) => (bool) $value));
                                     // loop $creditRawParts array
                                     foreach ($creditRawParts as $value) {
                                         // check if there is any text after the anchor tag
@@ -1864,7 +1941,7 @@ EOF;
                                         $doc->loadHTML('<?xml encoding="UTF-8">' . $value);
                                         $anchors = $doc->getElementsByTagName('a');
                                         // check if $anchors contains any <a> records
-                                        if ($anchors != null && $anchors->length > 0) {
+                                        if ($anchors->length > 0) {
                                             $href = $anchors->item(0)->attributes->getNamedItem('href')->nodeValue;
                                             $nameId = preg_replace('/[^0-9]+/', '', $href);
                                             $name = trim($anchors->item(0)->nodeValue);
@@ -1910,11 +1987,14 @@ EOF;
     #=======================================================[ /locations page ]===
     /**
      * Filming locations
-     * @return array locations (array[0..n] of arrays[real,array movie])
      * real: Real filming location, movie: location in the movie
+     * @return list<array{
+     *     real: string,
+     *     movie: list<string>
+     * }>
      * @see IMDB page /locations
      */
-    public function location()
+    public function location(): array
     {
         if (empty($this->locations)) {
             $query = <<<EOF
@@ -1958,10 +2038,10 @@ EOF;
     #---------------------------------------------------[ Producing Companies ]---
 
     /** Info about Production Companies
-     * @return array<array{name: string, id: string, country: string, attribute: string, year: int}>
+     * @return CompCredits
      * @see IMDB page /companycredits
      */
-    public function prodCompany()
+    public function prodCompany(): array
     {
         if (empty($this->compCreditsProd)) {
             $this->compCreditsProd = $this->companyCredits("production");
@@ -1972,10 +2052,10 @@ EOF;
     #------------------------------------------------[ Distributing Companies ]---
 
     /** Info about distributors
-     * @return array<array{name: string, id: string, country: string, attribute: string, year: int}>
+     * @return CompCredits
      * @see IMDB page /companycredits
      */
-    public function distCompany()
+    public function distCompany(): array
     {
         if (empty($this->compCreditsDist)) {
             $this->compCreditsDist = $this->companyCredits("distribution");
@@ -1986,10 +2066,10 @@ EOF;
     #---------------------------------------------[ Special Effects Companies ]---
 
     /** Info about Special Effects companies
-     * @return array<array{name: string, id: string, country: string, attribute: string, year: int}>
+     * @return CompCredits
      * @see IMDB page /companycredits
      */
-    public function specialCompany()
+    public function specialCompany(): array
     {
         if (empty($this->compCreditsSpecial)) {
             $this->compCreditsSpecial = $this->companyCredits("specialEffects");
@@ -2000,10 +2080,10 @@ EOF;
     #-------------------------------------------------------[ Other Companies ]---
 
     /** Info about other companies
-     * @return array<array{name: string, id: string, country: string, attribute: string, year: int}>
+     * @return CompCredits
      * @see IMDB page /companycredits
      */
-    public function otherCompany()
+    public function otherCompany(): array
     {
         if (empty($this->compCreditsOther)) {
             $this->compCreditsOther = $this->companyCredits("miscellaneous");
@@ -2013,10 +2093,10 @@ EOF;
 
     #-------------------------------------------------------[ Connections ]---
     /** Info about connections or references with other titles
-     * @return array of array('titleId: string, 'titleName: string, titleType: string, year: int, endYear: int, seriesName: string, description: string)
+     * @return array<string, list<array{titleId: array<string>|string|null, titleName: string, titleType: string, year: string, endYear: string, seriesName: string, description: string}>|string>
      * @see IMDB page /companycredits
      */
-    public function connection()
+    public function connection(): array
     {
         if (empty($this->connections)) {
             $query = <<<EOF
@@ -2082,10 +2162,10 @@ EOF;
 
     #-------------------------------------------------------[ External sites ]---
     /** external websites with info of this title, excluding external reviews.
-     * @return array of array('label: string, 'url: string, language: array[])
+     * @return array<list<array{label: string, url: string, language: list<string>}>|string>
      * @see IMDB page /externalsites
      */
-    public function extSites()
+    public function extSites(): array
     {
         if (empty($this->externalSites)) {
             $query = <<<EOF
@@ -2130,10 +2210,15 @@ EOF;
     #========================================================[ /Box Office page ]===
     #-------------------------------------------------------[ productionBudget ]---
     /** Info about productionBudget
-     * @return productionBudget: array[amount, currency]>
+     * @return array<array-key, array{
+     *     productionBudget: array{
+     *         amount: int|float|null,
+     *         currency: string|null
+     *     }|null
+     * }>
      * @see IMDB page /title
      */
-    public function budget()
+    public function budget(): array
     {
         if (empty($this->productionBudget)) {
             $query = <<<EOF
@@ -2165,10 +2250,14 @@ EOF;
 
     #-------------------------------------------------------[ rankedLifetimeGrosses ]---
     /** Info about Grosses, ranked by amount
-     * @return array[] array[areatype: string, amount: int, currency: string]>
+     * @return list<array{
+     *     areatype: string,
+     *     amount: string|null,
+     *     currency: string|null
+     * }>
      * @see IMDB page /title
      */
-    public function gross()
+    public function gross(): array
     {
         if (empty($this->grosses)) {
             $query = <<<EOF
@@ -2203,10 +2292,8 @@ EOF;
                     if (!empty($edge->node->boxOfficeAreaType->text)) {
                         $this->grosses[] = array(
                             'areatype' => $edge->node->boxOfficeAreaType->text,
-                            'amount' => isset($edge->node->total->amount) ?
-                                            $edge->node->total->amount : null,
-                            'currency' => isset($edge->node->total->currency) ?
-                                                $edge->node->total->currency : null
+                            'amount' => $edge->node->total->amount,
+                            'currency' => $edge->node->total->currency
                         );
                     }
                 }
@@ -2218,10 +2305,10 @@ EOF;
     #========================================================[ /keywords page ]===
     /**
      * Get all keywords from movie
-     * @return array keywords
+     * @return array<string, string> keywords
      * @see IMDB page /keywords
      */
-    public function keyword()
+    public function keyword(): array
     {
         if (empty($this->keywords)) {
             $query = <<<EOF
@@ -2246,10 +2333,10 @@ EOF;
     #========================================================[ /Alternate versions page ]===
     /**
      * Get the Alternate Versions for a given movie
-     * @return array Alternate Version (array[0..n] of string)
+     * @return list<string>
      * @see IMDB page /alternateversions
      */
-    public function alternateVersion()
+    public function alternateVersion(): array
     {
         if (empty($this->alternateversions)) {
             $query = <<<EOF
@@ -2272,13 +2359,13 @@ EOF;
     #-------------------------------------------------[ Main images ]---
     /**
      * Get image URLs for (default 6) pictures from photo page
-     * @param $amount, int for how many images, max = 9999
-     * @param $thumb boolean
+     * @param int $amount, int for how many images, max = 9999
+     * @param bool $thumb
      *      true: height is always the same (set in config), width is variable!
      *      false: untouched max width 1000 pixels
-     * @return array [0..n] of string image source
+     * @return list<string>
      */
-    public function mainphoto($amount = 6, $thumb = true)
+    public function mainphoto(int $amount = 6, bool $thumb = true): array
     {
         if (empty($this->mainPhoto)) {
             $query = <<<EOF
@@ -2328,23 +2415,21 @@ EOF;
     #-------------------------------------------------[ Trailer ]---
     /**
      * Get video URL's and images from videogallery page (Trailers only)
-     * @param $amount (int)determine how many trailers are returned, default: 1
-     * @param $customThumb boolean default: true
-     *      true: old style imdb custom thumb (fixed 200x150)
-     *      false: new style (fixed 500x281)
-     * @return array()
-     *      [0] array()
-     *          [id] =>             (string) (without vi) 4030506521
-     *          [name] =>           (string) (name of trailer) e.g. A Clockwork Orange
-     *          [runtime] =>        (int)    (in seconds!) 130
-     *          [description] =>    (string) (description text of this trailer)
-     *          [titleName] =>      (string) (name of Title) e.g. A Clockwork Orange
-     *          [titleYear] =>      (int)    1971
-     *          [playbackUrl] =>    (string) https://www.imdb.com/video/vi4030506521/
-     *          [imageUrl] =>       (string) (affected by $customThumb)
-     * videoUrl is an embeded url that is tested to work in iframe (won't work in html5 <video>)
+     * @param bool $customThumb Default: true
+     *                          true: old style imdb custom thumb (fixed 200x150)
+     *                          false: new style (fixed 500x281)
+     *
+     * @return list<array{
+     *     name: string|null,
+     *     runtime: int|null,
+     *     description: string|null,
+     *     titleName: string|null,
+     *     titleYear: int,
+     *     videoUrl: string|null,
+     *     videoImageUrl: string
+     * }>
      */
-    public function trailer($amount = 1, $customThumb = true)
+    public function trailer(bool $customThumb = true): array
     {
         if (empty($this->trailers)) {
             $query = <<<EOF
@@ -2407,7 +2492,9 @@ EOF;
                         $embedUrl = "https://www.imdb.com/video/imdb/" . $edge->node->id . "/imdb/embed";
                         // Check if embed URL not == 404 or 401
                         $headers = @get_headers($embedUrl);
-                        if (empty($headers) || substr($headers[0], 9, 3) == "404" || substr($headers[0], 9, 3) == "401") {
+                        preg_match('{HTTP\/\S*\s(\d{3})}', $headers[0], $matches);
+                        $statusCode = $matches[1] ?? null;
+                        if (in_array($statusCode, ['404', '401'], true)) {
                             continue;
                         }
                     }
@@ -2440,29 +2527,22 @@ EOF;
                                         . 'ZA' . $title . ',4,138,14,176,arialbd,7,255,255,255,1_.jpg';
                         } else {
                             // New style thumb
-                            if (!empty($thumbnailUrl)) {
-                                $fullImageWidth = $edge->node->thumbnail->width;
-                                $fullImageHeight = $edge->node->thumbnail->height;
-                                $img = str_replace('.jpg', '', $thumbnailUrl);
-                                $parameter = $this->imageFunctions->resultParameter($fullImageWidth, $fullImageHeight, 500, 281);
-                                $thumbUrl = $img . $parameter;
-                            }
+                            $fullImageWidth = $edge->node->thumbnail->width;
+                            $fullImageHeight = $edge->node->thumbnail->height;
+                            $img = str_replace('.jpg', '', $thumbnailUrl);
+                            $parameter = $this->imageFunctions->resultParameter($fullImageWidth, $fullImageHeight, 500, 281);
+                             $thumbUrl = $img . $parameter;
                         }
                     }
-                    if (count($this->trailers) < $amount) {
-                        $this->trailers[] = array(
-                            'name' => isset($edge->node->name->value) ?
-                                            $edge->node->name->value : null,
-                            'runtime' => $runtime,
-                            'description' => isset($edge->node->description->value) ?
-                                                $edge->node->description->value : null,
-                            'titleName' => $titleName,
-                            'titleYear' => isset($edge->node->primaryTitle->releaseYear->year) ?
-                                                $edge->node->primaryTitle->releaseYear->year : null,
-                            'videoUrl' => $embedUrl,
-                            'videoImageUrl' => $thumbUrl
-                        );
-                    }
+                    $this->trailers[] = array(
+                        'name' => $edge->node->name->value,
+                        'runtime' => $runtime,
+                        'description' => $edge->node->description->value,
+                        'titleName' => $titleName,
+                        'titleYear' => (int) $edge->node->primaryTitle->releaseYear->year,
+                        'videoUrl' => $embedUrl,
+                        'videoImageUrl' => $thumbUrl
+                    );
                 }
             }
         }
@@ -2472,29 +2552,18 @@ EOF;
     #-------------------------------------------------[ Video ]---
     /**
      * Get all video URL's and images from videogallery page
-     * @return array categorized by type array videos
-     *     [Trailer] => Array
-     *          [0] => Array()
-     *              [id] => 4030506521
-     *              [name] => A Clockwork Orange
-     *              [runtime] => 130
-     *              [description] => Trailer for A Clockwork Orange - Two-Disc Anniversary Edition Blu-ray Book Packaging
-     *              [titleName] => A Clockwork Orange
-     *              [titleYear] => 1971
-     *              [playbackUrl] => https://www.imdb.com/video/vi4030506521/
-     *              [imageUrl] => https://m.media-amazon.com/images/M/MVTg@._V1_QL75_UX500_CR0,47,500,281_.jpg
-     *      [Clip] => Array()
-     *          [0] => Array()
-     *              [id] => 815316505
-     *              [name] => 'The Platform' & Future Films From the IMDb Top 250
-     *              [runtime] => 244
-     *              [description] => On this IMDbrief, we break down our favorite movies from the IMDb Top 250 that boldly look to what might lie ahead.
-     *              [titleName] => 'The Platform' & Future Films From the IMDb Top 250
-     *              [titleYear] => 2020
-     *              [playbackUrl] => https://www.imdb.com/video/vi815316505/
-     *              [imageUrl] => https://m.media-amazon.com/images/M/MV5BMW8@._V1_QL75_UX500_CR0,0,500,281_.jpg
+     * @return array<string, list<array{
+     *     id: string,
+     *     name: string,
+     *     runtime: int|null,
+     *     description: string|null,
+     *     titleName: string|null,
+     *     titleYear: int|null,
+     *     playbackUrl: string|null,
+     *     imageUrl: string|null
+     * }>>
      */
-    public function video()
+    public function video(): array
     {
         if (empty($this->videos)) {
             $query = <<<EOF
@@ -2559,16 +2628,11 @@ EOF;
                     }
                     $this->videos[$edge->node->contentType->displayName->value][] = array(
                         'id' => $videoId,
-                        'name' => isset($edge->node->name->value) ?
-                                        $edge->node->name->value : null,
-                        'runtime' => isset($edge->node->runtime->value) ?
-                                        $edge->node->runtime->value : null,
-                        'description' => isset($edge->node->description->value) ?
-                                            $edge->node->description->value : null,
-                        'titleName' => isset($edge->node->primaryTitle->titleText->text) ?
-                                            $edge->node->primaryTitle->titleText->text : null,
-                        'titleYear' => isset($edge->node->primaryTitle->releaseYear->year) ?
-                                            $edge->node->primaryTitle->releaseYear->year : null,
+                        'name' => $edge->node->name->value,
+                        'runtime' => $edge->node->runtime->value,
+                        'description' => $edge->node->description->value,
+                        'titleName' => $edge->node->primaryTitle->titleText->text,
+                        'titleYear' => (int) $edge->node->primaryTitle->releaseYear->year,
                         'playbackUrl' => !empty($videoId) ?
                                                 'https://www.imdb.com/video/vi' . $videoId . '/' : null,
                         'imageUrl' => $thumbUrl
@@ -2582,12 +2646,21 @@ EOF;
     #-------------------------------------------------------[ Main Awards ]---
     /**
      * Get main awards (not including total wins and total nominations)
-     * @return array mainAwards (array[award|string, nominations|int, wins|int])
+     * @return array{
+     *     award: string|null,
+     *     nominations: int|null,
+     *     wins: int|null
+     * }
      * @see IMDB page / (TitlePage)
      */
-    public function mainaward()
+    public function mainaward(): array
     {
         if (empty($this->mainAwards)) {
+            $this->mainAwards = [
+                'award' => null,
+                'nominations' => null,
+                'wins' => null,
+            ];
             $query = <<<EOF
 query MainAward(\$id: ID!) {
   title(id: \$id) {
@@ -2602,17 +2675,11 @@ query MainAward(\$id: ID!) {
 }
 EOF;
             $data = $this->graphql->query($query, "MainAward", ["id" => "tt$this->imdbID"]);
-            if (!isset($data->title)) {
-                return $this->mainAwards;
-            }
             if (!empty($data->title->prestigiousAwardSummary)) {
                 $this->mainAwards = array(
-                    'award' => isset($data->title->prestigiousAwardSummary->award->text) ?
-                                     $data->title->prestigiousAwardSummary->award->text : null,
-                    'nominations' => isset($data->title->prestigiousAwardSummary->nominations) ?
-                                           $data->title->prestigiousAwardSummary->nominations : null,
-                    'wins' => isset($data->title->prestigiousAwardSummary->wins) ?
-                                    $data->title->prestigiousAwardSummary->wins : null
+                    'award' => $data->title->prestigiousAwardSummary->award->text,
+                    'nominations' => $data->title->prestigiousAwardSummary->nominations,
+                    'wins' => $data->title->prestigiousAwardSummary->wins
                 );
             }
         }
@@ -2622,8 +2689,8 @@ EOF;
     #-------------------------------------------------------[ Awards ]---
     /**
      * Get all awards for a title
-     * @param $winsOnly Default: false, set to true to only get won awards
-     * @param $event Default: "" fill eventId Example "ev0000003" to only get Oscars
+     * @param bool $winsOnly Default: false, set to true to only get won awards
+     * @param string $event Default: "" fill eventId Example "ev0000003" to only get Oscars
      *  Possible values for $event:
      *  ev0000003 (Oscar)
      *  ev0000223 (Emmy)
@@ -2642,46 +2709,26 @@ EOF;
      *  ev0000133 (Critics Choice Awards)
      *  ev0000403 (London Critics Circle Film Awards)
      *  ev0000530 (People's Choice Awards, USA)
-     * @return array[festivalName][0..n] of
-     *      array[awardYear,awardWinner(bool),awardCategory,awardName,awardNotes
-     *      array awardPerons[creditId,creditName,creditNote],awardOutcome] array total(win, nom)
-     *  Array
-     *       (
-     *           [Academy Awards, USA] => Array
-     *               (
-     *                   [0] => Array
-     *                   (
-     *                   [awardYear] => 1972
-     *                   [awardWinner] =>
-     *                   [awardCategory] => Best Picture
-     *                   [awardName] => Oscar
-     *                   [awardPerons] => Array
-     *                       (
-     *                           [0] => Array
-     *                               (
-     *                                   [creditId] => 0000040
-     *                                   [creditName] => Stanley Kubrick
-     *                                   [creditNote] => screenplay/director
-     *                                   [nameFullImageUrl] => (string) max width 1000 pixels
-     *                                   [nameThumbImageUrl] => string 140x207 pixels fixed
-     *                               )
      *
-     *                       )
-     *                   [awardNotes] => Based on the novel
-     *                   [awardOutcome] => Nominee
-     *                   )
-     *               )
-     *           )
-     *           [total] => Array
-     *           (
-     *               [win] => 12
-     *               [nom] => 26
-     *           )
+     * @return array<string, list<array{
+     *     awardYear: int|null,
+     *     awardWinner: bool,
+     *     awardCategory: string|null,
+     *     awardName: string|null,
+     *     awardNotes: string|null,
+     *     awardPersons: list<array{
+     *         creditId: string|null,
+     *         creditName: string|null,
+     *         creditNote: string|null,
+     *         nameFullImageUrl: string|null,
+     *         nameThumbImageUrl: string|null
+     *     }>,
+     *     awardOutcome: string
+     * }>|array{win: int, nom: int}>
      *
-     *       )
      * @see IMDB page / (TitlePage)
      */
-    public function award($winsOnly = false, $event = "")
+    public function award(bool $winsOnly = false, string $event = ""): array
     {
         $filter = $this->awardFilter($winsOnly, $event);
         if (empty($this->awards)) {
@@ -2794,10 +2841,10 @@ EOF;
     #----------------------------------------------------------[ Sound mix ]---
     /**
      * Get movie sound mixes
-     * @return array of array[0..n] of array[type, array attributes]
+     * @return list<array<string, list<string>|string>>
      * @see IMDB page / (specifications)
      */
-    public function sound()
+    public function sound(): array
     {
         if (empty($this->soundMix)) {
             return $this->techSpec("soundMixes", "text", $this->soundMix);
@@ -2808,10 +2855,10 @@ EOF;
     #----------------------------------------------------------[ Colorations ]---
     /**
      * Get movie colorations like color or Black and white
-     * @return array of array[0..n] of array[type, array attributes]
+     * @return list<array<string, list<string>|string>>
      * @see IMDB page / (specifications)
      */
-    public function color()
+    public function color(): array
     {
         if (empty($this->colors)) {
             return $this->techSpec("colorations", "text", $this->colors);
@@ -2822,10 +2869,10 @@ EOF;
     #----------------------------------------------------------[ Aspect ratio ]---
     /**
      * Get movie aspect ratio like 1.66:1 or 16:9
-     * @return array of array[0..n] of array[aspectRatio, array attributes]
+     * @return list<array<string, list<string>|string>>
      * @see IMDB page / (specifications)
      */
-    public function aspectRatio()
+    public function aspectRatio(): array
     {
         if (empty($this->aspectRatio)) {
             return $this->techSpec("aspectRatios", "aspectRatio", $this->aspectRatio);
@@ -2836,10 +2883,10 @@ EOF;
     #----------------------------------------------------------[ Cameras ]---
     /**
      * Get cameras used in this title
-     * @return array of array[0..n] of array[cameras, array attributes]
+     * @return list<array<string, list<string>|string>>
      * @see IMDB page / (specifications)
      */
-    public function camera()
+    public function camera(): array
     {
         if (empty($this->cameras)) {
             return $this->techSpec("cameras", "camera", $this->cameras);
@@ -2850,10 +2897,16 @@ EOF;
     #----------------------------------------------------------[ Movie Featured Reviews ]---
     /**
      * Get movie featured reviews (max 5 available)
-     * @return array[] of array(authorNickName| string, authorRating| int, summaryText| string, reviewText| string, submissionDate| iso date string)
+     * @return list<array{
+     *     authorNickName: string|null,
+     *     authorRating: int|null,
+     *     summaryText: string|null,
+     *     reviewText: string|null,
+     *     submissionDate: string|null
+     * }>
      * @see IMDB page / (TitlePage)
      */
-    public function featuredReview()
+    public function featuredReview(): array
     {
         if (empty($this->featuredReviews)) {
             $query = <<<EOF
@@ -2912,10 +2965,10 @@ EOF;
     #----------------------------------------------------------[ Movie isAdult ]---
     /**
      * Get adult status of a title
-     * @return boolean
+     * @return bool
      * @see IMDB page / (TitlePage)
      */
-    public function isAdult()
+    public function isAdult(): bool
     {
         if (empty($this->isAdult)) {
             $query = <<<EOF
@@ -2938,14 +2991,13 @@ EOF;
     /**
      * watch options by category for this title
      * @Note: (DEC 2024) Only Amazon providers are returned, no others!
-     * @return categorized array()
-     *  [rent/buy] => Array
-     *      [0] => Array
-     *          [providerId] =>     (string) amzn1.imdb.w2w.provider.prime_video
-     *          [providerName] =>   (string) Prime Video
-     *          [logoUrl] =>        (string) (PNG!) https://m.media-amazon.com/images/M/4c6e._V1_QL100_UX250_.png
+     * @return array<string, list<array{
+     *     providerId: string,
+     *     providerName: string,
+     *     logoUrl: string|null
+     * }>>
      */
-    public function watchOption()
+    public function watchOption(): array
     {
         if (empty($this->watchOption)) {
             $query = <<<EOF
@@ -3020,7 +3072,7 @@ EOF;
      * Get current production status of a title e.g. Released, In Development, Pre-Production, Complete, Production etc
      * @return string status
      */
-    public function productionStatus()
+    public function productionStatus(): string
     {
         if (empty($this->status)) {
             $query = <<<EOF
@@ -3038,8 +3090,7 @@ EOF;
             if (!isset($data->title)) {
                 return $this->status;
             }
-            $this->status = isset($data->title->productionStatus->currentProductionStage->text) ?
-                                  $data->title->productionStatus->currentProductionStage->text : null;
+            $this->status = $data->title->productionStatus->currentProductionStage->text;
         }
         return $this->status;
     }
@@ -3047,19 +3098,20 @@ EOF;
     #----------------------------------------------------------[ News ]---
     /**
      * Get news items about this title, max 100 items!
-     * @return array of array()
-     *      [id] =>                 (string)
-     *      [title] =>              (string) e.g. The best movies on Netflix right now
-     *      [author] =>             (string) e.g. The A.V. Club
-     *      [date] =>               (string) e.g. 2024-12-01T02:00:00Z
-     *      [extUrl] =>             (string) e.g. https://www.avclub.com/1842540580
-     *      [extHomepageUrl] =>     (string) e.g. http://www.avclub.com/content/home
-     *      [extHomepageLabel] =>   (string) e.g. avclub.com
-     *      [textHtml] =>           (string) (including html)
-     *      [textText] =>           (string)
-     *      [thumbnailUrl] =>       (string)
+     * @return list<array{
+     *     id: string,
+     *     title: string,
+     *     author: string|null,
+     *     date: string|null,
+     *     extUrl: string|null,
+     *     extHomepageUrl: string|null,
+     *     extHomepageLabel: string|null,
+     *     textHtml: string|null,
+     *     textText: string|null,
+     *     thumbnailUrl: string|null
+     * }>
      */
-    public function news()
+    public function news(): array
     {
         if (empty($this->news)) {
             $query = <<<EOF
@@ -3149,7 +3201,7 @@ EOF;
     /**
      * Setup title and year properties
      */
-    protected function titleYear()
+    protected function titleYear(): void
     {
         $query = <<<EOF
 query TitleYear(\$id: ID!) {
@@ -3176,12 +3228,9 @@ EOF;
                                  trim(str_replace('"', ':', trim($data->title->titleText->text, '"'))) : null;
         $this->mainOriginalTitle  = isset($data->title->originalTitleText->text) ?
                                           trim(str_replace('"', ':', trim($data->title->originalTitleText->text, '"'))) : null;
-        $this->mainMovietype = isset($data->title->titleType->text) ?
-                                     $data->title->titleType->text : null;
-        $this->mainYear = isset($data->title->releaseYear->year) ?
-                                $data->title->releaseYear->year : null;
-        $this->mainEndYear = isset($data->title->releaseYear->endYear) ?
-                                   $data->title->releaseYear->endYear : null;
+        $this->mainMovietype = $data->title->titleType->text;
+        $this->mainYear = $data->title->releaseYear->year;
+        $this->mainEndYear = $data->title->releaseYear->endYear;
     }
 
     #========================================================[ photo/poster ]===
@@ -3189,7 +3238,7 @@ EOF;
      * Setup cover photo (thumbnail and big variant)
      * @see IMDB page / (TitlePage)
      */
-    private function populatePoster()
+    private function populatePoster(): void
     {
         $query = <<<EOF
 query Poster(\$id: ID!) {
@@ -3223,9 +3272,9 @@ EOF;
     /**
      * Fetch all company credits
      * @param string $category e.g. distribution, production
-     * @return array<array{name: string, id: string, country: string, attribute: string, year: string}>
+     * @return array<array{name: string, id: string, country: string, attribute: list<string>|string, year: int}>
      */
-    protected function companyCredits($category)
+    protected function companyCredits(string $category): array
     {
         $filter = ', filter: { categories: ["' . $category . '"] }';
         $query = <<<EOF
@@ -3269,8 +3318,7 @@ EOF;
                     "country" => isset($edge->node->countries[0]->text) ?
                                     $edge->node->countries[0]->text : null,
                     "attribute" => $companyAttribute,
-                    "year" => isset($edge->node->yearsInvolved->year) ?
-                                    $edge->node->yearsInvolved->year : null,
+                    "year" => (int) $edge->node->yearsInvolved->year,
                 );
             }
         }
@@ -3281,11 +3329,22 @@ EOF;
     #---------------------------------------------------------------[ credit helper ]---
     /** helper for stunts, thanks, visualEffects, specialEffects, producer,
      *      writer, director, composer, cinematographer
-     * @return array (array[0..n] of arrays[imdb, name, jobs array[], attributes array[],
-     *      episode array(total, year, endYear)], titleFullImageUrl, titleThumbImageUrl)
+     * @return list<array{
+     *     imdb: string,
+     *     name: string,
+     *     jobs: list<string>,
+     *     attributes: list<string>,
+     *     episode: array{
+     *         total: int|null,
+     *         year: int|null,
+     *         endYear: int|null
+     *     }|null,
+     *     titleFullImageUrl: string|null,
+     *     titleThumbImageUrl: string|null
+     * }>
      * @see IMDB page /fullcredits
      */
-    private function creditHelper($crewCategory)
+    private function creditHelper(string $crewCategory): array
     {
         $filter = ', filter: { categories: ["' . $crewCategory . '"] }';
         $output = array();
@@ -3386,23 +3445,23 @@ EOF;
     #----------------------------------------------------------[ Episode build filter]---
     /**
      * Build filter constraint for episode()
-     * @param $seasonYear node->text from season or year
+     * @param string $seasonYear node->text from season or year
      * @return string $filter
      */
-    public function buildFilter($seasonYear)
+    public function buildFilter(string $seasonYear): string
     {
-        if (strlen((string)$seasonYear) === 4) {
+        if (strlen($seasonYear) === 4) {
             // year based Tv Series
             $filter = 'filter:{releasedOnOrAfter:{day:1,month:1,year:' . $seasonYear . '},'
                               . 'releasedOnOrBefore:{day:31,month:12,year:' . $seasonYear . '}}';
         } else {
             // To fetch data from unknown seasons/years
-            if ($seasonYear == "Unknown") { //this is intended capitol
+            if ($seasonYear === "Unknown") { //this is intended capitol
                 $SeasonUnknown = "unknown"; //this is intended not capitol
-                $seasonFilter = "";
+                $seasonFilter = '';
             } else {
                 $seasonFilter = $seasonYear;
-                $SeasonUnknown = "";
+                $SeasonUnknown = '';
             }
             $filter = 'filter:{includeSeasons:["' . $seasonFilter . '","' . $SeasonUnknown . '"]}';
         }
@@ -3412,9 +3471,9 @@ EOF;
     #========================================================[ Season Year check ]===
     /** Check if TV Series season or year based
      * @param int $yearbased 0: year based, 1: season based
-     * @return array or false
+     * @return array<array-key, \stdClass>|bool false
      */
-    private function seasonYearCheck($yearbased)
+    private function seasonYearCheck(int $yearbased): array|bool
     {
         $querySeasons = <<<EOF
 query Seasons(\$id: ID!) {
@@ -3442,7 +3501,7 @@ EOF;
         if (!empty($seasonsData->title->episodes)) {
             $bySeason = count($seasonsData->title->episodes->displayableSeasons->edges);
             $byYear = count($seasonsData->title->episodes->displayableYears->edges);
-            if ($yearbased == 0) {
+            if ($yearbased === 0) {
                 $data = $seasonsData->title->episodes->displayableSeasons->edges;
             } else {
                 $data = $seasonsData->title->episodes->displayableYears->edges;
@@ -3456,10 +3515,10 @@ EOF;
     #========================================================[ GraphQL Get All Episodes]===
     /**
      * Get all episodes of a title
-     * @param $filter add filter options to query
-     * @return \stdClass[]
+     * @param string $filter add filter options to query
+     * @return array<string, mixed>
      */
-    protected function graphQlGetAllEpisodes($filter)
+    protected function graphQlGetAllEpisodes(string $filter): array
     {
         $query = <<<EOF
 query Episodes(\$id: ID!, \$after: ID) {
@@ -3524,21 +3583,23 @@ EOF;
     #========================================================[ Helper Technical specifications ]===
     /**
      * Get movie tech specs
-     * @param $type input techspec type like soundMixes or aspectRatios
-     * @param $valueType input type like text or soundMix
-     * @param $arrayName output array name
-     * @return array of array[0..n] of array[type, array attributes]
+     * @param string $spec input techspec type like soundMixes or aspectRatios
+     * @param string $property input type like text or soundMix
+     * @param array<string, string> $target output array name
+     * @return array<mixed>
      * @see IMDB page / (specifications)
      */
-    protected function techSpec($type, $valueType, $arrayName)
+    protected function techSpec(string $spec, string $property, array $target): array
     {
         $query = <<<EOF
 query TechSpec(\$id: ID!) {
   title(id: \$id) {
-    technicalSpecifications {
-      $type {
-        items {
-          $valueType
+    {$spec} {
+      edges {
+        node {
+          {$property} {
+            text
+          }
           attributes {
             text
           }
@@ -3549,81 +3610,90 @@ query TechSpec(\$id: ID!) {
 }
 EOF;
         $data = $this->graphql->query($query, "TechSpec", ["id" => "tt$this->imdbID"]);
-        if (!isset($data->title)) {
-            return $arrayName;
+        $titleVars = is_object($data->title ?? null) ? get_object_vars($data->title) : [];
+        $specData = $titleVars[$spec] ?? null;
+
+        if (!isset($specData->edges) || !is_array($specData->edges)) {
+            return $target;
         }
-        if (
-            isset($data->title->technicalSpecifications->$type->items) &&
-            is_array($data->title->technicalSpecifications->$type->items) &&
-            count($data->title->technicalSpecifications->$type->items) > 0
-        ) {
-            foreach ($data->title->technicalSpecifications->$type->items as $item) {
-                $attributes = array();
-                if (
-                    isset($item->attributes) &&
-                    is_array($item->attributes) &&
-                    count($item->attributes) > 0
-                ) {
-                    foreach ($item->attributes as $attribute) {
-                        if (!empty($attribute->text)) {
-                            $attributes[] = $attribute->text;
-                        }
+
+        foreach ($specData->edges as $edge) {
+            $attributes = array();
+            if (
+                isset($edge->node->attributes) &&
+                is_array($edge->node->attributes) &&
+                count($edge->node->attributes) > 0
+            ) {
+                foreach ($edge->node->attributes as $attribute) {
+                    if (!empty($attribute->text)) {
+                        $attributes[] = $attribute->text;
                     }
                 }
-                $arrayName[] = array(
-                    'type' => isset($item->$valueType) ?
-                                    $item->$valueType : null,
-                    'attributes' => $attributes
-                );
             }
+
+            $nodeVars = is_object($edge->node ?? null) ? get_object_vars($edge->node) : [];
+            $propObj = $nodeVars[$property] ?? null;
+            $text = is_object($propObj) && isset($propObj->text) ? $propObj->text : null;
+
+            $target[] = array(
+                'text' => $text,
+                'attributes' => $attributes
+            );
         }
-        return $arrayName;
+        return $target;
     }
 
     #========================================================[ GraphQL Get All]===
     /**
      * Get all edges of a field in the title type
      * @param string $queryName The cached query name
-     * @param string $fieldName The field on title you want to get
-     * @param string $nodeQuery Graphql query that fits inside node { }
+     * @param string $propertyName The field on title you want to get
+     * @param string $query Graphql query that fits inside node { }
      * @param string $filter Add's extra Graphql query filters like categories
-     * @return \stdClass[]
+     * @return list<mixed>
      */
-    protected function graphQlGetAll($queryName, $fieldName, $nodeQuery, $filter = '')
+    protected function graphQlGetAll(string $queryName, string $propertyName, string $query, string $filter = ''): array
     {
-        $query = <<<EOF
-query $queryName(\$id: ID!, \$after: ID) {
+$results = array();
+        $after = '';
+        $hasNextPage = true;
+        while ($hasNextPage) {
+            $gqlQuery = <<<EOF
+query {$queryName}(\$id: ID!) {
   title(id: \$id) {
-    $fieldName(first: 9999, after: \$after$filter) {
+    {$propertyName}(first: 250$filter$after) {
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
       edges {
         node {
-          $nodeQuery
+          {$query}
         }
-      }
-      pageInfo {
-        endCursor
-        hasNextPage
       }
     }
   }
 }
 EOF;
-        // strip spaces from query due to hosters request limit
-        $fullQuery = implode("\n", array_map('trim', explode("\n", $query)));
+            $data = $this->graphql->query($gqlQuery, $queryName, ["id" => "tt$this->imdbID"]);
+            $titleVars = is_object($data->title ?? null) ? get_object_vars($data->title) : [];
+            $propData = $titleVars[$propertyName] ?? null;
 
-        // Results are paginated, so loop until we've got all the data
-        $endCursor = null;
-        $hasNextPage = true;
-        $edges = array();
-        while ($hasNextPage) {
-            $data = $this->graphql->query($fullQuery, $queryName, ["id" => "tt$this->imdbID", "after" => $endCursor]);
-            if (isset($data->title->{$fieldName})) {
-                $edges = array_merge($edges, $data->title->{$fieldName}->edges);
-                $hasNextPage = $data->title->{$fieldName}->pageInfo->hasNextPage;
-                $endCursor = $data->title->{$fieldName}->pageInfo->endCursor;
+            if (!isset($propData->edges) || !is_array($propData->edges)) {
+                return $results;
+            }
+            foreach ($propData->edges as $edge) {
+                $results[] = $edge;
+            }
+            $hasNextPage = $propData->pageInfo->hasNextPage ?? false;
+            $endCursor = $propData->pageInfo->endCursor ?? '';
+            if ($hasNextPage && !empty($endCursor)) {
+                $after = ', after: "' . $endCursor . '"';
+            } else {
+                $hasNextPage = false;
             }
         }
-        return $edges;
+        return $results;
     }
 
     #----------------------------------------------------------[ imdbID redirect ]---
@@ -3631,12 +3701,11 @@ EOF;
      * Check if imdbid is redirected to another id or not.
      * It sometimes happens that imdb redirects an existing id to a new id.
      * If user uses search class this check isn't nessecary as the returned results already contain a possible new imdbid
-     * @var $this->imdbID The imdbid used to call this class
-     * @var $titleImdbId the returned imdbid from Graphql call (in some cases this can be different)
-     * @return $titleImdbId (the new redirected imdbId) or false (no redirect)
+     *
+     * @return string|false $titleImdbId (the new redirected imdbId) or false (no redirect)
      * @see IMDB page / (TitlePage)
      */
-    public function checkRedirect()
+    public function checkRedirect(): string|false
     {
         $query = <<<EOF
 query Redirect(\$id: ID!) {
@@ -3650,10 +3719,10 @@ EOF;
         $data = $this->graphql->query($query, "Redirect", ["id" => "tt$this->imdbID"]);
         if (
             isset($data->title->meta->canonicalId) &&
-            $data->title->meta->canonicalId != ''
+            $data->title->meta->canonicalId !== ''
         ) {
             $titleImdbId = str_replace('tt', '', $data->title->meta->canonicalId);
-            if ($titleImdbId  != $this->imdbID) {
+            if ($titleImdbId  !== $this->imdbID) {
                 // todo write to log?
                 return $titleImdbId;
             } else {
@@ -3666,10 +3735,10 @@ EOF;
     #----------------------------------------------------------[ Build date string for Episode() ]---
     /**
      * build date string for episode()
-     * @param array $date input date array(['day'], ['month'], ['year'])
+     * @param array<string, string> $date input date array(['day'], ['month'], ['year'])
      * @return string $airDate e.g. '20 jan. 2008'
      */
-    private function buildDateString($date)
+    private function buildDateString(array $date): string
     {
         $airDate = null;
         if (!empty($date['day'])) {
@@ -3679,7 +3748,7 @@ EOF;
             }
         }
         if (!empty($date['month'])) {
-            $airDate .= date('M', mktime(0, 0, 0, $date['month'], 10)) . '.';
+            $airDate .= date('M', mktime(0, 0, 0, (int) $date['month'], 10)) . '.';
             if (!empty($date['year'])) {
                 $airDate .= ' ';
             }
@@ -3693,11 +3762,11 @@ EOF;
     #----------------------------------------------------------[ Award filter helper ]---
     /**
      * Build award filter string
-     * @param $winsOnly boolean
-     * @param $event string eventId
+     * @param bool $winsOnly
+     * @param string $event eventId
      * @return string $filter
      */
-    public function awardFilter($winsOnly, $event)
+    public function awardFilter(bool $winsOnly, string $event): string
     {
         $filter = ', sort: {by: PRESTIGIOUS, order: DESC}';
         if (!empty($event) || $winsOnly === true) {

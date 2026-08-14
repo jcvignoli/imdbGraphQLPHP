@@ -20,18 +20,12 @@ class KeywordSearch extends MdbBase
      * Search IMDb for titles matching $keywords
      * @param string $keywords input keywords, ("nihilism" or "sex drugs")
      *
-     * @return array[]
-     * Array
-     * (
-     *  [nihilism]
-     *      [keywordId] => 0022341 (without kw)
-     *      [totalTitles] => 517
-     *  [reference to nihilism]
-     *      [keywordId] => 0467796
-     *      [totalTitles] => 1
-     * )
+     * @return array<string, array{
+     *     keywordId: string|null,
+     *     totalTitles: int|null
+     * }>|array{}
      */
-    public function searchKeyword($keywords)
+    public function searchKeyword(string $keywords): array
     {
         $results = array();
 

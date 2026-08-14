@@ -24,70 +24,71 @@ use Imdb\Image;
  * @author Ed
  * @copyright (c) 2002-2004 by Giorgos Giagas and (c) 2004-2009 by Itzchak Rehberg and IzzySoft
  *
- * @phpstan-type ReturnPeople list<array{imdb: string, name: string, jobs: list<string>, attributes: list<string>, episode: array{total: int|null, year: int|null, endYear: int|null}|null, titleFullImageUrl: string|null, titleThumbImageUrl: string|null}>
+ * @phpstan-type CreditsArrayDef array<array-key, array{imdb: string, name: string, jobs: list<string>, attributes: list<string>, episode: array{total: int|null, year: int|null, endYear: int|null}|null, titleFullImageUrl: string|null, titleThumbImageUrl: string|null}>
+ * @phpstan-type TriviaArrayDef array<list<array{content: string|null, names: array<array{name: string, id: string}>, trademark: string, isSpoiler: string}>>
  * @phpstan-type CompCredits array<array{name: string, id: string, country: string, attribute: string, year: int}>
  */
 class Title extends MdbBase
 {
     protected Image $imageFunctions;
-    /** @var array<string, string> */
+    /** @var array<array{title: string, country: string, countryId: string, language: string|null, languageId: string, comment: array<string>|null}> */
     protected array $akas = array();
     /** @var array<string, string> */
     protected array $releaseDates = array();
     /** @var array<string, string> */
     protected array $countries = array();
-    /** @var array<string, string> */
+    /** @var list<array{ imdb: string|null, name: string|null, alias: string|null, credited: bool, character: list<string>, comment: list<string>, thumb: string|null }> */
     protected array $creditsCast = array();
     /** @var array<string, string> */
     protected array $creditsPrincipal = array();
     /**
      * @var array<mixed>
-     * @phpstan-var ReturnPeople
+     * @phpstan-var CreditsArrayDef
      */
     protected array $creditsComposer = array();
     /**
      * @var array<mixed>
-     * @phpstan-var ReturnPeople
+     * @phpstan-var CreditsArrayDef
      */
     protected array $creditsStunts = array();
     /**
      * @var array<mixed>
-     * @phpstan-var ReturnPeople
+     * @phpstan-var CreditsArrayDef
      */
     protected array $creditsThanks = array();
     /**
      * @var array<mixed>
-     * @phpstan-var ReturnPeople
+     * @phpstan-var CreditsArrayDef
      */
     protected array $creditsVisualEffects = array();
     /**
      * @var array<mixed>
-     * @phpstan-var ReturnPeople
+     * @phpstan-var CreditsArrayDef
      */
     protected array $creditsSpecialEffects = array();
     /**
      * @var array<mixed>
-     * @phpstan-var ReturnPeople
+     * @phpstan-var CreditsArrayDef
      */
     protected array $creditsDirector = array();
     /**
      * @var array<mixed>
-     * @phpstan-var ReturnPeople
+     * @phpstan-var CreditsArrayDef
      */
     protected array $creditsProducer = array();
     /**
      * @var array<mixed>
-     * @phpstan-var ReturnPeople
+     * @phpstan-var CreditsArrayDef
      */
     protected array $creditsWriter = array();
     /**
      * @var array<mixed>
-     * @phpstan-var ReturnPeople
+     * @phpstan-var CreditsArrayDef
      */
     protected array $creditsCinematographer = array();
     /** @var string[] */
     protected array $languages = array();
-    /** @var array<string, string> */
+    /** @var array<array-key, string> */
     protected array $keywords = array();
     protected ?string $mainPoster = null;
     protected ?string $mainPosterThumb = null;
@@ -108,7 +109,7 @@ class Title extends MdbBase
     protected array $mainPhoto = array();
     /** @var array<string, string> */
     protected array $trailers = array();
-    /** @var array<string, string> */
+    /** @var array<string, list<array{id: array<string>|string|null, name: string, runtime: string, description: string, titleName: string, titleYear: int, playbackUrl: string|null, imageUrl: string|null}>> */
     protected array $videos = array();
     /** @var array{award: string|null, nominations: int|null, wins: int|null}|array{} */
     protected array $mainAwards = array();
@@ -116,7 +117,7 @@ class Title extends MdbBase
     protected array $awards = array();
     /** @var array<array-key, array{mainGenre: string|null, subGenre: list<string>}> */
     protected array $genres = array();
-    /** @var list<string> */
+    /** @var array<array<string>|string> */
     protected array $quotes = array();
     /** @var array<string, string> */
     protected array $recommendations = array();
@@ -137,7 +138,7 @@ class Title extends MdbBase
     /** @var array<string, string> */
     protected array $trivias = array();
     protected ?bool $isOngoing = null;
-    /** @var array<int, list<array{ content: string, isSpoiler: bool }>> */
+    /** @var array<int, array<array{ content: string, isSpoiler: bool }>> */
     protected array $goofs = array();
     /** @var array<string, string> */
     protected array $crazyCredits = array();
@@ -151,7 +152,7 @@ class Title extends MdbBase
     protected array $compCreditsSpecial = array();
     /** @var CompCredits */
     protected array $compCreditsOther = array();
-    /** @var array<string, list<array{titleId: array<string>|string|null, titleName: string, titleType: string, year: string, endYear: string, seriesName: string, description: string}>|string> */
+    /** @var array<array<array{titleId: string|null, titleName: string|null, titleType: string, year: string|null, endYear: string, seriesName: string, description: string|null}>> */
     protected array $connections = array();
     /** @var array<list<array{label: string, url: string, language: list<string>}>|string> */
     protected array $externalSites = array();
@@ -163,8 +164,6 @@ class Title extends MdbBase
     protected array $alternateversions = array();
     /** @var list<array<string, list<string>|string>> */
     protected array $soundMix = array();
-    /** @var list<array<string, list<string>|string>> */
-    protected array $colors = array();
     /** @var list<array<string, list<string>|string>> */
     protected array $aspectRatio = array();
     /** @var list<array{cameras: string, attributes: list<string>}> */
@@ -1326,15 +1325,7 @@ EOF;
     #----------------------------------------------------------------[ Actors]---
     /**
      * Get the actors/cast members for this title
-     * @return list<array{
-     *     imdb: string|null,
-     *     name: string|null,
-     *     alias: string|null,
-     *     credited: bool,
-     *     character: list<string>,
-     *     comment: list<string>,
-     *     thumb: string|null
-     * }>
+     * @return list<array{ imdb: string|null, name: string|null, alias: string|null, credited: bool, character: list<string>, comment: list<string>, thumb: string|null }>
      * @see IMDB page /fullcredits
      */
     public function cast(): array
@@ -1428,7 +1419,7 @@ EOF;
     /**
      * Get the director(s) of the movie
      * @return array<mixed>
-     * @phpstan-return ReturnPeople
+     * @phpstan-return CreditsArrayDef
      * @see IMDB page /fullcredits
      */
     public function director(): array
@@ -1445,7 +1436,7 @@ EOF;
     /**
      * Get the cinematographer of the title
      * @return array<mixed>
-     * @phpstan-return ReturnPeople
+     * @phpstan-return CreditsArrayDef
      * @see IMDB page /fullcredits
      */
     public function cinematographer(): array
@@ -1461,7 +1452,7 @@ EOF;
     #---------------------------------------------------------------[ Writers ]---
     /** Get the writer(s)
      * @return array<mixed>
-     * @phpstan-return ReturnPeople
+     * @phpstan-return CreditsArrayDef
      * @see IMDB page /fullcredits
      */
     public function writer(): array
@@ -1476,7 +1467,7 @@ EOF;
     #-------------------------------------------------------------[ Producers ]---
     /** Obtain the producer credits of this title
      * @return array<mixed>
-     * @phpstan-return ReturnPeople
+     * @phpstan-return CreditsArrayDef
      * @see IMDB page /fullcredits
      */
     public function producer(): array
@@ -1491,7 +1482,7 @@ EOF;
     #-------------------------------------------------------------[ Composers ]---
     /** Obtain the composer(s) ("Original Music by...")
      * @return array<mixed>
-     * @phpstan-return ReturnPeople
+     * @phpstan-return CreditsArrayDef
      * @see IMDB page /fullcredits
      */
     public function composer(): array
@@ -1506,7 +1497,7 @@ EOF;
     #-------------------------------------------------------------[ Stunts ]---
     /** Obtain the stunts credits of this title
      * @return array<mixed>
-     * @phpstan-return ReturnPeople
+     * @phpstan-return CreditsArrayDef
      * @see IMDB page /fullcredits
      */
     public function stunts(): array
@@ -1521,7 +1512,7 @@ EOF;
     #-------------------------------------------------------------[ Thanks ]---
     /** Obtain thanks credits of this title
      * @return array<mixed>
-     * @phpstan-return ReturnPeople
+     * @phpstan-return CreditsArrayDef
      * @see IMDB page /fullcredits
      */
     public function thanks(): array
@@ -1536,7 +1527,7 @@ EOF;
     #-------------------------------------------------------------[ Visual Effects ]---
     /** Obtain Visual Effects credits of this title
      * @return array<mixed>
-     * @phpstan-return ReturnPeople
+     * @phpstan-return CreditsArrayDef
      * @see IMDB page /fullcredits
      */
     public function visualEffects(): array
@@ -1551,7 +1542,7 @@ EOF;
         #-------------------------------------------------------------[ Special Effects ]---
     /** Obtain Special Effects credits of this title
      * @return array<mixed>
-     * @phpstan-return ReturnPeople
+     * @phpstan-return CreditsArrayDef
      * @see IMDB page /fullcredits
      */
     public function specialEffects(): array
@@ -1714,7 +1705,7 @@ EOF;
     #-----------------------------------------------------------[ Goofs Array ]---
     /** Get the goofs
      * @param bool $spoil boolean if true spoilers are also included.
-     * @return array<int, list<array{
+     * @return array<int, array<array{
      *     content: string,
      *     isSpoiler: bool
      * }>>
@@ -1759,7 +1750,7 @@ EOF;
 
     #==========================================================[ /quotes page ]===
     /** Get the quotes for a given movie
-     * @return list<string>
+     * @return array<array<string>|string>
      * @see IMDB page /quotes
      */
     public function quote(): array
@@ -1793,7 +1784,7 @@ EOF;
     /**
      * Get the trivia info
      * @param bool $spoil if true spoilers are also included.
-     * @return array<string, non-empty-list<array{content: (array<string>|string|null), names: list<array{name: mixed, id: array<string>|string|null}>, trademark: mixed, isSpoiler: mixed}>|string>
+     * @return TriviaArrayDef
      * @see IMDB page /trivia
      */
     public function trivia(bool $spoil = false): array
@@ -2093,7 +2084,7 @@ EOF;
 
     #-------------------------------------------------------[ Connections ]---
     /** Info about connections or references with other titles
-     * @return array<string, list<array{titleId: array<string>|string|null, titleName: string, titleType: string, year: string, endYear: string, seriesName: string, description: string}>|string>
+     * @return array<array<array{titleId: string|null, titleName: string|null, titleType: string, year: string|null, endYear: string, seriesName: string, description: string|null}>>
      * @see IMDB page /companycredits
      */
     public function connection(): array
@@ -2141,18 +2132,12 @@ EOF;
                     $this->connections[$categoryId][] = array(
                         'titleId' => isset($edge->node->associatedTitle->id) ?
                                         str_replace('tt', '', $edge->node->associatedTitle->id) : null,
-                        'titleName' => isset($edge->node->associatedTitle->titleText->text) ?
-                                            $edge->node->associatedTitle->titleText->text : null,
-                        'titleType' => isset($edge->node->associatedTitle->titleType->text) ?
-                                            $edge->node->associatedTitle->titleType->text : null,
-                        'year' => isset($edge->node->associatedTitle->releaseYear->year) ?
-                                        $edge->node->associatedTitle->releaseYear->year : null,
-                        'endYear' => isset($edge->node->associatedTitle->releaseYear->endYear) ?
-                                        $edge->node->associatedTitle->releaseYear->endYear : null,
-                        'seriesName' => isset($edge->node->associatedTitle->series->series->titleText->text) ?
-                                            $edge->node->associatedTitle->series->series->titleText->text : null,
-                        'description' => isset($edge->node->description->plainText) ?
-                                            $edge->node->description->plainText : null
+                        'titleName' => $edge->node->associatedTitle->titleText->text,
+                        'titleType' => $edge->node->associatedTitle->titleType->text,
+                        'year' => $edge->node->associatedTitle->releaseYear->year,
+                        'endYear' => $edge->node->associatedTitle->releaseYear->endYear,
+                        'seriesName' => $edge->node->associatedTitle->series->series->titleText->text,
+                        'description' => $edge->node->description->plainText
                     );
                 }
             }
@@ -2162,7 +2147,7 @@ EOF;
 
     #-------------------------------------------------------[ External sites ]---
     /** external websites with info of this title, excluding external reviews.
-     * @return array<list<array{label: string, url: string, language: list<string>}>|string>
+     * @return array<array<array{label: string, url: string, language: list<string>}>>
      * @see IMDB page /externalsites
      */
     public function extSites(): array
@@ -2195,10 +2180,8 @@ EOF;
                         }
                     }
                     $this->externalSites[$edge->node->externalLinkCategory->id][] = array(
-                        'label' => isset($edge->node->label) ?
-                                        $edge->node->label : null,
-                        'url' => isset($edge->node->url) ?
-                                    $edge->node->url : null,
+                        'label' => $edge->node->label,
+                        'url' => $edge->node->url,
                         'language' => $language
                     );
                 }
@@ -2305,7 +2288,7 @@ EOF;
     #========================================================[ /keywords page ]===
     /**
      * Get all keywords from movie
-     * @return array<string, string> keywords
+     * @return array<array-key, string> keywords
      * @see IMDB page /keywords
      */
     public function keyword(): array
@@ -2419,15 +2402,7 @@ EOF;
      *                          true: old style imdb custom thumb (fixed 200x150)
      *                          false: new style (fixed 500x281)
      *
-     * @return list<array{
-     *     name: string|null,
-     *     runtime: int|null,
-     *     description: string|null,
-     *     titleName: string|null,
-     *     titleYear: int,
-     *     videoUrl: string|null,
-     *     videoImageUrl: string
-     * }>
+     * @return list<array{name: string, runtime: int|null, description: string|null, titleName: string|null, titleYear: int|null, videoUrl: string|null, videoImageUrl: string|null}>
      */
     public function trailer(bool $customThumb = true): array
     {
@@ -2552,16 +2527,7 @@ EOF;
     #-------------------------------------------------[ Video ]---
     /**
      * Get all video URL's and images from videogallery page
-     * @return array<string, list<array{
-     *     id: string,
-     *     name: string,
-     *     runtime: int|null,
-     *     description: string|null,
-     *     titleName: string|null,
-     *     titleYear: int|null,
-     *     playbackUrl: string|null,
-     *     imageUrl: string|null
-     * }>>
+     * @return array<string, list<array{id: array<string>|string|null, name: string, runtime: string, description: string, titleName: string, titleYear: int, playbackUrl: string|null, imageUrl: string|null}>>
      */
     public function video(): array
     {
@@ -2632,7 +2598,7 @@ EOF;
                         'runtime' => $edge->node->runtime->value,
                         'description' => $edge->node->description->value,
                         'titleName' => $edge->node->primaryTitle->titleText->text,
-                        'titleYear' => (int) $edge->node->primaryTitle->releaseYear->year,
+                        'titleYear' => (int) $edge->node->primaryTitle?->releaseYear?->year,
                         'playbackUrl' => !empty($videoId) ?
                                                 'https://www.imdb.com/video/vi' . $videoId . '/' : null,
                         'imageUrl' => $thumbUrl
@@ -2850,20 +2816,6 @@ EOF;
             return $this->techSpec("soundMixes", "text", $this->soundMix);
         }
         return $this->soundMix;
-    }
-
-    #----------------------------------------------------------[ Colorations ]---
-    /**
-     * Get movie colorations like color or Black and white
-     * @return list<array<string, list<string>|string>>
-     * @see IMDB page / (specifications)
-     */
-    public function color(): array
-    {
-        if (empty($this->colors)) {
-            return $this->techSpec("colorations", "text", $this->colors);
-        }
-        return $this->colors;
     }
 
     #----------------------------------------------------------[ Aspect ratio ]---
@@ -3318,7 +3270,7 @@ EOF;
                     "country" => isset($edge->node->countries[0]->text) ?
                                     $edge->node->countries[0]->text : null,
                     "attribute" => $companyAttribute,
-                    "year" => (int) $edge->node->yearsInvolved->year,
+                    "year" => (int) $edge->node?->yearsInvolved?->year,
                 );
             }
         }
@@ -3585,21 +3537,19 @@ EOF;
      * Get movie tech specs
      * @param string $spec input techspec type like soundMixes or aspectRatios
      * @param string $property input type like text or soundMix
-     * @param array<string, string> $target output array name
-     * @return array<mixed>
+     * @param list<array<string, list<string>|string>> $target output array name
+     * @return list<array<string, list<string>|string>>
      * @see IMDB page / (specifications)
      */
-    protected function techSpec(string $spec, string $property, array $target): array
+     protected function techSpec(string $spec, string $property, array $target): array
     {
         $query = <<<EOF
 query TechSpec(\$id: ID!) {
   title(id: \$id) {
-    {$spec} {
-      edges {
-        node {
-          {$property} {
-            text
-          }
+    technicalSpecifications {
+      $spec {
+        items {
+          $property
           attributes {
             text
           }
@@ -3609,36 +3559,25 @@ query TechSpec(\$id: ID!) {
   }
 }
 EOF;
-        $data = $this->graphql->query($query, "TechSpec", ["id" => "tt$this->imdbID"]);
+        $data = $this->graphql->query($query, "TechSpec", ["id" => "tt{$this->imdbID}"]);
         $titleVars = is_object($data->title ?? null) ? get_object_vars($data->title) : [];
         $specData = $titleVars[$spec] ?? null;
-
         if (!isset($specData->edges) || !is_array($specData->edges)) {
             return $target;
         }
-
         foreach ($specData->edges as $edge) {
             $attributes = array();
-            if (
-                isset($edge->node->attributes) &&
-                is_array($edge->node->attributes) &&
-                count($edge->node->attributes) > 0
-            ) {
+            if (isset($edge->node->attributes) && is_array($edge->node->attributes) && count($edge->node->attributes) > 0) {
                 foreach ($edge->node->attributes as $attribute) {
                     if (!empty($attribute->text)) {
                         $attributes[] = $attribute->text;
                     }
                 }
             }
-
             $nodeVars = is_object($edge->node ?? null) ? get_object_vars($edge->node) : [];
             $propObj = $nodeVars[$property] ?? null;
             $text = is_object($propObj) && isset($propObj->text) ? $propObj->text : null;
-
-            $target[] = array(
-                'text' => $text,
-                'attributes' => $attributes
-            );
+            $target[] = array('text' => $text, 'attributes' => $attributes);
         }
         return $target;
     }

@@ -11,7 +11,9 @@
 	<arg value="ps"/>
 	<arg name="extensions" value="php"/>
 	<arg name="parallel" value="8"/>
-	<arg name="warning-severity" value="0"/>
+	<arg name="warning-severity" value="1"/>
 
-	<rule ref="PSR12"/>
+	<rule ref="PSR12">
+		<exclude name="Generic.Files.LineLength.TooLong"/>
+	</rule>
 </ruleset>

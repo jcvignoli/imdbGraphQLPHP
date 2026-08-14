@@ -247,10 +247,10 @@ EOF;
             $ext = "_big";
         }
         if (!is_dir($this->config->photoroot)) {
-            if ( mkdir($this->config->photoroot, 0777, true) === false ) {
+            if (mkdir($this->config->photoroot, 0777, true) === false) {
                     $this->debugScalar('<br>***ERROR*** The configured image directory does not exist and couldn\'t be created.');
-	            return false;
-	    }
+                return false;
+            }
         }
         $path = $this->config->photoroot . "nm{$this->imdbid()}" . "{$ext}.jpg";
         if (file_exists($path)) {

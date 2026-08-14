@@ -208,7 +208,7 @@ EOF;
      */
     private function genre(array $genreArray): array
     {
-    	$mainGenres = array();
+        $mainGenres = array();
         if (count($genreArray) > 0) {
             foreach ($genreArray as $edge) {
                 $subGenres = array();

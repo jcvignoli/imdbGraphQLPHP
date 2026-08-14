@@ -645,6 +645,6 @@ EOF;
         }
         $first = \DateTime::createFromFormat('m/d/Y', $startDate);
         $second = \DateTime::createFromFormat('m/d/Y', $endDate);
-	return (int) ceil($first->diff($second)->days / 7);
+        return (int) ceil($first->diff($second)->days / 7);
     }
 }

@@ -293,7 +293,7 @@ class Title extends MdbBase
     /**
      * Retrieve all runtimes and their descriptions
      * @return array<array{time: int|float|null, country: string|null, annotations: list<string>}>
-     *		time is the length in minutes, country optionally exists for alternate cuts, annotations is an array of comments
+     *      time is the length in minutes, country optionally exists for alternate cuts, annotations is an array of comments
      */
     public function runtime(): array
     {
@@ -3541,7 +3541,7 @@ EOF;
      * @return list<array<string, list<string>|string>>
      * @see IMDB page / (specifications)
      */
-     protected function techSpec(string $spec, string $property, array $target): array
+    protected function techSpec(string $spec, string $property, array $target): array
     {
         $query = <<<EOF
 query TechSpec(\$id: ID!) {
@@ -3593,7 +3593,7 @@ EOF;
      */
     protected function graphQlGetAll(string $queryName, string $propertyName, string $query, string $filter = ''): array
     {
-$results = array();
+        $results = array();
         $after = '';
         $hasNextPage = true;
         while ($hasNextPage) {

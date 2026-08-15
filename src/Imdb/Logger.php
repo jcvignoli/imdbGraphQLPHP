@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Imdb;
 
 use Psr\Log\LoggerInterface;

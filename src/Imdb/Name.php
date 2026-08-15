@@ -25,7 +25,7 @@ use Imdb\Image;
  * @copyright 2008 by Itzchak Rehberg and IzzySoft
  *
  * @phpstan-type RelativeDef array{ imdb: string|null, name: string|null, relType: string|null }
- * @phpstan-type PublicityDef array{ publication: string, regionId: string, title: string, date: array{ day: int, month: int, year: int }, reference: string, authors: list<string> }|array{}
+ * @phpstan-type PublicityDef array{ publication: string|null, regionId: string, title: string, date: array{ day: int, month: int, year: int }, reference: string, authors: list<string> }|array{}
 * @phpstan-type DateDef array{ day: int|null, month: string|null, mon: int|null, year: int|null }
  * @phpstan-type SpouseDef array{ imdb: string|null, name: string|null, from: DateDef, to: DateDef, dateText: string|null, comment: list<string>, children: int, current: string }
 * @phpstan-type SalaryDef array{ imdb: string|null, name: string|null, year: string|null, amount: string|null, currency: string|null, comment: list<string> }
@@ -50,7 +50,7 @@ class Name extends MdbBase
     protected array $mainPhoto = array();
     /** @phpstan-var array<'Trailer'|'Clip', list<array{ id: string, name: string, runtime: int|null, description: string|null, titleName: string|null, titleYear: int|null, playbackUrl: string, imageUrl: string|null }>> */
     protected array $videos = array();
-    /** @phpstan-var list<array{ id: string, title: string, author: string|null, date: string, extUrl: string, extHomepageUrl: string|null, extHomepageLabel: string|null, textHtml: string|null, textText: string|null, thumbnailUrl: string|null }> */
+    /** @phpstan-var list<array{ id: string, title: string|null, author: string|null, date: string, extUrl: string|null, extHomepageUrl: string|null, extHomepageLabel: string|null, textHtml: string|null, textText: string|null, thumbnailUrl: string|null }> */
     protected array $news = array();
 
     // "Bio" page:
@@ -81,7 +81,7 @@ class Name extends MdbBase
     protected array $bioSalary = array();
 
     // "Publicity" page:
-    /** @phpstan-var list<array{ title: string, author: list<string>, publisher: string, isbn: string|null }> */
+    /** @phpstan-var list<array{ title: string|null, author: list<string>|null, publisher: string|null, isbn: string|null }> */
     protected array $pubPrints = array();
     /** @phpstan-var list<array{ title: string, id: string, year: int|null, seriesTitle: string|null, seriesSeason: int|null, seriesEpisode: int|null }> */
     protected array $pubMovies = array();
@@ -109,7 +109,7 @@ class Name extends MdbBase
     protected array $awards = array();
     /** @phpstan-var list<array{ title: string, titleId: string, titleYear: int|null, titleEndYear: int|null, titleFullImageUrl: string|null, titleThumbImageUrl: string|null, titleCharacters: list<string> }> */
     protected array $creditKnownFor = array();
-    /** @phpstan-var array<string, list<array{ titleId: string, titleName: string, titleType: string, year: int|null, endYear: int|null, characters: list<string>, jobs: list<string>, titleFullImageUrl: string|null, titleThumbImageUrl: string|null }>> */
+    /** @phpstan-var array<string, list<array{ titleId: string, titleName: string, titleType: string, year: int|null, endYear: int|null, characters: list<string>|null, jobs: list<string>, titleFullImageUrl: string|null, titleThumbImageUrl: string|null }>> */
     protected array $credits = array();
 
     #----------------------------------------------------------[ Helper for NameSearch class ]---
@@ -439,7 +439,7 @@ EOF;
      *     place: string|null,
      *     cause: string|null,
      *     status: 'ALIVE'|'DEAD'|'PRESUMED_DEAD'|null
-     * }
+     * }|array{}
      * @see IMDB person page /bio
      */
     public function died(): array
@@ -960,9 +960,9 @@ EOF;
     #-----------------------------------------------------------[ Print media ]---
     /** Print media about this person
      * @phpstan-return list<array{
-     *     title: string,
-     *     author: list<string>,
-     *     publisher: string,
+     *     title: string|null,
+     *     author: list<string>|null,
+     *     publisher: string|null,
      *     isbn: string|null
      * }>
      * @see IMDB person page /publicity
@@ -1599,7 +1599,7 @@ EOF;
      *     titleType: string,
      *     year: int|null,
      *     endYear: int|null,
-     *     characters: list<string>,
+     *     characters: list<string>|null,
      *     jobs: list<string>,
      *     titleFullImageUrl: string|null,
      *     titleThumbImageUrl: string|null
@@ -1815,10 +1815,10 @@ EOF;
      * Get news items about this name, max 100 items!
      * @phpstan-return list<array{
      *     id: string,
-     *     title: string,
+     *     title: string|null,
      *     author: string|null,
      *     date: string,
-     *     extUrl: string,
+     *     extUrl: string|null,
      *     extHomepageUrl: string|null,
      *     extHomepageLabel: string|null,
      *     textHtml: string|null,

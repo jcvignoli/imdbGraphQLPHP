@@ -40,14 +40,15 @@ class Calendar extends MdbBase
 
     /**
      * Get upcoming movie releases as seen on IMDb
-     * @parameter string $region This defines which country's releases are returned like DE, NL, US
-     * @parameter string $type This defines which type is returned, MOVIE, TV or TV_EPISODE
-     * @parameter int $startDateOverride This defines the startDate override like +3 or -5 of default todays day
-     * @parameter int $endDateOverride This defines the endDate override like +3 or -5, default + 1 year
-     * @parameter string $filter This defines if disablePopularityFilter is set or not, set to false shows all releases,
+     * @param string $region This defines which country's releases are returned like DE, NL, US
+     * @param string $type This defines which type is returned, MOVIE, TV or TV_EPISODE
+     * @param int $startDateOverride This defines the startDate override like +3 or -5 of default todays day
+     * @param int $endDateOverride This defines the endDate override like +3 or -5, default + 1 year
+     * @param string $filter This defines if disablePopularityFilter is set or not, set to false shows all releases,
      * true only returns populair releases so less results within the given date span
      * there seems to be a limit of 100 titles but i did get more titles so i really don't know
-     * @return array<string, list<array{
+     *
+     * @phpstan-return array<string, list<array{
      *     title: string,
      *     imdbid: string,
      *     genres: list<string>,

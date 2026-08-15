@@ -47,7 +47,7 @@ class News extends MdbBase
      * @param string $listType determines which list to return
      *                         possible values: CELEBRITY, INDIE, MOVIE, TOP, TV
      *
-     * @return array<int, array{
+     * @phpstan-return array<int, array{
      *     id: string|null,
      *     title: string|null,
      *     author: string|null,

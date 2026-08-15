@@ -334,12 +334,12 @@ EOF;
 
     /**
      * Check if there is at least one, possible more input items
-     * @param string $items if multiple items separate by , (Horror,Action etc)
+     * @param string|null $items if multiple items separate by , (Horror,Action etc)
      * @return string|false $items double quoted and separated by comma if more then one
      */
-    private function checkItems(string $items): string|bool
+    private function checkItems(?string $items): string|bool
     {
-        if (empty(trim($items))) {
+        if (!is_string($items) || strlen($items) === 0 || empty(trim($items))) {
             return false;
         }
         $parts = array_map('trim', explode(',', $items));
@@ -348,11 +348,14 @@ EOF;
 
     /**
      * Check if provided date is valid
-     * @param string $date input date
+     * @param string|null $date input date
      * @return bool
      */
-    private function validateDate(string $date): bool
+    private function validateDate(?string $date): bool
     {
+        if (!is_string($date) || strlen($date) === 0) {
+            return false;
+        }
         $d = \DateTime::createFromFormat('Y-m-d', $date);
         return $d && $d->format('Y-m-d') === $date;
     }

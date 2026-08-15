@@ -17,17 +17,11 @@ namespace Imdb;
 class Image
 {
     /**
-     */
-    public function __construct()
-    {
-    }
-
-    /**
      * Calculate The total result parameter and determine if SX or SY is used
-     * @parameter int $fullImageWidth the width in pixels of the large original image
-     * @parameter int $fullImageHeight the height in pixels of the large original image
-     * @parameter int $newImageWidth the width in pixels of the desired cropt/resized thumb image
-     * @parameter int $newImageHeight the height in pixels of the desired cropt/resized thumb image
+     * @param int $fullImageWidth the width in pixels of the large original image
+     * @param int $fullImageHeight the height in pixels of the large original image
+     * @param int $newImageWidth the width in pixels of the desired cropt/resized thumb image
+     * @param int $newImageHeight the height in pixels of the desired cropt/resized thumb image
      * @return string example 'QL100_SX190_CR0,15,190,281_.jpg'
      * QL100 = Quality Level, 100 the highest, 0 the lowest quality
      * SX190 = S (scale) X190 desired width
@@ -54,7 +48,7 @@ class Image
 
     /**
      * Calculate if cropValue has to be round to previous or next even integer
-     * @parameter float $totalPixelCropSize how much pixels in total need to be cropped
+     * @param float $totalPixelCropSize how much pixels in total need to be cropped
      */
     private function roundInteger(float $totalPixelCropSize): float
     {
@@ -63,19 +57,19 @@ class Image
             $num = 2 * round($totalPixelCropSize / 2.0);
         } else {
             // Next even integer
-            $num = ceil($totalPixelCropSize);
+            $num = (int) ceil($totalPixelCropSize);
             $num += $num % 2;
         }
-        return $num;
+        return (float) $num;
     }
 
     /**
      * Calculate HORIZONTAL (left and right) crop value for primary, cast, episode, recommendations and mainphoto images
      * Output is for portrait images!
-     * @parameter int $fullImageWidth the width in pixels of the large original image
-     * @parameter int $fullImageHeight the height in pixels of the large original image
-     * @parameter int $newImageWidth the width in pixels of the desired cropt/resized thumb image
-     * @parameter int $newImageHeight the height in pixels of the desired cropt/resized thumb image
+     * @param int $fullImageWidth the width in pixels of the large original image
+     * @param int $fullImageHeight the height in pixels of the large original image
+     * @param int $newImageWidth the width in pixels of the desired cropt/resized thumb image
+     * @param int $newImageHeight the height in pixels of the desired cropt/resized thumb image
      * @see IMDB page / (TitlePage)
      */
     public function thumbUrlCropParameter(int $fullImageWidth, int $fullImageHeight, int $newImageWidth, int $newImageHeight): float
@@ -90,10 +84,10 @@ class Image
     /**
      * Calculate VERTICAL (Top and bottom)crop value for primary, cast, episode and recommendations images
      * Output is for landscape images!
-     * @parameter int $fullImageWidth the width in pixels of the large original image
-     * @parameter int $fullImageHeight the height in pixels of the large original image
-     * @parameter int $newImageWidth the width in pixels of the desired cropt/resized thumb image
-     * @parameter int $newImageHeight the height in pixels of the desired cropt/resized thumb image
+     * @param int $fullImageWidth the width in pixels of the large original image
+     * @param int $fullImageHeight the height in pixels of the large original image
+     * @param int $newImageWidth the width in pixels of the desired cropt/resized thumb image
+     * @param int $newImageHeight the height in pixels of the desired cropt/resized thumb image
      * @see IMDB page / (TitlePage)
      */
     public function thumbUrlCropParameterVertical(int $fullImageWidth, int $fullImageHeight, int $newImageWidth, int $newImageHeight): float
@@ -107,9 +101,9 @@ class Image
 
     /**
      * Calculate new width for mainphoto thumbnail images
-     * @parameter int $fullImageWidth the width in pixels of the large original image
-     * @parameter int $fullImageHeight the height in pixels of the large original image
-     * @parameter int $newImageHeight the height in pixels of the desired cropt/resized thumb image
+     * @param int $fullImageWidth the width in pixels of the large original image
+     * @param int $fullImageHeight the height in pixels of the large original image
+     * @param int $newImageHeight the height in pixels of the desired cropt/resized thumb image
      * @return float newImageWidth
      */
     public function thumbUrlNewWidth(int $fullImageWidth, int $fullImageHeight, int $newImageHeight): float

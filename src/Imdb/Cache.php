@@ -16,30 +16,17 @@ use Psr\SimpleCache\CacheInterface;
 /**
  * File caching
  * Caches files to disk in cacheDir optionally gzipping if cacheUseZip
- *
  */
 class Cache implements CacheInterface
 {
-    /**
-     * @var Config
-     */
-    protected $config;
-
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
-
     /**
      * Cache constructor.
      * @param Config $config
      * @param LoggerInterface $logger
      * @throws Exception
      */
-    public function __construct(Config $config, LoggerInterface $logger)
+    public function __construct(protected Config $config, protected LoggerInterface $logger)
     {
-        $this->config = $config;
-        $this->logger = $logger;
 
         if (($this->config->cacheUse || $this->config->cacheStore) && !is_dir($this->config->cacheDir)) {
             @mkdir($this->config->cacheDir, 0755, true);
@@ -84,7 +71,7 @@ class Cache implements CacheInterface
                 @$fp = fopen($fname, "r");
                 $zipchk = fread($fp, 2);
                 fclose($fp);
-                if (!($zipchk[0] == chr(31) && $zipchk[1] == chr(139))) { //checking for zip header
+                if (!($zipchk[0] === chr(31) && $zipchk[1] === chr(139))) { //checking for zip header
                     /* converting on access */
                     file_put_contents('compress.zlib://' . $fname, $content);
                 }
@@ -98,7 +85,7 @@ class Cache implements CacheInterface
     /**
      * @inheritdoc
      */
-    public function set($key, $value, $ttl = null)
+    public function set($key, $value, $ttl = null): bool
     {
         if (!$this->config->cacheStore) {
             return false;
@@ -121,11 +108,10 @@ class Cache implements CacheInterface
     /**
      * This method looks for files older than the cache_expire set in the
      * \Imdb\Config and removes them
-     *
      */
-    public function purge()
+    public function purge(): void
     {
-        if (!$this->config->cacheStore || $this->config->cacheExpire == 0) {
+        if (!$this->config->cacheStore || $this->config->cacheExpire === 0) {
             return;
         }
 
@@ -135,7 +121,7 @@ class Cache implements CacheInterface
         $thisdir = dir($cacheDir);
         $now = time();
         while ($file = $thisdir->read()) {
-            if ($file != "." && $file != ".." && $file != ".placeholder") {
+            if ($file !== "." && $file !== ".." && $file !== ".placeholder") {
                 $fname = $cacheDir . '/' . $file;
                 if (is_dir($fname)) {
                     continue;
@@ -152,38 +138,67 @@ class Cache implements CacheInterface
     /**
      * Replace characters the OS won't like using with the filesystem
      */
-    protected function sanitiseKey($key)
+    protected function sanitiseKey(string $key): string
     {
         return str_replace(array('/', '\\', '?', '%', '*', ':', '|', '"', '<', '>'), '.', $key);
     }
 
-    // Some empty functions so we match the interface. These will never be used
-    public function getMultiple($keys, $default = null)
+    /**
+     * Some empty functions so we match the interface. These will never be used
+     * @param iterable<mixed, mixed> $keys
+     * @param mixed $default Default value to return for keys that do not exist.
+     * @return iterable<string, mixed>
+     */
+    public function getMultiple($keys, $default = null): iterable
     {
-        return [];
+        return $default;
     }
 
-    public function clear()
-    {
-        return false;
-    }
-
-    public function delete($key)
-    {
-        return false;
-    }
-
-    public function deleteMultiple($keys)
-    {
-        return false;
-    }
-
-    public function has($key)
+    /**
+     * Some empty functions so we match the interface. These will never be used
+     * @return bool
+     */
+    public function clear(): bool
     {
         return false;
     }
 
-    public function setMultiple($values, $ttl = null)
+    /**
+     * Some empty functions so we match the interface. These will never be used
+     * @return bool
+     */
+    public function delete($key): bool
+    {
+        return false;
+    }
+
+    /**
+     * Some empty functions so we match the interface. These will never be used
+     * @param iterable<mixed, mixed> $keys
+     * @return bool
+     */
+    public function deleteMultiple($keys): bool
+    {
+        return false;
+    }
+
+    /**
+     * Some empty functions so we match the interface. These will never be used
+     * @param string $key
+     * @return bool
+     */
+    public function has($key): bool
+    {
+        return false;
+    }
+
+    /**
+     * Some empty functions so we match the interface. These will never be used
+     * @param iterable<mixed, mixed> $values
+     * @param null|int|\DateInterval $ttl Optional. The TTL value of this item.
+     * @return bool
+     */
+    public function setMultiple($values, $ttl = null): bool
     {
         return false;
     }

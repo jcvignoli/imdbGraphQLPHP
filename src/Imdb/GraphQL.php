@@ -38,7 +38,7 @@ class GraphQL
     /**
      * @param string $query
      * @param string|null $qn
-     * @param array<string, string> $variables
+     * @param array{id?:string|null, after?:string|null} $variables
      * @return stdClass
      */
     public function query(string $query, ?string $qn = null, array $variables = array()): stdClass
@@ -58,7 +58,7 @@ class GraphQL
     /**
      * @param string $query
      * @param string|null $queryName
-     * @param array<string, string> $variables
+     * @param array{id?:string|null, after?:string|null} $variables
      * @return stdClass
      */
     private function doRequest(string $query, ?string $queryName = null, array $variables = array()): stdClass

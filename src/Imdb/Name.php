@@ -22,6 +22,12 @@ use Imdb\Image;
  * @author Izzy (izzysoft AT qumran DOT org)
  * @author Ed
  * @copyright 2008 by Itzchak Rehberg and IzzySoft
+ *
+ * @phpstan-type RelativeDef array{ imdb: string|null, name: string|null, relType: string|null }
+ * @phpstan-type PublicityDef array{ publication: string, regionId: string, title: string, date: array{ day: int, month: int, year: int }, reference: string, authors: list<string> }|array{}
+* @phpstan-type DateDef array{ day: int|null, month: string|null, mon: int|null, year: int|null }
+ * @phpstan-type SpouseDef array{ imdb: string|null, name: string|null, from: DateDef, to: DateDef, dateText: string|null, comment: list<string>, children: int, current: string }
+* @phpstan-type SalaryDef array{ imdb: string|null, name: string|null, year: string|null, amount: string|null, currency: string|null, comment: list<string> }
  */
 class Name extends MdbBase
 {
@@ -30,39 +36,39 @@ class Name extends MdbBase
     protected ?string $mainPoster = null;
     protected ?string $mainPosterThumb = null;
     protected ?string $fullName = null;
-    /** @var array<string, string> */
-    protected array $birthday = array();
-    /** @var array<string, string> */
+    /** @phpstan-var array{ day: int|null, month: string|null, mon: int|null, year: int|null, place: string|null }|array{}|null */
+    protected ?array $birthday = array();
+    /** @phpstan-var array{ day: int|null, month: string|null, mon: int|null, year: int|null, place: string|null, cause: string|null, status: 'ALIVE'|'DEAD'|'PRESUMED_DEAD'|null }|array{} */
     protected array $deathday = array();
     protected ?int $age = null;
-    /** @var array<string, string> */
+    /** @var array<array-key, string> */
     protected array $professions = array();
-    /** @var array<string, string> */
+    /** @phpstan-var array{ currentRank: int|null, changeDirection: string|null, difference: int|null }|array{} */
     protected array $popRank = array();
-    /** @var array<string, string> */
+    /** @var string[] */
     protected array $mainPhoto = array();
-    /** @var array<string, string> */
+    /** @phpstan-var array<'Trailer'|'Clip', list<array{ id: string, name: string, runtime: int|null, description: string|null, titleName: string|null, titleYear: int|null, playbackUrl: string, imageUrl: string|null }>> */
     protected array $videos = array();
-    /** @var array<string, string> */
+    /** @phpstan-var list<array{ id: string, title: string, author: string|null, date: string, extUrl: string, extHomepageUrl: string|null, extHomepageLabel: string|null, textHtml: string|null, textText: string|null, thumbnailUrl: string|null }> */
     protected array $news = array();
 
     // "Bio" page:
     protected ?string $birthName = null;
-    /** @var array<string, string> */
+    /** @var string[] */
     protected array $nickName = array();
-    /** @var array<string, string> */
+    /** @var string[] */
     protected array $akaName = array();
-    /** @var array<string, string> */
+    /** @var array{imperial: array{feet: int, inches: float}, metric: int}|array{} */
     protected array $bodyheight = array();
-    /** @var array<string, string> */
+    /** @phpstan-var list<SpouseDef> */
     protected array $spouses = array();
-    /** @var array<string, string> */
+    /** @phpstan-var list<RelativeDef> */
     protected array $children = array();
-    /** @var array<string, string> */
+    /** @phpstan-var list<RelativeDef> */
     protected array $parents = array();
-    /** @var array<string, string> */
+    /** @phpstan-var list<RelativeDef> */
     protected array $relatives = array();
-    /** @var array<string, string> */
+    /** @phpstan-var list<array{ desc: string, author: string }> */
     protected array $bioBio = array();
     /** @var array<string, string> */
     protected array $bioTrivia = array();
@@ -70,39 +76,39 @@ class Name extends MdbBase
     protected array $bioQuotes = array();
     /** @var array<string, string> */
     protected array $bioTrademark = array();
-    /** @var array<string, string> */
+    /** @phpstan-var list<SalaryDef> */
     protected array $bioSalary = array();
 
     // "Publicity" page:
-    /** @var array<string, string> */
+    /** @phpstan-var list<array{ title: string, author: list<string>, publisher: string, isbn: string|null }> */
     protected array $pubPrints = array();
-    /** @var array<string, string> */
+    /** @phpstan-var list<array{ title: string, id: string, year: int|null, seriesTitle: string|null, seriesSeason: int|null, seriesEpisode: int|null }> */
     protected array $pubMovies = array();
-    /** @var array<string, string> */
+    /** @phpstan-var list<array{ title: string, id: string, year: int|null }> */
     protected array $pubPortrayal = array();
-    /** @var array<string, string> */
+    /** @phpstan-var list<PublicityDef> */
     protected array $pubArticle = array();
-    /** @var array<string, string> */
+    /** @phpstan-var list<PublicityDef> */
     protected array $pubInterview = array();
-    /** @var array<string, string> */
+    /** @phpstan-var list<PublicityDef> */
     protected array $pubMagazine = array();
-    /** @var array<string, string> */
+    /** @phpstan-var list<PublicityDef> */
     protected array $pubPictorial = array();
 
     // "OtherWorks" page:
-    /** @var array<string, string> */
+    /** @phpstan-var list<array{ category: string, fromDate: array{ day: int|null, month: int|null, year: int|null }|null, toDate: array{ day: int|null, month: int|null, year: int|null }|null, text: string }> */
     protected array $otherWorks = array();
 
     // "External Sites" page:
-    /** @var array<string, string> */
+    /** @phpstan-var array<'official'|'video'|'photo'|'sound'|'misc', list<array{ label: string|null, url: string|null, language: list<string> }>> */
     protected array $externalSites = array();
 
     // "Credits" page:
-    /** @var array<string, string> */
+    /** @phpstan-var array<string, list<array{ awardYear: int, awardWinner: bool, awardCategory: string, awardName: string, awardTitles: list<array{ titleId: string, titleName: string, titleNote: string|null, titleFullImageUrl: string|null, titleThumbImageUrl: string|null }>, awardNotes: string|null, awardOutcome: string }>|array{win: int, nom: int}> */
     protected array $awards = array();
-    /** @var array<string, string> */
+    /** @phpstan-var list<array{ title: string, titleId: string, titleYear: int|null, titleEndYear: int|null, titleFullImageUrl: string|null, titleThumbImageUrl: string|null, titleCharacters: list<string> }> */
     protected array $creditKnownFor = array();
-    /** @var array<string, string> */
+    /** @phpstan-var array<string, list<array{ titleId: string, titleName: string, titleType: string, year: int|null, endYear: int|null, characters: list<string>, jobs: list<string>, titleFullImageUrl: string|null, titleThumbImageUrl: string|null }>> */
     protected array $credits = array();
 
     #----------------------------------------------------------[ Helper for NameSearch class ]---
@@ -110,9 +116,9 @@ class Name extends MdbBase
      * Create an person object populated with id and name
      * @param string $id name ID
      * @param string $name person name
-     * @param Config $config
-     * @param LoggerInterface $logger OPTIONAL override default logger
-     * @param CacheInterface $cache OPTIONAL override default cache
+     * @param Config|null $config
+     * @param LoggerInterface|null $logger OPTIONAL override default logger
+     * @param CacheInterface|null $cache OPTIONAL override default cache
      * @return Name
      */
     public static function fromSearchResult(
@@ -129,9 +135,9 @@ class Name extends MdbBase
 
     /**
      * @param string $id IMDBID to use for data retrieval
-     * @param Config $config OPTIONAL override default config
-     * @param LoggerInterface $logger OPTIONAL override default logger `\Imdb\Logger` with a custom one
-     * @param CacheInterface $cache OPTIONAL override the default cache with any PSR-16 cache.
+     * @param Config|null $config OPTIONAL override default config
+     * @param LoggerInterface|null $logger OPTIONAL override default logger `\Imdb\Logger` with a custom one
+     * @param CacheInterface|null $cache OPTIONAL override the default cache with any PSR-16 cache.
      */
     public function __construct(string $id, ?Config $config = null, ?LoggerInterface $logger = null, ?CacheInterface $cache = null)
     {
@@ -170,22 +176,22 @@ EOF;
     #--------------------------------------------------------[ Photo specific ]---
     /**
      * Get the main photo image url for thumbnail or full size
-     * @param boolean $thumb get the thumbnail (140x207 pixels) or large (max 1000 pixels)
-     * @return string|false photo (string URL if found, FALSE otherwise)
+     * @param bool $thumb get the thumbnail (140x207 pixels) or large (max 1000 pixels)
+     * @return string|false|null photo (string URL if found, false otherwise, but can be null)
      * @see IMDB page / (NamePage)
      */
-    public function photo($thumb = true)
+    public function photo(bool $thumb = true): string|bool|null
     {
         if (empty($this->mainPoster)) {
             $this->populatePoster();
         }
-        if (!$thumb && empty($this->mainPoster)) {
+        if ($thumb === false && empty($this->mainPoster)) {
             return false;
         }
-        if ($thumb && empty($this->mainPosterThumb)) {
+        if ($thumb === true && empty($this->mainPosterThumb)) {
             return false;
         }
-        if ($thumb) {
+        if ($thumb === true) {
             return $this->mainPosterThumb;
         }
         return $this->mainPoster;
@@ -269,7 +275,7 @@ EOF;
     #==================================================================[ /bio ]===
     #------------------------------------------------------------[ Birth Name ]---
     /** Get the birth name
-     * @return string birthname
+     * @return string|null birthname
      * @see IMDB person page /bio
      */
     public function birthname(): ?string
@@ -294,10 +300,10 @@ EOF;
 
     #-------------------------------------------------------------[ Nick Name ]---
     /** Get the nick name
-     * @return array nicknames array[0..n] of strings
+     * @return string[] nicknames
      * @see IMDB person page /bio
      */
-    public function nickname()
+    public function nickname(): array
     {
         if (empty($this->nickName)) {
             $query = <<<EOF
@@ -330,10 +336,10 @@ EOF;
 
     #-------------------------------------------------------------[ Alternative Names ]---
     /** Get alternative names for a person
-     * @return array[0..n] of alternative names
+     * @return string[] alternative names
      * @see IMDB person page /bio
      */
-    public function akaName()
+    public function akaName(): array
     {
         if (empty($this->akaName)) {
             $query = <<<EOF
@@ -370,11 +376,18 @@ EOF;
 
     #------------------------------------------------------------------[ Born ]---
     /** Get Birthday
-     * @return array|null birthday [day,month,mon,year,place]
+     * @return array{
+     *     day: int|null,
+     *     month: string|null,
+     *     mon: int|null,
+     *     year: int|null,
+     *     place: string|null
+     * }|array{}|null
+     * birthday [day,month,mon,year,place]
      *         where $monthName is the month name, and $monthInt the month number
      * @see IMDB person page /bio
      */
-    public function born()
+    public function born(): ?array
     {
         if (empty($this->birthday)) {
             $query = <<<EOF
@@ -417,11 +430,18 @@ EOF;
     #------------------------------------------------------------------[ Died ]---
     /**
      * Get date of death with place and cause
-     * @return array [day,monthName,monthInt,year,place,cause,status]
-     *         New: Status returns current state: ALIVE,DEAD or PRESUMED_DEAD
+     * @return array{
+     *     day: int|null,
+     *     month: string|null,
+     *     mon: int|null,
+     *     year: int|null,
+     *     place: string|null,
+     *     cause: string|null,
+     *     status: 'ALIVE'|'DEAD'|'PRESUMED_DEAD'|null
+     * }
      * @see IMDB person page /bio
      */
-    public function died()
+    public function died(): array
     {
         if (empty($this->deathday)) {
             $query = <<<EOF
@@ -496,10 +516,10 @@ EOF;
 
     #-----------------------------------------------------------[ Primary Professions ]---
     /** Get primary professions of this person
-     * @return array() all professions
+     * @return array<array-key, string> all professions
      * @see IMDB person page
      */
-    public function profession()
+    public function profession(): array
     {
         if (empty($this->professions)) {
             $query = <<<EOF
@@ -535,10 +555,14 @@ EOF;
     #----------------------------------------------------------[ Popularity ]---
     /**
      * Get current popularity rank of a person
-     * @return array(currentRank: int, changeDirection: string, difference: int)
+     * @return array{
+     *     currentRank: int|null,
+     *     changeDirection: string|null,
+     *     difference: int|null
+     * }|array{}
      * @see IMDB page / (NamePage)
      */
-    public function rank()
+    public function rank(): array
     {
         if (empty($this->popRank)) {
             $query = <<<EOF
@@ -571,10 +595,14 @@ EOF;
 
     #-----------------------------------------------------------[ Body Height ]---
     /** Get the body height
-     * @return array [imperial: array[feet (int), inches (float)], metric: int (in centimeters)]
+     * imperial: array[feet (int), inches (float)], metric: int (in centimeters)
+     * @return array{
+     *     imperial: array{feet: int, inches: float},
+     *     metric: int
+     * }|array{}
      * @see IMDB person page /bio
      */
-    public function height()
+    public function height(): array
     {
         if (empty($this->bodyheight)) {
             $query = <<<EOF
@@ -609,12 +637,12 @@ EOF;
 
     #----------------------------------------------------------------[ Spouse ]---
     /** Get spouse(s)
-     * @return array [0..n] of array spouses [imdb, name, array from,
-     *         array to, dateText, comment array(), children] where from/to are array
-     *         [day,month,mon,year] (MonthName is the name, MonthInt the number of the month),
+     * MonthName is the name, MonthInt the number of the month
+     * @return array<int, array<string, mixed>>
+     * @phpstan-return list<SpouseDef>
      * @see IMDB person page /bio
      */
-    public function spouse()
+    public function spouse(): array
     {
         if (empty($this->spouses)) {
             $query = <<<EOF
@@ -743,10 +771,10 @@ EOF;
 
     #----------------------------------------------------------------[ Children ]---
     /** Get the Children
-     * @return array children array[0..n] of array(imdb, name, relType)
+     * @phpstan-return list<RelativeDef>
      * @see IMDB person page /bio
      */
-    public function children()
+    public function children(): array
     {
         if (empty($this->children)) {
             return $this->nameDetailsParse("CHILDREN", $this->children);
@@ -756,10 +784,10 @@ EOF;
 
     #----------------------------------------------------------------[ Parents ]---
     /** Get the Parents
-     * @return array parents array[0..n] of array(imdb, name, relType)
+     * @phpstan-return list<RelativeDef>
      * @see IMDB person page /bio
      */
-    public function parents()
+    public function parents(): array
     {
         if (empty($this->parents)) {
             return $this->nameDetailsParse("PARENTS", $this->parents);
@@ -769,10 +797,10 @@ EOF;
 
     #----------------------------------------------------------------[ Relatives ]---
     /** Get the relatives
-     * @return array relatives array[0..n] of array(imdb, name, relType)
+     * @phpstan-return list<RelativeDef>
      * @see IMDB person page /bio
      */
-    public function relatives()
+    public function relatives(): array
     {
         if (empty($this->relatives)) {
             return $this->nameDetailsParse("OTHERS", $this->relatives);
@@ -782,10 +810,13 @@ EOF;
 
     #---------------------------------------------------------------[ MiniBio ]---
     /** Get the person's mini bio
-     * @return array bio array [0..n] of array[string desc, string author]
+     * @phpstan-return list<array{
+     *     desc: string,
+     *     author: string
+     * }>
      * @see IMDB person page /bio
      */
-    public function bio()
+    public function bio(): array
     {
         if (empty($this->bioBio)) {
             $query = <<<EOF
@@ -830,10 +861,10 @@ EOF;
 
     #----------------------------------------------------------------[ Trivia ]---
     /** Get the Trivia
-     * @return array trivia array[0..n] of string
+     * @return string[] trivias
      * @see IMDB person page /bio
      */
-    public function trivia()
+    public function trivia(): array
     {
         if (empty($this->bioTrivia)) {
             return $this->dataParse("trivia", $this->bioTrivia);
@@ -843,10 +874,10 @@ EOF;
 
     #----------------------------------------------------------------[ Quotes ]---
     /** Get the Personal Quotes
-     * @return array quotes array[0..n] of string
+     * @return string[] quotes
      * @see IMDB person page /bio
      */
-    public function quotes()
+    public function quotes(): array
     {
         if (empty($this->bioQuotes)) {
             return $this->dataParse("quotes", $this->bioQuotes);
@@ -856,10 +887,10 @@ EOF;
 
     #------------------------------------------------------------[ Trademarks ]---
     /** Get the "trademarks" of the person
-     * @return array trademarks array[0..n] of strings
+     * @return string[] trademarks
      * @see IMDB person page /bio
      */
-    public function trademark()
+    public function trademark(): array
     {
         if (empty($this->bioTrademark)) {
             return $this->dataParse("trademarks", $this->bioTrademark);
@@ -869,10 +900,10 @@ EOF;
 
     #----------------------------------------------------------------[ Salary ]---
     /** Get the salary list
-     * @return array salary array[0..n] of array [strings imdb, name, year, amount, currency, array comments[]]
+     * @phpstan-return list<SalaryDef>
      * @see IMDB person page /bio
      */
-    public function salary()
+    public function salary(): array
     {
         if (empty($this->bioSalary)) {
             $query = <<<EOF
@@ -927,11 +958,15 @@ EOF;
 
     #-----------------------------------------------------------[ Print media ]---
     /** Print media about this person
-     * @return array prints array[0..n] of array[title, author, place, publisher, isbn],
-     *         where "place" refers to the place of publication including year
+     * @phpstan-return list<array{
+     *     title: string,
+     *     author: list<string>,
+     *     publisher: string,
+     *     isbn: string|null
+     * }>
      * @see IMDB person page /publicity
      */
-    public function pubprints()
+    public function pubprints(): array
     {
         if (empty($this->pubPrints)) {
             $filter = ', filter: {categories: ["namePrintBiography"]}';
@@ -975,10 +1010,17 @@ EOF;
 
     #----------------------------------------------------[ Biographical movies ]---
     /** Biographical Movies
-     * @return array pubmovies array[0..n] of array[title, id, year, seriesTitle, seriesSeason, seriesEpisode]
+     * @phpstan-return list<array{
+     *     title: string,
+     *     id: string,
+     *     year: int|null,
+     *     seriesTitle: string|null,
+     *     seriesSeason: int|null,
+     *     seriesEpisode: int|null
+     * }>
      * @see IMDB person page /publicity
      */
-    public function pubmovies()
+    public function pubmovies(): array
     {
         if (empty($this->pubMovies)) {
             $filter = ', filter: {categories: ["nameFilmBiography"]}';
@@ -1035,10 +1077,14 @@ EOF;
 
     #-----------------------------------------------------------[ Portrayal]---
     /** Portrayal listings about this person
-     * @return array portrayal array[0..n] of array[title, id, year]
+     * @phpstan-return list<array{
+     *     title: string,
+     *     id: string,
+     *     year: int|null
+     * }>
      * @see IMDB person page /publicity
      */
-    public function pubportrayal()
+    public function pubportrayal(): array
     {
         if (empty($this->pubPortrayal)) {
             $filter = ', filter: {categories: ["namePortrayal"]}';
@@ -1074,20 +1120,10 @@ EOF;
 
     #----------------------------------------------------------------[ Article ]---
     /** Get the Publicity Articles of this name
-     * @return array()
-     *      [publication] =>    (string)
-     *      [regionId] =>       (string)
-     *      [title] =>          (string)
-     *      [date] => Array()
-     *          [day] =>    (int)
-     *          [month] =>  (int)
-     *          [year] =>   (int)
-     *      [reference] =>      (string)
-     *      [authors] => Array()
-     *          [0] => (string)
+     * @phpstan-return list<PublicityDef>
      * @see IMDB person page /publicity
      */
-    public function pubarticle()
+    public function pubarticle(): array
     {
         if (empty($this->pubArticle)) {
             $this->pubArticle = $this->pubOtherListing("PublicityArticle");
@@ -1097,20 +1133,10 @@ EOF;
 
     #----------------------------------------------------------------[ Interview ]---
     /** Get the Publicity Interviews of this name
-     * @return array()
-     *      [publication] =>    (string)
-     *      [regionId] =>       (string)
-     *      [title] =>          (string)
-     *      [date] => Array()
-     *          [day] =>    (int)
-     *          [month] =>  (int)
-     *          [year] =>   (int)
-     *      [reference] =>      (string)
-     *      [authors] => Array()
-     *          [0] => (string)
+     * @phpstan-return list<PublicityDef>
      * @see IMDB person page /publicity
      */
-    public function pubinterview()
+    public function pubinterview(): array
     {
         if (empty($this->pubInterview)) {
             $this->pubInterview = $this->pubOtherListing("PublicityInterview");
@@ -1120,20 +1146,10 @@ EOF;
 
     #----------------------------------------------------------------[ Magazines ]---
     /** Get the Publicity Magazines of this name
-     * @return array()
-     *      [publication] =>    (string)
-     *      [regionId] =>       (string)
-     *      [title] =>          (string)
-     *      [date] => Array()
-     *          [day] =>    (int)
-     *          [month] =>  (int)
-     *          [year] =>   (int)
-     *      [reference] =>      (string)
-     *      [authors] => Array()
-     *          [0] => (string)
+     * @phpstan-return list<PublicityDef>
      * @see IMDB person page /publicity
      */
-    public function pubmagazine()
+    public function pubmagazine(): array
     {
         if (empty($this->pubMagazine)) {
             $this->pubMagazine = $this->pubOtherListing("PublicityMagazineCover");
@@ -1143,20 +1159,10 @@ EOF;
 
     #----------------------------------------------------------------[ Pictorial ]---
     /** Get the Publicity Pictoryials of this name
-     * @return array()
-     *      [publication] =>    (string)
-     *      [regionId] =>       (string)
-     *      [title] =>          (string)
-     *      [date] => Array()
-     *          [day] =>    (int)
-     *          [month] =>  (int)
-     *          [year] =>   (int)
-     *      [reference] =>      (string)
-     *      [authors] => Array()
-     *          [0] => (string)
+     * @phpstan-return list<PublicityDef>
      * @see IMDB person page /publicity
      */
-    public function pubpictorial()
+    public function pubpictorial(): array
     {
         if (empty($this->pubPictorial)) {
             $this->pubPictorial = $this->pubOtherListing("PublicityPictorial");
@@ -1167,10 +1173,23 @@ EOF;
     #============================================================[ /OtherWorks ]===
 
     /** Other works of this person
-     * @return array pubOtherWorks array[0..n] of array[category, fromDate array(day, month,year), toDate array(day, month,year), text]
+     * @phpstan-return list<array{
+     *     category: string,
+     *     fromDate: array{
+     *         day: int|null,
+     *         month: int|null,
+     *         year: int|null
+     *     }|null,
+     *     toDate: array{
+     *         day: int|null,
+     *         month: int|null,
+     *         year: int|null
+     *     }|null,
+     *     text: string
+     * }>
      * @see IMDB person page /otherworks
      */
-    public function otherWorks()
+    public function otherWorks(): array
     {
         if (empty($this->otherWorks)) {
             $query = <<<EOF
@@ -1219,11 +1238,16 @@ EOF;
     }
 
     #-------------------------------------------------------[ External sites ]---
-    /** external websites with info of this name, excluding external reviews.
-     * @return array of array('label: string, 'url: string, language: array[])
+    /**
+     * external websites with info of this name, excluding external reviews.
+     * @phpstan-return array<'official'|'video'|'photo'|'sound'|'misc', list<array{
+     *     label: string|null,
+     *     url: string|null,
+     *     language: list<string>
+     * }>>
      * @see IMDB page /externalsites
      */
-    public function extSites()
+    public function extSites(): array
     {
         $categoryIds = array(
             'official' => 'official',
@@ -1274,13 +1298,13 @@ EOF;
     #-------------------------------------------------[ Main images ]---
     /**
      * Get image URLs for (default 6) pictures from photo page
-     * @param $amount, int for how many images, max = 9999
-     * @param $thumb boolean
+     * @param int $amount how many images, max = 9999
+     * @param bool $thumb boolean
      *      true: height is always the same (set in config), width is variable!
      *      false: untouched max width 1000 pixels
-     * @return array [0..n] of string image source
+     * @return string[] string image source
      */
-    public function mainphoto($amount = 6, $thumb = true)
+    public function mainphoto(int $amount = 6, bool $thumb = true): array
     {
         if (empty($this->mainPhoto)) {
             $query = <<<EOF
@@ -1330,52 +1354,31 @@ EOF;
     #-------------------------------------------------------[ Awards ]---
     /**
      * Get all awards for a name
-     * @param $winsOnly boolean Default: false, set to true to only get won awards
-     * @param $event string Default: "" eventId Example " ev0000003" to only get Oscars
+     * @param bool $winsOnly Default: false, set to true to only get won awards
+     * @param string $event Default: "" eventId Example " ev0000003" to only get Oscars
      *  Possible values for $event:
      *  ev0000003 (Oscar)
      *  ev0000223 (Emmy)
      *  ev0000292 (Golden Globe)
-     * @return array[festivalName][0..n] of
-     *      array[awardYear,awardWinner(bool),awardCategory,awardName,awardNotes
-     *      array awardTitles[titleId,titleName,titleNote],awardOutcome] array total(win, nom)
-     *  Array
-     *       (
-     *           [Academy Awards, USA] => Array
-     *               (
-     *                   [0] => Array
-     *                   (
-     *                   [awardYear] => 1972
-     *                   [awardWinner] =>
-     *                   [awardCategory] => Best Picture
-     *                   [awardName] => Oscar
-     *                   [awardTitles] => Array
-     *                       (
-     *                           [0] => Array
-     *                               (
-     *                                   [titleId] => 0000040
-     *                                   [titleName] => 1408
-     *                                   [titleNote] => screenplay/director
-     *                                   [titleFullImageUrl] => https://m.media-amazon.com/images/M/MV5BMTg3ODY2ODM3OF5BMl5BanBnXkFtZTYwOTQ5NTM3._V1_.jpg
-     *                                   [titleThumbImageUrl] => https://m.media-amazon.com/images/M/MV5BMTg3ODY2ODM3OF5BMl5BanBnXkFtZTYwOTQ5NTM3._V1_QL75_SX281_.jpg
-     *                               )
      *
-     *                       )
-     *                   [awardNotes] => Based on the novel
-     *                   [awardOutcome] => Nominee
-     *                   )
-     *               )
-     *           )
-     *           [total] => Array
-     *           (
-     *               [win] => 12
-     *               [nom] => 26
-     *           )
-     *
-     *       )
+     * @phpstan-return array<string, list<array{
+     *     awardYear: int,
+     *     awardWinner: bool,
+     *     awardCategory: string,
+     *     awardName: string,
+     *     awardTitles: list<array{
+     *         titleId: string,
+     *         titleName: string,
+     *         titleNote: string|null,
+     *         titleFullImageUrl: string|null,
+     *         titleThumbImageUrl: string|null
+     *     }>,
+     *     awardNotes: string|null,
+     *     awardOutcome: string
+     * }>|array{win: int, nom: int}>
      * @see IMDB page / (TitlePage)
      */
-    public function award($winsOnly = false, $event = "")
+    public function award(bool $winsOnly = false, string $event = ""): array
     {
         if (empty($this->awards)) {
             $filter = $this->awardFilter($winsOnly, $event);
@@ -1486,10 +1489,18 @@ EOF;
 
     #============================================================[ /creditKnownFor ]===
     /** All prestigious title credits for this person
-     * @return array creditKnownFor array[0..n] of array[title, titleId, titleYear, titleEndYear, titleFullImageUrl, titleThumbImageUrl, array titleCharacters]
+     * @phpstan-return list<array{
+     *     title: string,
+     *     titleId: string,
+     *     titleYear: int|null,
+     *     titleEndYear: int|null,
+     *     titleFullImageUrl: string|null,
+     *     titleThumbImageUrl: string|null,
+     *     titleCharacters: list<string>
+     * }>
      * @see IMDB person page /credits
      */
-    public function creditKnownFor()
+    public function creditKnownFor(): array
     {
         if (empty($this->creditKnownFor)) {
             $query = <<<EOF
@@ -1581,11 +1592,20 @@ EOF;
 
     #-------------------------------------------------------[ Credits ]---
     /** Get all credits for a person
-     * @return array[categoryId] of array('titleId: string, 'titleName: string, titleType: string,
-     *      year: int, endYear: int, characters: array(),jobs: array(), titleFullImageUrl, titleThumbImageUrl,)
+     * @phpstan-return array<string, list<array{
+     *     titleId: string,
+     *     titleName: string,
+     *     titleType: string,
+     *     year: int|null,
+     *     endYear: int|null,
+     *     characters: list<string>,
+     *     jobs: list<string>,
+     *     titleFullImageUrl: string|null,
+     *     titleThumbImageUrl: string|null
+     * }>>
      * @see IMDB page /credits
      */
-    public function credit()
+    public function credit(): array
     {
         if (empty($this->credits)) {
             $query = <<<EOF
@@ -1693,29 +1713,18 @@ EOF;
     #-------------------------------------------------[ Video ]---
     /**
      * Get all video URL's and images from videogallery page
-     * @return categorized array videos
-     *     [Trailer] => Array
-     *          [0] => Array()
-     *              [id] => 4030506521
-     *              [name] => A Clockwork Orange
-     *              [runtime] => 130
-     *              [description] => Trailer for A Clockwork Orange - Two-Disc Anniversary Edition Blu-ray Book Packaging
-     *              [titleName] => A Clockwork Orange
-     *              [titleYear] => 1971
-     *              [playbackUrl] => https://www.imdb.com/video/vi4030506521/
-     *              [imageUrl] => https://m.media-amazon.com/images/M/MVTg@._V1_QL75_UX500_CR0,47,500,281_.jpg
-     *      [Clip] => Array()
-     *          [0] => Array()
-     *              [id] => 815316505
-     *              [name] => 'The Platform' & Future Films From the IMDb Top 250
-     *              [runtime] => 244
-     *              [description] => On this IMDbrief, we break down our favorite movies from the IMDb Top 250 that boldly look to what might lie ahead.
-     *              [titleName] => 'The Platform' & Future Films From the IMDb Top 250
-     *              [titleYear] => 2020
-     *              [playbackUrl] => https://www.imdb.com/video/vi815316505/
-     *              [imageUrl] => https://m.media-amazon.com/images/M/MV5BMW8@._V1_QL75_UX500_CR0,0,500,281_.jpg
+     * @phpstan-return array<'Trailer'|'Clip', list<array{
+     *     id: string,
+     *     name: string,
+     *     runtime: int|null,
+     *     description: string|null,
+     *     titleName: string|null,
+     *     titleYear: int|null,
+     *     playbackUrl: string,
+     *     imageUrl: string|null
+     * }>>
      */
-    public function video()
+    public function video(): array
     {
         if (empty($this->videos)) {
             $query = <<<EOF
@@ -1803,19 +1812,20 @@ EOF;
     #----------------------------------------------------------[ News ]---
     /**
      * Get news items about this name, max 100 items!
-     * @return array of array()
-     *      [id] =>                 (string)
-     *      [title] =>              (string) e.g. The best movies on Netflix right now
-     *      [author] =>             (string) e.g. The A.V. Club
-     *      [date] =>               (string) e.g. 2024-12-01T02:00:00Z
-     *      [extUrl] =>             (string) e.g. https://www.avclub.com/1842540580
-     *      [extHomepageUrl] =>     (string) e.g. http://www.avclub.com/content/home
-     *      [extHomepageLabel] =>   (string) e.g. avclub.com
-     *      [textHtml] =>           (string) (including html)
-     *      [textText] =>           (string)
-     *      [thumbnailUrl] =>       (string)
+     * @phpstan-return list<array{
+     *     id: string,
+     *     title: string,
+     *     author: string|null,
+     *     date: string,
+     *     extUrl: string,
+     *     extHomepageUrl: string|null,
+     *     extHomepageLabel: string|null,
+     *     textHtml: string|null,
+     *     textText: string|null,
+     *     thumbnailUrl: string|null
+     * }>
      */
-    public function news()
+    public function news(): array
     {
         if (empty($this->news)) {
             $query = <<<EOF
@@ -1903,9 +1913,10 @@ EOF;
     #========================================================[ photo/poster ]===
     /**
      * Setup cover photo (thumbnail and big variant)
+     * @return void
      * @see IMDB page / (NamePage)
      */
-    private function populatePoster()
+    private function populatePoster(): void
     {
         $query = <<<EOF
 query Poster(\$id: ID!) {
@@ -1940,9 +1951,10 @@ EOF;
     #-----------------------------------------[ Helper for Trivia, Quotes and Trademarks ]---
     /** Parse Trivia, Quotes and Trademarks
      * @param string $name
-     * @param array $arrayName
+     * @param array<string, string> $arrayName
+     * @return array<string, string>
      */
-    protected function dataParse($name, $arrayName)
+    protected function dataParse(string $name, array $arrayName): array
     {
         $query = <<<EOF
 text {
@@ -1964,10 +1976,10 @@ EOF;
     /** Parse children, parents, relatives
      * @param string $name
      *     possible values for $name: CHILDREN, PARENTS, OTHERS
-     * @param array $arrayName
-     * @return array
+     * @param array<string, string> $arrayName
+     * @phpstan-return list<RelativeDef>
      */
-    protected function nameDetailsParse($name, $arrayName)
+    protected function nameDetailsParse(string $name, array $arrayName): array
     {
         $filter = ', filter: {relationshipTypes: ' . $name . '}';
         $query = <<<EOF
@@ -2013,10 +2025,10 @@ EOF;
 
     #-----------------------------------------------------------[ Other Publicity Listings helper]---
     /** helper for Article, Interview, Magazine and Pictorial publicity listings about this person
-     * @return array listing
+     * @phpstan-return list<PublicityDef> listing
      * @see IMDB person page /publicity
      */
-    protected function pubOtherListing($listingType)
+    protected function pubOtherListing(string $listingType): array
     {
         $results = array();
         $filter = ', filter: {categories: ["' . lcfirst($listingType) . '"]}';
@@ -2085,7 +2097,7 @@ EOF;
      * @param string $filter Add's extra Graphql query filters like categories
      * @return \stdClass[]
      */
-    protected function graphQlGetAll($queryName, $fieldName, $nodeQuery, $filter = '')
+    protected function graphQlGetAll(string $queryName, string $fieldName, string $nodeQuery, string $filter = ''): array
     {
         $query = <<<EOF
 query $queryName(\$id: ID!, \$after: ID) {
@@ -2113,11 +2125,20 @@ EOF;
         $edges = array();
         while ($hasNextPage) {
             $data = $this->graphql->query($fullQuery, $queryName, ["id" => "nm$this->imdbID", "after" => $endCursor]);
-            if (isset($data->name->{$fieldName})) {
-                $edges = array_merge($edges, $data->name->{$fieldName}->edges);
-                $hasNextPage = $data->name->{$fieldName}->pageInfo->hasNextPage;
-                $endCursor = $data->name->{$fieldName}->pageInfo->endCursor;
+
+            if (isset($data->name)) {
+                $nameVars = get_object_vars($data->name);
+                if (isset($nameVars[$fieldName])) {
+                    /** @var \stdClass $field */
+                    $field = $nameVars[$fieldName];
+                    $edges = array_merge($edges, $field->edges ?? []);
+                    $hasNextPage = $field->pageInfo->hasNextPage ?? false;
+                    $endCursor = $field->pageInfo->endCursor ?? null;
+                    continue;
+                }
             }
+
+            $hasNextPage = false;
         }
         return $edges;
     }
@@ -2127,12 +2148,12 @@ EOF;
      * Check if imdbid is redirected to another id or not.
      * It sometimes happens that imdb redirects an existing id to a new id.
      * If user uses search class this check isn't nessecary as the returned results already contain a possible new imdbid
-     * @var $this->imdbID The imdbid used to call this class
-     * @var $nameImdbId the returned imdbid from Graphql call (in some cases this can be different)
-     * @return $nameImdbId (the new redirected imdbId) or false (no redirect)
+     * @info $this->imdbID The imdbid used to call this class
+     * @info $nameImdbId the returned imdbid from Graphql call (in some cases this can be different)
+     * @return string|false $nameImdbId (the new redirected imdbId) or false (no redirect)
      * @see IMDB page / (TitlePage)
      */
-    public function checkRedirect()
+    public function checkRedirect(): string|bool
     {
         $query = <<<EOF
 query Redirect(\$id: ID!) {
@@ -2146,10 +2167,10 @@ EOF;
         $data = $this->graphql->query($query, "Redirect", ["id" => "nm$this->imdbID"]);
         if (
             isset($data->name->meta->canonicalId) &&
-            $data->name->meta->canonicalId != ''
+            $data->name->meta->canonicalId !== ''
         ) {
             $nameImdbId = str_replace('nm', '', $data->name->meta->canonicalId);
-            if ($nameImdbId  != $this->imdbID) {
+            if ($nameImdbId  !== $this->imdbID) {
                 // todo write to log?
                 return $nameImdbId;
             } else {
@@ -2162,11 +2183,11 @@ EOF;
     #----------------------------------------------------------[ Award filter helper ]---
     /**
      * Build award filter string
-     * @param $winsOnly boolean
-     * @param $event string eventId
+     * @param bool $winsOnly
+     * @param string $event eventId
      * @return string $filter
      */
-    public function awardFilter($winsOnly, $event)
+    public function awardFilter(bool $winsOnly, string $event): string
     {
         $filter = ', sort: {by: PRESTIGIOUS, order: DESC}';
         if (!empty($event) || $winsOnly === true) {

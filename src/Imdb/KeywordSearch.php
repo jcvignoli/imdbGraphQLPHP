@@ -20,7 +20,7 @@ class KeywordSearch extends MdbBase
      * Search IMDb for titles matching $keywords
      * @param string $keywords input keywords, ("nihilism" or "sex drugs")
      *
-     * @return array<string, array{
+     * @phpstan-return array<string, array{
      *     keywordId: string|null,
      *     totalTitles: int|null
      * }>|array{}

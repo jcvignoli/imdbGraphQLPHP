@@ -24,7 +24,7 @@ class TitleCombined extends MdbBase
     protected Image $imageFunctions;
     protected int $newImageWidth;
     protected int $newImageHeight;
-    /** @var array{title: string, originalTitle: string, imdbid: string, reDirectId: string|false, movieType: string, year: int|string|null, endYear: int|string|null, imgThumb: string, imgFull: string, runtime: int, rating: float, genre: list<array{mainGenre: string|null, subGenre: list<string>}>, plotoutline: string, credits: array<string, list<array{name: string, imdbid: string}>>}|array{} */
+    /** @phpstan-var array{title: string, originalTitle: string, imdbid: string, reDirectId: string|false, movieType: string, year: int|string|null, endYear: int|string|null, imgThumb: string, imgFull: string, runtime: int, rating: float, genre: list<array{mainGenre: string|null, subGenre: list<string>}>, plotoutline: string, credits: array<string, list<array{name: string, imdbid: string}>>}|array{} */
     protected array $main = array();
 
     /**
@@ -44,7 +44,7 @@ class TitleCombined extends MdbBase
 
     /**
      * This method will only get main values of a imdb title (inside the black top part of the imdb page)
-     * @return array{
+     * @phpstan-return array{
      *     title: string,
      *     originalTitle: string,
      *     imdbid: string,
@@ -200,7 +200,7 @@ EOF;
     #--------------------------------------------------------------[ Genre(s) ]---
     /** Get all genres the movie is registered for
      * @param list<\stdClass> $genreArray found genres array from main()
-     * @return list<array{
+     * @phpstan-return list<array{
      *     mainGenre: string|null,
      *     subGenre: list<string>
      * }>|array{}

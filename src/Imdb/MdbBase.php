@@ -11,6 +11,8 @@
 
 namespace Imdb;
 
+use Imdb\Config;
+use Imdb\GraphQL;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Psr\SimpleCache\CacheInterface;
@@ -24,43 +26,25 @@ use Psr\SimpleCache\CacheInterface;
  */
 class MdbBase extends Config
 {
-    public $version = '2.1.4';
+    protected CacheInterface $cache;
+    protected LoggerInterface $logger;
+    protected Config $config;
+    protected GraphQL $graphql;
+
+    /** @var string 7 or 8 digit identifier for this person or title */
+    protected string $imdbID;
+    public string $version = '3.0';
 
     /**
-     * @var CacheInterface
-     */
-    protected $cache;
-
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
-
-    /**
-     * @var Config
-     */
-    protected $config;
-
-    /**
-     * @var GraphQL
-     */
-    protected $graphql;
-
-    /**
-     * @var string 7 or 8 digit identifier for this person or title
-     */
-    protected $imdbID;
-
-    /**
-     * @param Config $config OPTIONAL override default config
-     * @param LoggerInterface $logger OPTIONAL override default logger `\Imdb\Logger` with a custom one
-     * @param CacheInterface $cache OPTIONAL override the default cache with any PSR-16 cache.
+     * @param Config|null $config OPTIONAL override default config
+     * @param LoggerInterface|null $logger OPTIONAL override default logger `\Imdb\Logger` with a custom one
+     * @param CacheInterface|null $cache OPTIONAL override the default cache with any PSR-16 cache.
      */
     public function __construct(?Config $config = null, ?LoggerInterface $logger = null, ?CacheInterface $cache = null)
     {
-        $this->config = $config ?: $this;
+        $this->config = $config ?? $this;
         $this->logger = $logger ?? ($this->debug ? new Logger($this->debug) : new NullLogger());
-        $this->cache = empty($cache) ? new Cache($this->config, $this->logger) : $cache;
+        $this->cache = $cache ?? new Cache($this->config, $this->logger);
         $this->graphql = new GraphQL($this->cache, $this->logger, $this->config);
     }
 
@@ -75,9 +59,9 @@ class MdbBase extends Config
 
     /**
      * Set and validate the IMDb ID
-     * @param string id IMDb ID
+     * @param string $id IMDb ID
      */
-    protected function setid($id)
+    protected function setid(string $id): void
     {
         if (is_numeric($id)) {
             $this->imdbID = str_pad($id, 7, '0', STR_PAD_LEFT);
@@ -89,18 +73,8 @@ class MdbBase extends Config
     }
 
     #---------------------------------------------------------[ Debug helpers ]---
-    protected function debugScalar($scalar)
+    protected function debugScalar(string $scalar): void
     {
         $this->logger->error($scalar);
-    }
-
-    protected function debugObject($object)
-    {
-        $this->logger->error('{object}', array('object' => $object));
-    }
-
-    protected function debugHtml($html)
-    {
-        $this->logger->error(htmlentities($html));
     }
 }

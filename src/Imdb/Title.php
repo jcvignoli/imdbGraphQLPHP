@@ -3591,7 +3591,7 @@ EOF;
      * @param string $propertyName The field on title you want to get
      * @param string $query Graphql query that fits inside node { }
      * @param string $filter Add's extra Graphql query filters like categories
-     * @return list<mixed>
+     * @return \stdClass[]
      */
     protected function graphQlGetAll(string $queryName, string $propertyName, string $query, string $filter = ''): array
     {

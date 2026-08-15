@@ -41,7 +41,7 @@ class Trailers extends MdbBase
 
     /**
      * Get the latest trailers as seen on IMDb https://www.imdb.com/trailers/
-     * @return array<int, array{
+     * @phpstan-return array<int, array{
      *     videoId: string,
      *     titleId: string,
      *     title: string,
@@ -149,7 +149,7 @@ EOF;
      * - releaseDate: Date string (e.g., "December 4, 2024")
      * - contentType: Type description (e.g., "Trailer Season 1 [OV]")
      *
-     * @return list<array{
+     * @phpstan-return list<array{
      *     videoId: string,
      *     titleId: string,
      *     title: string,

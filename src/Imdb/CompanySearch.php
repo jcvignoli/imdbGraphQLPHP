@@ -22,7 +22,7 @@ class CompanySearch extends MdbBase
      * The results can be used as input for advancedTitleSearch class to get titles based on this company
      * Or the results can be used as input for Company class to get company info
      *
-     * @return list<array{
+     * @phpstan-return list<array{
      *     id: string,
      *     name: string,
      *     country: string,

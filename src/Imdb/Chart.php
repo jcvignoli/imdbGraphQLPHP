@@ -53,7 +53,7 @@ class Chart extends MdbBase
      *   TOP_250_TV
      *       Overall IMDb Top 250 TV List
      *
-     * @return list<array{
+     * @phpstan-return list<array{
      *     title: string,
      *     imdbid: string,
      *     year: int|null,
@@ -147,7 +147,7 @@ EOF;
 
     /**
      * Get top250 Names lists (Not seen on IMDb afaik)
-     * @return list<array{
+     * @phpstan-return list<array{
      *     name: string,
      *     imdbid: string,
      *     rank: int,
@@ -261,7 +261,7 @@ EOF;
 
     /**
      * Get most popular Names lists as seen on https://imdb.com/chart/starmeter
-     * @return list<array{
+     * @phpstan-return list<array{
      *     name: string,
      *     imdbid: string,
      *     rank: int,
@@ -399,7 +399,7 @@ EOF;
      *   TOP_RATED_TV_SHOWS
      *       Top Rated IMDb TV List
      *
-     * @return list<array{
+     * @phpstan-return list<array{
      *     title: string,
      *     imdbid: string,
      *     year: int|null,
@@ -587,9 +587,9 @@ EOF;
             return $boxOfficeResults;
         }
         if (
-            isset($data->boxOfficeWeekendChart->edges) &&
-            is_array($data->boxOfficeWeekendChart->edges) &&
-            count($data->boxOfficeWeekendChart->edges) > 0
+            isset($data->boxOfficeWeekendChart->entries) &&
+            is_array($data->boxOfficeWeekendChart->entries) &&
+            count($data->boxOfficeWeekendChart->entries) > 0
         ) {
             foreach ($data->boxOfficeWeekendChart->entries as $edge) {
                 $thumbUrl = null;

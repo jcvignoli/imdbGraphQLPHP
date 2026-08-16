@@ -1,12 +1,11 @@
 <?php
 
-#############################################################################
-# imdbGraphQLPHP Chart                       https://www.imdb.com/chart     #
-# written by Ed (github user: duck7000)                                     #
-# ------------------------------------------------------------------------- #
-# This program is free software; you can redistribute and/or modify it      #
-# under the terms of the GNU General Public License (see doc/LICENSE)       #
-#############################################################################
+/**
+ * imdbGraphQLPHP
+ * This program is free software; you can redistribute and/or modify it
+ * under the terms of the GNU General Public License (see doc/LICENSE)
+ */
+
 declare(strict_types=1);
 
 namespace Imdb;
@@ -19,7 +18,6 @@ use Imdb\Image;
  * Obtains information about chart lists as seen on IMDb
  * https://www.imdb.com/chart
  * @Note thumbnail width and height are set in config, one setting for all methods!
- * @author Ed (github user: duck7000)
  */
 class Chart extends MdbBase
 {

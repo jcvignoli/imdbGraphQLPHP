@@ -1,13 +1,11 @@
 <?php
 
-#############################################################################
-# imdbGraphQLPHP                                 ed (github user: duck7000) #
-# written by ed (github user: duck7000)                                     #
-# http://www.izzysoft.de/                                                   #
-# ------------------------------------------------------------------------- #
-# This program is free software; you can redistribute and/or modify it      #
-# under the terms of the GNU General Public License (see doc/LICENSE)       #
-#############################################################################
+/**
+ * imdbGraphQLPHP
+ * This program is free software; you can redistribute and/or modify it
+ * under the terms of the GNU General Public License (see doc/LICENSE)
+ */
+
 declare(strict_types=1);
 
 namespace Imdb;
@@ -20,10 +18,12 @@ use Psr\SimpleCache\CacheInterface;
 
 /**
  * Accessing Movie information
+ * @created by 2002-2004 by Giorgos Giagas and 2004-2009 by Itzchak Rehberg and IzzySoft
  * @author Georgos Giagas
- * @author Ed
  * @author Izzy (izzysoft AT qumran DOT org)
- * @copyright (c) 2002-2004 by Giorgos Giagas and (c) 2004-2009 by Itzchak Rehberg and IzzySoft
+ * @author Tom Boothman
+ * @author Ed
+ * @author jcv
  */
 class MdbBase extends Config
 {
@@ -66,7 +66,7 @@ class MdbBase extends Config
     {
         if (is_numeric($id)) {
             $this->imdbID = str_pad($id, 7, '0', STR_PAD_LEFT);
-        } elseif (preg_match("/(?:nm|tt)(\d{7,8})/", $id, $matches)) {
+        } elseif (preg_match("/(?:nm|tt)(\d{7,8})/", $id, $matches) === 1) {
             $this->imdbID = $matches[1];
         } else {
             $this->debugScalar("<BR>setid: Invalid IMDB ID '$id'!<BR>");

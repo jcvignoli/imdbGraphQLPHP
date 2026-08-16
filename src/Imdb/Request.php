@@ -1,14 +1,11 @@
 <?php
 
-#############################################################################
-# IMDBPHP                              (c) Giorgos Giagas & Itzchak Rehberg #
-# written by Giorgos Giagas                                                 #
-# extended & maintained by Itzchak Rehberg <izzysoft AT qumran DOT org>     #
-# http://www.izzysoft.de/                                                   #
-# ------------------------------------------------------------------------- #
-# This program is free software; you can redistribute and/or modify it      #
-# under the terms of the GNU General Public License (see doc/LICENSE)       #
-#############################################################################
+/**
+ * imdbGraphQLPHP
+ * This program is free software; you can redistribute and/or modify it
+ * under the terms of the GNU General Public License (see doc/LICENSE)
+ */
+
 declare(strict_types=1);
 
 namespace Imdb;

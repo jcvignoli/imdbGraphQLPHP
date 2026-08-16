@@ -1,12 +1,11 @@
 <?php
 
-#############################################################################
-# imdbGraphQLPHP Company                 https://www.imdb.com/trailers/     #
-# written by Ed (github user: duck7000)                                     #
-# ------------------------------------------------------------------------- #
-# This program is free software; you can redistribute and/or modify it      #
-# under the terms of the GNU General Public License (see doc/LICENSE)       #
-#############################################################################
+/**
+ * imdbGraphQLPHP
+ * This program is free software; you can redistribute and/or modify it
+ * under the terms of the GNU General Public License (see doc/LICENSE)
+ */
+
 declare(strict_types=1);
 
 namespace Imdb;
@@ -14,7 +13,6 @@ namespace Imdb;
 /**
  * Obtains information about Company
  * This info is only available for imdbPro users but throught GraphQL it is freely available!
- * @author Ed (github user: duck7000)
  */
 class Company extends MdbBase
 {

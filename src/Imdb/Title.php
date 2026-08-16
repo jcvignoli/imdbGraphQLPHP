@@ -1,15 +1,12 @@
 <?php
 
-#############################################################################
-# imdbGraphQLPHP                                 ed (github user: duck7000) #
-# written by Giorgos Giagas                                                 #
-# written extended & maintained by ed (github user: duck7000)               #
-# extended & maintained by Itzchak Rehberg <izzysoft AT qumran DOT org>     #
-# http://www.izzysoft.de/                                                   #
-# ------------------------------------------------------------------------- #
-# This program is free software; you can redistribute and/or modify it      #
-# under the terms of the GNU General Public License (see doc/LICENSE)       #
-#############################################################################
+/**
+ * imdbGraphQLPHP
+ * This program is free software; you can redistribute and/or modify it
+ * under the terms of the GNU General Public License (see doc/LICENSE)
+ */
+
+declare(strict_types=1);
 
 namespace Imdb;
 
@@ -19,13 +16,9 @@ use Imdb\Image;
 
 /**
  * A title on IMDb
- * @author Georgos Giagas
- * @author Izzy (izzysoft AT qumran DOT org)
- * @author Ed
- * @copyright (c) 2002-2004 by Giorgos Giagas and (c) 2004-2009 by Itzchak Rehberg and IzzySoft
  *
  * @phpstan-type CreditsArrayDef array<array-key, array{imdb: string, name: string, jobs: list<string>, attributes: list<string>, episode: array{total: int|null, year: int|null, endYear: int|null}|null, titleFullImageUrl: string|null, titleThumbImageUrl: string|null}>
- * @phpstan-type TriviaArrayDef array<list<array{content: string|null, names: array<array{name: string, id: string}>, trademark: string, isSpoiler: string}>>
+ * @phpstan-type TriviaArrayDef array<string, list<array{content: string|null, names: list<array{name: string|null, id: string|null}>, trademark: string|null, isSpoiler: bool}>>
  * @phpstan-type CompCredits array<array{name: string, id: string, country: string, attribute: string, year: int}>
  */
 class Title extends MdbBase
@@ -37,54 +30,27 @@ class Title extends MdbBase
     protected array $releaseDates = array();
     /** @var string[] */
     protected array $countries = array();
-    /** @phpstan-var list<array{ imdb: string|null, name: string|null, alias: string|null, credited: bool, character: list<string>, comment: list<string>, thumb: string|null }> */
+    /** @var list<array{imdb: string|null, name: string|null, alias: string|null, credited: bool, character: list<string>, comment: list<string>, thumb: string|null}> */
     protected array $creditsCast = array();
-    /** @var array<string, string> */
+    /** @var array<string, list<array{name: string, imdbid: string}>> */
     protected array $creditsPrincipal = array();
-    /**
-     * @var array<mixed>
-     * @phpstan-var CreditsArrayDef
-     */
+    /** @phpstan-var CreditsArrayDef */
     protected array $creditsComposer = array();
-    /**
-     * @var array<mixed>
-     * @phpstan-var CreditsArrayDef
-     */
+    /** @phpstan-var CreditsArrayDef */
     protected array $creditsStunts = array();
-    /**
-     * @var array<mixed>
-     * @phpstan-var CreditsArrayDef
-     */
+    /** @phpstan-var CreditsArrayDef */
     protected array $creditsThanks = array();
-    /**
-     * @var array<mixed>
-     * @phpstan-var CreditsArrayDef
-     */
+    /** @phpstan-var CreditsArrayDef */
     protected array $creditsVisualEffects = array();
-    /**
-     * @var array<mixed>
-     * @phpstan-var CreditsArrayDef
-     */
+    /** @phpstan-var CreditsArrayDef */
     protected array $creditsSpecialEffects = array();
-    /**
-     * @var array<mixed>
-     * @phpstan-var CreditsArrayDef
-     */
+    /** @phpstan-var CreditsArrayDef */
     protected array $creditsDirector = array();
-    /**
-     * @var array<mixed>
-     * @phpstan-var CreditsArrayDef
-     */
+    /** @phpstan-var CreditsArrayDef */
     protected array $creditsProducer = array();
-    /**
-     * @var array<mixed>
-     * @phpstan-var CreditsArrayDef
-     */
+    /** @phpstan-var CreditsArrayDef */
     protected array $creditsWriter = array();
-    /**
-     * @var array<mixed>
-     * @phpstan-var CreditsArrayDef
-     */
+    /** @phpstan-var CreditsArrayDef */
     protected array $creditsCinematographer = array();
     /** @var string[] */
     protected array $languages = array();
@@ -105,15 +71,15 @@ class Title extends MdbBase
     protected array $mainMetacritics = array();
     /** @var array{currentRank: int, changeDirection: string, difference: int}|array{} */
     protected array $mainRank = array();
-    /** @var array<string, string> */
+    /** @var array<int, string> */
     protected array $mainPhoto = array();
-    /** @var array<string, string> */
+    /** @var list<array{name: string, runtime: int|null, description: string|null, titleName: string|null, titleYear: int|null, videoUrl: string|null, videoImageUrl: string|null}> */
     protected array $trailers = array();
     /** @var array<string, list<array{id: array<string>|string|null, name: string, runtime: string, description: string, titleName: string, titleYear: int, playbackUrl: string|null, imageUrl: string|null}>> */
     protected array $videos = array();
     /** @var array{award: string|null, nominations: int|null, wins: int|null}|array{} */
     protected array $mainAwards = array();
-    /** @var array<string, array<string, int>|string> */
+    /** @var array<string, list<array{awardYear: int|null, awardWinner: bool, awardCategory: string|null, awardName: string|null, awardNotes: string|null, awardPersons: list<array{creditId: string|null, creditName: string|null, creditNote: string|null, nameFullImageUrl: string|null, nameThumbImageUrl: string|null}>, awardOutcome: string}>|array{win: int, nom: int}> */
     protected array $awards = array();
     /** @var array<array-key, array{mainGenre: string|null, subGenre: list<string>}> */
     protected array $genres = array();
@@ -123,24 +89,24 @@ class Title extends MdbBase
     protected array $recommendations = array();
     /** @var list<array{time: int|float|null, country: string|null, annotations: list<string>}> */
     protected array $runtimes = array();
-    /** @var list<array{string, string, string|null}> */
+    /** @var list<array{country: string|null, rating: string|null, content: string|null}> */
     protected array $mpaas = array();
-    /** @phpstan-var array<string, array{severity: string, severityVotedFor: int, totalSeverityVotes: int, guideItems: list<array{ isSpoiler: bool, guideText: string}>}> */
+    /** @var array<string, array{severity: string, severityVotedFor: int, totalSeverityVotes: int, guideItems: list<array{isSpoiler: bool, guideText: string}>}> */
     protected array $parentsGuide = array();
-    /** @var array<string, string> */
+    /** @var list<array{plot: string, author: string}> */
     protected array $plot = array();
-    /** @phpstan-var array<int, array<int, list<array{ imdbid: string, title: string, airdate: string|null, airdateParts: array{ day: int|null, month: int|null, year: int|null }|null, plot: string|null, episode: int|string, imgUrl: string|null }>>> */
+    /** @var array<int, array<int, list<array{imdbid: string, title: string, airdate: string|null, airdateParts: array{day: int|null, month: int|null, year: int|null}|null, plot: string|null, episode: int|string, imgUrl: string|null}>>> */
     protected array $seasonEpisodes = array();
-    /** @phpstan-var list<array{soundtrack: string,credits: list<string>, creditSplit: array{creditors: list<array{creditType: string|null, name: string, nameId: string|null, attribute: string|null }>, comment: list<string> } }> */
+    /** @var list<array{soundtrack: string, credits: list<string>, creditSplit: array{creditors: list<array{creditType: string|null, name: string, nameId: string|null, attribute: string|null}>, comment: list<string>}}> */
     protected array $soundtracks = array();
-    /** @var array<string, string> */
+    /** @var string[] */
     protected array $taglines = array();
-    /** @var array<string, string> */
+    /** @phpstan-var TriviaArrayDef */
     protected array $trivias = array();
     protected ?bool $isOngoing = null;
-    /** @phpstan-var array<int, array<array{ content: string, isSpoiler: bool }>> */
+    /** @var array<array-key, array<array{content: string, isSpoiler: bool}>> */
     protected array $goofs = array();
-    /** @var array<string, string> */
+    /** @var string[] */
     protected array $crazyCredits = array();
     /** @var list<array{real: string, movie: list<string>}> */
     protected array $locations = array();
@@ -152,15 +118,15 @@ class Title extends MdbBase
     protected array $compCreditsSpecial = array();
     /** @phpstan-var CompCredits */
     protected array $compCreditsOther = array();
-    /** @phpstan-var array<array<array{titleId: string|null, titleName: string|null, titleType: string|null, year: string|null, endYear: string|null, seriesName: string|null, description: string|null}>> */
+    /** @var array<array<array{titleId: string|null, titleName: string|null, titleType: string|null, year: string|null, endYear: string|null, seriesName: string|null, description: string|null}>> */
     protected array $connections = array();
-    /** @var array<list<array{label: string, url: string, language: list<string>}>|string> */
+    /** @var array<array<array{label: string, url: string, language: list<string>}>> */
     protected array $externalSites = array();
-    /** @var array<string, string> */
+    /** @var array<array-key, array{productionBudget: array{amount: int|float|null, currency: string|null}|null}> */
     protected array $productionBudget = array();
-    /** @var array<string, string> */
+    /** @var list<array{areatype: string, amount: string|null, currency: string|null}> */
     protected array $grosses = array();
-    /** @var array<string, string> */
+    /** @var string[] */
     protected array $alternateversions = array();
     /** @var list<array<string, list<string>|string>> */
     protected array $soundMix = array();
@@ -168,15 +134,15 @@ class Title extends MdbBase
     protected array $aspectRatio = array();
     /** @var list<array{cameras: string, attributes: list<string>}> */
     protected array $cameras = array();
-    /** @var array<string, string> */
+    /** @var list<array{authorNickName: string|null, authorRating: int|null, summaryText: string|null, reviewText: string|null, submissionDate: string|null}> */
     protected array $featuredReviews = array();
-    /** @phpstan-var list<array{question: string|null, answer: string|null, isSpoiler: bool|null}> */
+    /** @var list<array{question: string|null, answer: string|null, isSpoiler: bool|null}> */
     protected array $faqs = array();
     protected ?bool $isAdult = null;
-    /** @var array<string, string> */
+    /** @var array<string, list<array{providerId: string, providerName: string, logoUrl: string|null}>> */
     protected array $watchOption = array();
     protected ?string $status = null;
-    /** @var array<string, string> */
+    /** @var list<array{id: string, title: string, author: string|null, date: string|null, extUrl: string|null, extHomepageUrl: string|null, extHomepageLabel: string|null, textHtml: string|null, textText: string|null, thumbnailUrl: string|null}> */
     protected array $news = array();
 
     #----------------------------------------------------------[ Helper for TitleSearch class ]---
@@ -998,7 +964,7 @@ EOF;
     #-------------------------------------------------------[ MPAA / PG / FSK ]---
     /**
      * Get the MPAA rating / Parental Guidance / Age rating for this title by country
-     * @return list<array{string, string, string|null}> comment whithout brackets
+     * @return list<array{country: string|null, rating: string|null, content: string|null}> comment whithout brackets
      * @see IMDB Parental Guidance page / (parentalguide)
      */
     public function mpaa(): array
@@ -1044,15 +1010,7 @@ EOF;
     #-------------------------------------------------------[ ParentsGuide ]---
     /** Info for parents like Violence, Drugs. Alcohol etc
      * @param bool $spoil boolean if true spoilers are also included.
-     * @return array<string, array{
-     *     severity: string,
-     *     severityVotedFor: int,
-     *     totalSeverityVotes: int,
-     *     guideItems: list<array{
-     *         isSpoiler: bool,
-     *         guideText: string
-     *     }>
-     * }>
+     * @return array<string, array{severity: string, severityVotedFor: int, totalSeverityVotes: int, guideItems: list<array{isSpoiler: bool, guideText: string}>}>
      */
     public function parentsGuide(bool $spoil = false): array
     {
@@ -1160,10 +1118,7 @@ EOF;
     #=====================================================[ /plotsummary page ]===
     /** Get movie plots without Spoilers
      * @param bool $spoil boolean if true spoilers are also included, default: false.
-     * @return list<array{
-     *     plot: string,
-     *     author: string
-     * }>
+     * @return list<array{plot: string, author: string}>
      * @see IMDB page /plotsummary
      */
     public function plot(bool $spoil = false): array
@@ -1254,10 +1209,7 @@ EOF;
     #----------------------------------------------------------------[ PrincipalCredits ]---
     /**
      * Get the PrincipalCredits for this title (limited to 3 items per category)
-     * @return array<string, list<array{
-     *     name: string,
-     *     imdbid: string
-     * }>>
+     * @return array<string, list<array{name: string, imdbid: string}>>
      * Not all categories are always available
      */
     public function principalCredits(): array
@@ -1326,7 +1278,7 @@ EOF;
     #----------------------------------------------------------------[ Actors]---
     /**
      * Get the actors/cast members for this title
-     * @return list<array{ imdb: string|null, name: string|null, alias: string|null, credited: bool, character: list<string>, comment: list<string>, thumb: string|null }>
+     * @return list<array{imdb: string|null, name: string|null, alias: string|null, credited: bool, character: list<string>, comment: list<string>, thumb: string|null}>
      * @see IMDB page /fullcredits
      */
     public function cast(): array
@@ -1590,19 +1542,7 @@ EOF;
      * @param bool $thumb boolean true: thumbnail (cropped from center 224x126), false: large (max width 1000 pixels)
      * @param int $yearbased This gives user control if returned episodes are yearbased or season based
      * @version The outer array keys reflects the real season seasonnumber! Episodes can start at 0 (pilot episode)
-     * @return array<int, array<int, list<array{
-     *     imdbid: string,
-     *     title: string,
-     *     airdate: string|null,
-     *     airdateParts: array{
-     *         day: int|null,
-     *         month: int|null,
-     *         year: int|null
-     *     }|null,
-     *     plot: string|null,
-     *     episode: int|string,
-     *     imgUrl: string|null
-     * }>>>
+     * @return array<int, array<int, list<array{imdbid: string, title: string, airdate: string|null, airdateParts: array{day: int|null, month: int|null, year: int|null}|null, plot: string|null, episode: int|string, imgUrl: string|null}>>>
      */
     public function episode(bool $thumb = true, int $yearbased = 0): array
     {
@@ -1706,10 +1646,7 @@ EOF;
     #-----------------------------------------------------------[ Goofs Array ]---
     /** Get the goofs
      * @param bool $spoil boolean if true spoilers are also included.
-     * @return array<int, array<array{
-     *     content: string,
-     *     isSpoiler: bool
-     * }>>
+     * @return array<array-key, array<array{content: string, isSpoiler: bool}>>
      * @see IMDB page /goofs
      */
     public function goof(bool $spoil = false): array
@@ -1785,7 +1722,7 @@ EOF;
     /**
      * Get the trivia info
      * @param bool $spoil if true spoilers are also included.
-     * @return TriviaArrayDef
+     * @phpstan-return TriviaArrayDef
      * @see IMDB page /trivia
      */
     public function trivia(bool $spoil = false): array
@@ -1855,19 +1792,7 @@ EOF;
     #======================================================[ Soundtrack ]===
     /**
      * Get the soundtrack listing
-     * @return list<array{
-     *     soundtrack: string,
-     *     credits: list<string>,
-     *     creditSplit: array{
-     *         creditors: list<array{
-     *             creditType: string|null,
-     *             name: string,
-     *             nameId: string|null,
-     *             attribute: string|null
-     *         }>,
-     *         comment: list<string>
-     *     }
-     * }>
+     * @return list<array{soundtrack: string, credits: list<string>, creditSplit: array{creditors: list<array{creditType: string|null, name: string, nameId: string|null, attribute: string|null}>, comment: list<string>}}>
      * @see IMDB page /soundtrack
      */
     public function soundtrack(): array
@@ -1980,10 +1905,7 @@ EOF;
     /**
      * Filming locations
      * real: Real filming location, movie: location in the movie
-     * @return list<array{
-     *     real: string,
-     *     movie: list<string>
-     * }>
+     * @return list<array{real: string, movie: list<string>}>
      * @see IMDB page /locations
      */
     public function location(): array
@@ -2030,7 +1952,7 @@ EOF;
     #---------------------------------------------------[ Producing Companies ]---
 
     /** Info about Production Companies
-     * @return CompCredits
+     * @phpstan-return CompCredits
      * @see IMDB page /companycredits
      */
     public function prodCompany(): array
@@ -2044,7 +1966,7 @@ EOF;
     #------------------------------------------------[ Distributing Companies ]---
 
     /** Info about distributors
-     * @return CompCredits
+     * @phpstan-return CompCredits
      * @see IMDB page /companycredits
      */
     public function distCompany(): array
@@ -2058,7 +1980,7 @@ EOF;
     #---------------------------------------------[ Special Effects Companies ]---
 
     /** Info about Special Effects companies
-     * @return CompCredits
+     * @phpstan-return CompCredits
      * @see IMDB page /companycredits
      */
     public function specialCompany(): array
@@ -2072,7 +1994,7 @@ EOF;
     #-------------------------------------------------------[ Other Companies ]---
 
     /** Info about other companies
-     * @return CompCredits
+     * @phpstan-return CompCredits
      * @see IMDB page /companycredits
      */
     public function otherCompany(): array
@@ -2194,12 +2116,7 @@ EOF;
     #========================================================[ /Box Office page ]===
     #-------------------------------------------------------[ productionBudget ]---
     /** Info about productionBudget
-     * @return array<array-key, array{
-     *     productionBudget: array{
-     *         amount: int|float|null,
-     *         currency: string|null
-     *     }|null
-     * }>
+     * @return array<array-key, array{productionBudget: array{amount: int|float|null, currency: string|null}|null}>
      * @see IMDB page /title
      */
     public function budget(): array
@@ -2234,11 +2151,7 @@ EOF;
 
     #-------------------------------------------------------[ rankedLifetimeGrosses ]---
     /** Info about Grosses, ranked by amount
-     * @return list<array{
-     *     areatype: string,
-     *     amount: string|null,
-     *     currency: string|null
-     * }>
+     * @return list<array{areatype: string, amount: string|null, currency: string|null}>
      * @see IMDB page /title
      */
     public function gross(): array
@@ -2317,7 +2230,7 @@ EOF;
     #========================================================[ /Alternate versions page ]===
     /**
      * Get the Alternate Versions for a given movie
-     * @return list<string>
+     * @return string[]
      * @see IMDB page /alternateversions
      */
     public function alternateVersion(): array
@@ -2677,21 +2590,7 @@ EOF;
      *  ev0000403 (London Critics Circle Film Awards)
      *  ev0000530 (People's Choice Awards, USA)
      *
-     * @return array<string, list<array{
-     *     awardYear: int|null,
-     *     awardWinner: bool,
-     *     awardCategory: string|null,
-     *     awardName: string|null,
-     *     awardNotes: string|null,
-     *     awardPersons: list<array{
-     *         creditId: string|null,
-     *         creditName: string|null,
-     *         creditNote: string|null,
-     *         nameFullImageUrl: string|null,
-     *         nameThumbImageUrl: string|null
-     *     }>,
-     *     awardOutcome: string
-     * }>|array{win: int, nom: int}>
+     * @return array<string, list<array{awardYear: int|null, awardWinner: bool, awardCategory: string|null, awardName: string|null, awardNotes: string|null, awardPersons: list<array{creditId: string|null, creditName: string|null, creditNote: string|null, nameFullImageUrl: string|null, nameThumbImageUrl: string|null}>, awardOutcome: string}>|array{win: int, nom: int}>
      *
      * @see IMDB page / (TitlePage)
      */
@@ -2850,13 +2749,7 @@ EOF;
     #----------------------------------------------------------[ Movie Featured Reviews ]---
     /**
      * Get movie featured reviews (max 5 available)
-     * @return list<array{
-     *     authorNickName: string|null,
-     *     authorRating: int|null,
-     *     summaryText: string|null,
-     *     reviewText: string|null,
-     *     submissionDate: string|null
-     * }>
+     * @return list<array{authorNickName: string|null, authorRating: int|null, summaryText: string|null, reviewText: string|null, submissionDate: string|null}>
      * @see IMDB page / (TitlePage)
      */
     public function featuredReview(): array
@@ -2918,10 +2811,10 @@ EOF;
     #----------------------------------------------------------[ Movie isAdult ]---
     /**
      * Get adult status of a title
-     * @return bool
+     * @return bool|null
      * @see IMDB page / (TitlePage)
      */
-    public function isAdult(): bool
+    public function isAdult(): ?bool
     {
         if (empty($this->isAdult)) {
             $query = <<<EOF
@@ -2944,11 +2837,7 @@ EOF;
     /**
      * watch options by category for this title
      * @Note: (DEC 2024) Only Amazon providers are returned, no others!
-     * @return array<string, list<array{
-     *     providerId: string,
-     *     providerName: string,
-     *     logoUrl: string|null
-     * }>>
+     * @return array<string, list<array{providerId: string, providerName: string, logoUrl: string|null}>>
      */
     public function watchOption(): array
     {
@@ -3023,9 +2912,9 @@ EOF;
     #----------------------------------------------------------[ Production Status ]---
     /**
      * Get current production status of a title e.g. Released, In Development, Pre-Production, Complete, Production etc
-     * @return string status
+     * @return string|null status
      */
-    public function productionStatus(): string
+    public function productionStatus(): ?string
     {
         if (empty($this->status)) {
             $query = <<<EOF
@@ -3051,18 +2940,7 @@ EOF;
     #----------------------------------------------------------[ News ]---
     /**
      * Get news items about this title, max 100 items!
-     * @return list<array{
-     *     id: string,
-     *     title: string,
-     *     author: string|null,
-     *     date: string|null,
-     *     extUrl: string|null,
-     *     extHomepageUrl: string|null,
-     *     extHomepageLabel: string|null,
-     *     textHtml: string|null,
-     *     textText: string|null,
-     *     thumbnailUrl: string|null
-     * }>
+     * @return list<array{id: string, title: string, author: string|null, date: string|null, extUrl: string|null, extHomepageUrl: string|null, extHomepageLabel: string|null, textHtml: string|null, textText: string|null, thumbnailUrl: string|null}>
      */
     public function news(): array
     {
@@ -3282,19 +3160,7 @@ EOF;
     #---------------------------------------------------------------[ credit helper ]---
     /** helper for stunts, thanks, visualEffects, specialEffects, producer,
      *      writer, director, composer, cinematographer
-     * @return list<array{
-     *     imdb: string,
-     *     name: string,
-     *     jobs: list<string>,
-     *     attributes: list<string>,
-     *     episode: array{
-     *         total: int|null,
-     *         year: int|null,
-     *         endYear: int|null
-     *     }|null,
-     *     titleFullImageUrl: string|null,
-     *     titleThumbImageUrl: string|null
-     * }>
+     * @return list<array{imdb: string, name: string, jobs: list<string>, attributes: list<string>, episode: array{total: int|null, year: int|null, endYear: int|null}|null, titleFullImageUrl: string|null, titleThumbImageUrl: string|null}>
      * @see IMDB page /fullcredits
      */
     private function creditHelper(string $crewCategory): array
@@ -3676,9 +3542,9 @@ EOF;
     /**
      * build date string for episode()
      * @param array<string, string> $date input date array(['day'], ['month'], ['year'])
-     * @return string $airDate e.g. '20 jan. 2008'
+     * @return string|null $airDate e.g. '20 jan. 2008'
      */
-    private function buildDateString(array $date): string
+    private function buildDateString(array $date): ?string
     {
         $airDate = null;
         if (!empty($date['day'])) {

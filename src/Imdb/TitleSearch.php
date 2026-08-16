@@ -1,16 +1,18 @@
 <?php
 
-#############################################################################
-# imdbGraphQLPHP                                ed (github user: duck7000)  #
-# written by ed (github user: duck7000)                                     #
-# ------------------------------------------------------------------------- #
-# This program is free software; you can redistribute and/or modify it      #
-# under the terms of the GNU General Public License (see doc/LICENSE)       #
-#############################################################################
+/**
+ * imdbGraphQLPHP
+ * This program is free software; you can redistribute and/or modify it
+ * under the terms of the GNU General Public License (see doc/LICENSE)
+ */
+
 declare(strict_types=1);
 
 namespace Imdb;
 
+/**
+ * Search by title
+ */
 class TitleSearch extends MdbBase
 {
     /**
@@ -31,7 +33,7 @@ class TitleSearch extends MdbBase
      * @param string $endDate search from endDate and earlier, iso date (year-month-day) ("1975-01-01")
      * if both dates are provided searches within the date span ("1950-01-01" - "1980-01-01")
      *
-     * @return array<int, array<string, string|Title>>
+     * @return array<int, array<string, string|\Imdb\Title|null>>
      */
     public function search(string $searchTerms, ?string $types = null, string $startDate = '', string $endDate = ''): array
     {
@@ -44,6 +46,9 @@ class TitleSearch extends MdbBase
             return $results;
         }
 
+        $startDateVal = $inputReleaseDates['startDate'];
+        $endDateVal = $inputReleaseDates['endDate'];
+
         $query = <<<EOF
 query Search{
   mainSearch(
@@ -55,8 +60,8 @@ query Search{
       titleSearchOptions: {
         type: [$types]
         releaseDateRange: {
-          start: $inputReleaseDates[startDate]
-          end: $inputReleaseDates[endDate]
+          start: $startDateVal
+          end: $endDateVal
         }
       }
     }
@@ -103,8 +108,8 @@ EOF;
                         $yearRange .= '-' . $edge->node->entity->releaseYear->endYear;
                     }
                 }
-                $id = isset($edge->node->entity->id) ?
-                            str_replace('tt', '', $edge->node->entity->id) : null;
+                $rawId = $edge->node->entity->id ?? null;
+                $id = is_string($rawId) ? str_replace('tt', '', $rawId) : '';
                 $title = isset($edge->node->entity->titleText->text) ?
                             $edge->node->entity->titleText->text : null;
                 $origTitle = isset($edge->node->entity->originalTitleText->text) ?
@@ -146,16 +151,16 @@ EOF;
     private function validateDate(string $date): bool
     {
         $d = \DateTime::createFromFormat('Y-m-d', $date);
-        return $d && $d->format('Y-m-d') === $date;
+        return $d !== false && $d->format('Y-m-d') === $date;
     }
 
     /**
      * Check if input date is not empty and valid
      * @param string $startDate (searches between startDate and present date) iso date string ('1975-01-01')
      * @param string $endDate (searches between endDate and earlier) iso date string ('1975-01-01')
-     * @return array<string, string>|bool
+     * @return array<string, string>|false
      */
-    private function checkReleaseDates(string $startDate, string $endDate): array|bool
+    private function checkReleaseDates(string $startDate, string $endDate): array|false
     {
         if (empty(trim($startDate)) && empty(trim($endDate))) {
             return array(

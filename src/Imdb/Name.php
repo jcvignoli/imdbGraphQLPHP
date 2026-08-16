@@ -1,15 +1,11 @@
 <?php
 
-#############################################################################
-# imdbGraphQLPHP                       (c) Giorgos Giagas & Itzchak Rehberg #
-# written by Giorgos Giagas                                                 #
-# extended & maintained by Itzchak Rehberg <izzysoft AT qumran DOT org>     #
-# written extended & maintained by Ed                                       #
-# http://www.izzysoft.de/                                                   #
-# ------------------------------------------------------------------------- #
-# This program is free software; you can redistribute and/or modify it      #
-# under the terms of the GNU General Public License (see doc/LICENSE)       #
-#############################################################################
+/**
+ * imdbGraphQLPHP
+ * This program is free software; you can redistribute and/or modify it
+ * under the terms of the GNU General Public License (see doc/LICENSE)
+ */
+
 declare(strict_types=1);
 
 namespace Imdb;
@@ -20,9 +16,6 @@ use Imdb\Image;
 
 /**
  * A person on IMDb
- * @author Izzy (izzysoft AT qumran DOT org)
- * @author Ed
- * @copyright 2008 by Itzchak Rehberg and IzzySoft
  *
  * @phpstan-type RelativeDef array{ imdb: string|null, name: string|null, relType: string|null }
  * @phpstan-type PublicityDef array{ publication: string|null, regionId: string, title: string, date: array{ day: int, month: int, year: int }, reference: string, authors: list<string> }|array{}

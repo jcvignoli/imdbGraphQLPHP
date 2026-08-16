@@ -1,12 +1,11 @@
 <?php
 
-#############################################################################
-# imdbGraphQLPHP                                  (c) Ed (github: duck7000) #
-# written & maintained by Ed                                                #
-# ------------------------------------------------------------------------- #
-# This program is free software; you can redistribute and/or modify it      #
-# under the terms of the GNU General Public License (see doc/LICENSE)       #
-#############################################################################
+/**
+ * imdbGraphQLPHP
+ * This program is free software; you can redistribute and/or modify it
+ * under the terms of the GNU General Public License (see doc/LICENSE)
+ */
+
 declare(strict_types=1);
 
 namespace Imdb;
@@ -17,7 +16,6 @@ use Imdb\Image;
 
 /**
  * Name Search Advanced Class for advanced searches
- * @author Ed (github user: duck7000)
  */
 class NameSearchAdvanced extends MdbBase
 {

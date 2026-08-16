@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * imdbGraphQLPHP
+ * This program is free software; you can redistribute and/or modify it
+ * under the terms of the GNU General Public License (see doc/LICENSE)
+ */
+
 declare(strict_types=1);
 
 namespace Imdb;
@@ -33,7 +39,7 @@ class Logger extends AbstractLogger
                 $replace['{' . $key . '}'] = "<pre>" . print_r($val, true) . "</pre>";
             }
 
-            $message = strtr($message, $replace);
+            $message = strtr((string) $message, $replace);
 
             switch ($level) {
                 case 'emergency':

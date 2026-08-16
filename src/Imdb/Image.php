@@ -1,19 +1,17 @@
 <?php
 
-#############################################################################
-# imdbGraphQLPHP                                 ed (github user: duck7000) #
-# written by ed (duck7000)                                                  #
-# ------------------------------------------------------------------------- #
-# This program is free software; you can redistribute and/or modify it      #
-# under the terms of the GNU General Public License (see doc/LICENSE)       #
-#############################################################################
+/**
+ * imdbGraphQLPHP
+ * This program is free software; you can redistribute and/or modify it
+ * under the terms of the GNU General Public License (see doc/LICENSE)
+ */
+
 declare(strict_types=1);
 
 namespace Imdb;
 
 /**
  * Image processing functions to calculate image url parameters to get thumbnails just like imdb uses
- * @author Ed
  */
 class Image
 {

@@ -1,12 +1,11 @@
 <?php
 
-#############################################################################
-# imdbGraphQLPHP                                  (c) Ed (github: duck7000) #
-# written & maintained by Ed                                                #
-# ------------------------------------------------------------------------- #
-# This program is free software; you can redistribute and/or modify it      #
-# under the terms of the GNU General Public License (see doc/LICENSE)       #
-#############################################################################
+/**
+ * imdbGraphQLPHP
+ * This program is free software; you can redistribute and/or modify it
+ * under the terms of the GNU General Public License (see doc/LICENSE)
+ */
+
 declare(strict_types=1);
 
 namespace Imdb;
@@ -17,13 +16,12 @@ use Imdb\Image;
 
 /**
  * Title Search Advanced Class for advanced searches
- * @author Ed (github user: duck7000)
  */
 class TitleSearchAdvanced extends MdbBase
 {
-    protected Image $imageFunctions;
-    protected int $newImageWidth;
-    protected int $newImageHeight;
+    protected readonly Image $imageFunctions;
+    protected readonly int $newImageWidth;
+    protected readonly int $newImageHeight;
 
     /**
      * @param Config|null $config OPTIONAL override default config
@@ -37,65 +35,40 @@ class TitleSearchAdvanced extends MdbBase
         $this->newImageWidth = $this->config->titleSearchAdvancedThumbnailWidth;
         $this->newImageHeight = $this->config->titleSearchAdvancedThumbnailHeight;
     }
+
     /**
      * Advanced Search IMDb on genres, titleTypes, creditId, startDate, endDate, countryId, languageId, $keywords
      *
      * @param string $searchTerm input searchTerm to search for specific titleText
-     *
      * @param string $genres if multiple genres separate by , (Horror,Action etc)
-     * GenreIDs: Action, Adult, Adventure, Animation, Biography, Comedy, Crime,
-     *           Documentary, Drama, Family, Fantasy, Film-Noir, Game-Show,
-     *           History, Horror, Music, Musical, Mystery, News, Reality-TV,
-     *           Romance, Sci-Fi, Short, Sport, Talk-Show, Thriller, War, Western
-     *
      * @param string $types if multiple types separate by , (movie,tvSeries etc)
-     * TitleTypeIDs: movie, tvSeries, short, tvEpisode, tvMiniSeries, tvMovie, tvSpecial,
-     *               tvShort, videoGame, video, musicVideo, podcastSeries, podcastEpisode
-     *
      * @param string $creditId works only with nameID like "0001228" (without nm) (Peter Fonda)
-     *
      * @param string $startDate search from startDate til present date, iso date ("1975-01-01")
      * @param string $endDate search from endDate and earlier, iso date ("1975-01-01")
-     * if both dates are provided searches within the date span ("1950-01-01" - "1980-01-01")
-     * if one or both dates are not valid then the whole constraint will not be added!
-     *
      * @param string $countryId iso 3166 country code like "US" or "US,DE" (separate by comma)
-     *
      * @param string $languageId iso 639 Language code like "en" or "en,de" (separate by comma)
-     *
      * @param string $keywords like "sex" or "sex,drugs" (separate by comma)
-     *
      * @param string $companyId like "0185428" (without co) (single companyid is supported)
      *
-     * @return Title[] array of Titles
-     * array[]
-     *      ['imdbid']          string      imdbid from the found title
-     *      ['originalTitle']   string      originalTitle from the found title
-     *      ['title']           string      title from the found title
-     *      ['year']            string      year or year span from the found title
-     *      ['movietype']       string      titleType from the found title
-     *      [runtime] =>        string      In seconds!
-     *      [rating] =>         float
-     *      [voteCount] =>      int
-     *      [metacritic] =>     int
-     *      [plot] =>           string
-     *      [imgUrl] =>         string
+     * @return array{totalFoundResults: ?int, titles: array<int, array{imdbid: ?string, originalTitle: ?string, title: ?string, year: string, movietype: ?string, runtime: ?int, rating: ?float, voteCount: ?int, metacritic: ?int, plot: ?string, imgUrl: ?string}>}
      */
     public function advancedSearch(
-        $searchTerm = '',
-        $genres = '',
-        $types = '',
-        $creditId = '',
-        $startDate = '',
-        $endDate = '',
-        $countryId = '',
-        $languageId = '',
-        $keywords = '',
-        $companyId = ''
-    ) {
-
-        $results = array();
-        $titles = array();
+        string $searchTerm = '',
+        string $genres = '',
+        string $types = '',
+        string $creditId = '',
+        string $startDate = '',
+        string $endDate = '',
+        string $countryId = '',
+        string $languageId = '',
+        string $keywords = '',
+        string $companyId = ''
+    ): array {
+        $results = [
+            'totalFoundResults' => null,
+            'titles' => []
+        ];
+        $titles = [];
         $constraints = $this->buildConstraints(
             $searchTerm,
             $genres,
@@ -172,6 +145,7 @@ EOF;
         if (!isset($data->advancedTitleSearch)) {
             return $results;
         }
+
         if (
             isset($data->advancedTitleSearch->edges) &&
             is_array($data->advancedTitleSearch->edges) &&
@@ -181,71 +155,92 @@ EOF;
                 // Year range
                 $yearRange = '';
                 if (isset($edge->node->title->releaseYear->year)) {
-                    $yearRange .= $edge->node->title->releaseYear->year;
+                    $yearRange .= (string)$edge->node->title->releaseYear->year;
                     if (isset($edge->node->title->releaseYear->endYear)) {
                         $yearRange .= '-' . $edge->node->title->releaseYear->endYear;
                     }
                 }
 
-                // image url
+                // Image url
                 $imgUrl = null;
-                if (!empty($edge->node->title->primaryImage->url)) {
-                    $fullImageWidth = $edge->node->title->primaryImage->width;
-                    $fullImageHeight = $edge->node->title->primaryImage->height;
+                if (
+                    !empty($edge->node->title->primaryImage->url) &&
+                    is_string($edge->node->title->primaryImage->url) &&
+                    isset($edge->node->title->primaryImage->width, $edge->node->title->primaryImage->height)
+                ) {
+                    $fullImageWidth = (int)$edge->node->title->primaryImage->width;
+                    $fullImageHeight = (int)$edge->node->title->primaryImage->height;
                     $img = str_replace('.jpg', '', $edge->node->title->primaryImage->url);
                     $parameter = $this->imageFunctions->resultParameter($fullImageWidth, $fullImageHeight, $this->newImageWidth, $this->newImageHeight);
                     $imgUrl = $img . $parameter;
                 }
 
-                $titles[] = array(
-                    'imdbid' => isset($edge->node->title->id) ?
-                                    str_replace('tt', '', $edge->node->title->id) : null,
-                    'originalTitle' => isset($edge->node->title->titleText->text) ?
-                                            $edge->node->title->titleText->text : null,
-                    'title' => isset($edge->node->title->titleText->text) ?
-                                    $edge->node->title->titleText->text : null,
+                $imdbid = isset($edge->node->title->id) && is_string($edge->node->title->id)
+                    ? str_replace('tt', '', $edge->node->title->id)
+                    : null;
+
+                $originalTitle = isset($edge->node->title->originalTitleText->text) && is_string($edge->node->title->originalTitleText->text)
+                    ? $edge->node->title->originalTitleText->text
+                    : null;
+
+                $title = isset($edge->node->title->titleText->text) && is_string($edge->node->title->titleText->text)
+                    ? $edge->node->title->titleText->text
+                    : null;
+
+                $movietype = isset($edge->node->title->titleType->text) && is_string($edge->node->title->titleType->text)
+                    ? $edge->node->title->titleType->text
+                    : null;
+
+                $runtime = isset($edge->node->title->runtime->seconds)
+                    ? (int)$edge->node->title->runtime->seconds
+                    : null;
+
+                $rating = isset($edge->node->title->ratingsSummary->aggregateRating)
+                    ? (float)$edge->node->title->ratingsSummary->aggregateRating
+                    : null;
+
+                $voteCount = isset($edge->node->title->ratingsSummary->voteCount)
+                    ? (int)$edge->node->title->ratingsSummary->voteCount
+                    : null;
+
+                $metacritic = isset($edge->node->title->metacritic->metascore->score)
+                    ? (int)$edge->node->title->metacritic->metascore->score
+                    : null;
+
+                $plot = isset($edge->node->title->plot->plotText->plainText) && is_string($edge->node->title->plot->plotText->plainText)
+                    ? $edge->node->title->plot->plotText->plainText
+                    : null;
+
+                $titles[] = [
+                    'imdbid' => $imdbid,
+                    'originalTitle' => $originalTitle,
+                    'title' => $title,
                     'year' => $yearRange,
-                    'movietype' => isset($edge->node->title->titleType->text) ?
-                                        $edge->node->title->titleType->text : null,
-                    'runtime' => isset($edge->node->title->runtime->seconds) ?
-                                    $edge->node->title->runtime->seconds : null,
-                    'rating' => isset($edge->node->title->ratingsSummary->aggregateRating) ?
-                                    $edge->node->title->ratingsSummary->aggregateRating : null,
-                    'voteCount' => isset($edge->node->title->ratingsSummary->voteCount) ?
-                                        $edge->node->title->ratingsSummary->voteCount : null,
-                    'metacritic' => isset($edge->node->title->metacritic->metascore->score) ?
-                                        $edge->node->title->metacritic->metascore->score : null,
-                    'plot' => isset($edge->node->title->plot->plotText->plainText) ?
-                                    $edge->node->title->plot->plotText->plainText : null,
-                    'imgUrl' => $imgUrl
-                );
+                    'movietype' => $movietype,
+                    'runtime' => $runtime,
+                    'rating' => $rating,
+                    'voteCount' => $voteCount,
+                    'metacritic' => $metacritic,
+                    'plot' => $plot,
+                    'imgUrl' => $imgUrl,
+                ];
             }
         }
-        if (!empty($titles)) {
-            $results = array(
-                'totalFoundResults' => isset($data->advancedNameSearch->total) ?
-                                             $data->advancedNameSearch->total : null,
-                'titles' => $titles
-            );
-        }
-        return $results;
+
+        $totalFound = isset($data->advancedTitleSearch->total)
+            ? (int)$data->advancedTitleSearch->total
+            : null;
+
+        return [
+            'totalFoundResults' => $totalFound,
+            'titles' => $titles,
+        ];
     }
 
     #========================================================[ Helper functions]===
 
     /**
      * Check input parameters and build constraints
-     * @param string|null $searchTerm
-     * @param string|null $genres
-     * @param string|null $types
-     * @param string|null $creditId
-     * @param string|null $startDate
-     * @param string|null $endDate
-     * @param string|null $countryId
-     * @param string|null $languageId
-     * @param string|null $keywords
-     * @param string|null $companyId
-     * @return string|bool constraints or false
      */
     private function buildConstraints(
         ?string $searchTerm,
@@ -261,24 +256,20 @@ EOF;
     ): string|bool {
         $constraint = '{';
 
-        // Title search input
-        if (!empty(trim($searchTerm))) {
+        if (!empty(trim((string)$searchTerm))) {
             $constraint .= 'titleTextConstraint:{searchTerm:"' . $searchTerm . '"}';
         }
 
-        // Genres, Input is array
         $checkedGenres = $this->checkItems($genres);
         if ($checkedGenres !== false) {
             $constraint .= 'genreConstraint:{allGenreIds:["' . $checkedGenres . '"]}';
         }
 
-        // Types, Input is array
         $checkedTypes = $this->checkItems($types);
         if ($checkedTypes !== false) {
             $constraint .= 'titleTypeConstraint:{anyTitleTypeIds:["' . $checkedTypes . '"]}';
         }
 
-        // CreditId, Input is array
         if (!empty($creditId)) {
             $creditId = "nm$creditId";
         }
@@ -287,31 +278,26 @@ EOF;
             $constraint .= 'creditedNameConstraint:{anyNameIds:["' . $checkedCreditId . '"]}';
         }
 
-        // Date Range
         $dateRange = $this->checkDates($startDate, $endDate);
         if ($dateRange !== false) {
             $constraint .= $dateRange;
         }
 
-        // CountryId, Input is array
         $checkedCountryId = $this->checkItems($countryId);
         if ($checkedCountryId !== false) {
             $constraint .= 'originCountryConstraint:{anyCountries:["' . $checkedCountryId . '"]}';
         }
 
-        // LanguageId, Input is array
         $checkedLanguageId = $this->checkItems($languageId);
         if ($checkedLanguageId !== false) {
             $constraint .= 'languageConstraint:{anyLanguages:["' . $checkedLanguageId . '"]}';
         }
 
-        // Keywords, Input is array
         $checkedKeywords = $this->checkItems($keywords);
         if ($checkedKeywords !== false) {
             $constraint .= 'keywordConstraint:{anyKeywords:["' . $checkedKeywords . '"]}';
         }
 
-        // CompanyId, Input is array
         if (!empty($companyId)) {
             $companyId = "co$companyId";
         }
@@ -324,10 +310,7 @@ EOF;
             return false;
         }
 
-        // Adult constraint included
         $constraint .= 'explicitContentConstraint:{explicitContentFilter:INCLUDE_ADULT}';
-
-        // end constraints
         $constraint .= '}';
 
         return $constraint;
@@ -335,8 +318,6 @@ EOF;
 
     /**
      * Check if there is at least one, possible more input items
-     * @param string|null $items if multiple items separate by , (Horror,Action etc)
-     * @return string|false $items double quoted and separated by comma if more then one
      */
     private function checkItems(?string $items): string|bool
     {
@@ -349,8 +330,6 @@ EOF;
 
     /**
      * Check if provided date is valid
-     * @param string|null $date input date
-     * @return bool
      */
     private function validateDate(?string $date): bool
     {
@@ -358,14 +337,11 @@ EOF;
             return false;
         }
         $d = \DateTime::createFromFormat('Y-m-d', $date);
-        return $d && $d->format('Y-m-d') === $date;
+        return $d !== false && $d->format('Y-m-d') === $date;
     }
 
     /**
      * Check if input dates not empty and valid
-     * @param string|null $startDate (searches between startDate and present date) iso date string ('1975-01-01')
-     * @param string|null $endDate (searches between endDate and earlier) iso date string ('1975-01-01')
-     * @return string|false constraints or false
      */
     private function checkDates(?string $startDate, ?string $endDate): string|bool
     {

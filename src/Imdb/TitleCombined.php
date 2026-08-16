@@ -1,12 +1,11 @@
 <?php
 
-#############################################################################
-# imdbGraphQLPHP                                 ed (github user: duck7000) #
-# written by Ed                                                             #
-# ------------------------------------------------------------------------- #
-# This program is free software; you can redistribute and/or modify it      #
-# under the terms of the GNU General Public License (see doc/LICENSE)       #
-#############################################################################
+/**
+ * imdbGraphQLPHP
+ * This program is free software; you can redistribute and/or modify it
+ * under the terms of the GNU General Public License (see doc/LICENSE)
+ */
+
 declare(strict_types=1);
 
 namespace Imdb;
@@ -17,16 +16,14 @@ use Imdb\Image;
 
 /**
  * A title on IMDb
- * @author Ed
- * @copyright (c) 2025 Ed
  */
 class TitleCombined extends MdbBase
 {
-    protected Image $imageFunctions;
-    protected int $newImageWidth;
-    protected int $newImageHeight;
-    /** @phpstan-var array{title: string, originalTitle: string, imdbid: string, reDirectId: string|false, movieType: string, year: int|string|null, endYear: int|string|null, imgThumb: string, imgFull: string, runtime: int, rating: float, genre: list<array{mainGenre: string|null, subGenre: list<string>}>, plotoutline: string, credits: array<string, list<array{name: string, imdbid: string}>>}|array{} */
-    protected array $main = array();
+    protected readonly Image $imageFunctions;
+    protected readonly int $newImageWidth;
+    protected readonly int $newImageHeight;
+    /** @var array{title: string|null, originalTitle: string|null, imdbid: string, reDirectId: string|false, movieType: string|null, year: int|string|null, endYear: int|string|null, imgThumb: string|null, imgFull: string|null, runtime: int|float, rating: float|int, genre: list<array{mainGenre: string|null, subGenre: list<string>}>|null, plotoutline: string|null, credits: array<string, list<array{name: string|null, imdbid: string|null}>>|null}|array{} */
+    protected array $main = [];
 
     /**
      * @param string $id IMDb ID. e.g. 285331 for https://www.imdb.com/title/tt0285331/
@@ -45,28 +42,8 @@ class TitleCombined extends MdbBase
 
     /**
      * This method will only get main values of a imdb title (inside the black top part of the imdb page)
-     * @phpstan-return array{
-     *     title: string,
-     *     originalTitle: string,
-     *     imdbid: string,
-     *     reDirectId: string|false,
-     *     movieType: string,
-     *     year: int|string|null,
-     *     endYear: int|string|null,
-     *     imgThumb: string,
-     *     imgFull: string,
-     *     runtime: int,
-     *     rating: float,
-     *     genre: list<array{
-     *         mainGenre: string|null,
-     *         subGenre: list<string>
-     *     }>,
-     *     plotoutline: string,
-     *     credits: array<string, list<array{
-     *         name: string,
-     *         imdbid: string
-     *     }>>
-     * }
+     *
+     * @return array{title: string|null, originalTitle: string|null, imdbid: string, reDirectId: string|false, movieType: string|null, year: int|string|null, endYear: int|string|null, imgThumb: string|null, imgFull: string|null, runtime: int|float, rating: float|int, genre: list<array{mainGenre: string|null, subGenre: list<string>}>|null, plotoutline: string|null, credits: array<string, list<array{name: string|null, imdbid: string|null}>>|null}|array{}
      */
     public function main(): array
     {
@@ -177,7 +154,7 @@ EOF;
     #--------------------------------------------------------------[ Photo/Poster ]---
     /**
      * Setup cover photo (thumbnail and big variant)
-     * @param object $primaryImage primary image object found in main()
+     * @param object{url?: string, width?: int, height?: int} $primaryImage primary image object found in main()
      * @param bool $thumb
      * @return string|null
      * @see IMDB page / (TitlePage)
@@ -186,7 +163,7 @@ EOF;
     {
         if (isset($primaryImage->url)) {
             $img = str_replace('.jpg', '', $primaryImage->url);
-            if ($thumb === true) {
+            if ($thumb === true && isset($primaryImage->width, $primaryImage->height)) {
                 $fullImageWidth = $primaryImage->width;
                 $fullImageHeight = $primaryImage->height;
                 $parameter = $this->imageFunctions->resultParameter($fullImageWidth, $fullImageHeight, $this->newImageWidth, $this->newImageHeight);
@@ -209,10 +186,10 @@ EOF;
      */
     private function genre(array $genreArray): array
     {
-        $mainGenres = array();
+        $mainGenres = [];
         if (count($genreArray) > 0) {
             foreach ($genreArray as $edge) {
-                $subGenres = array();
+                $subGenres = [];
                 if (
                     isset($edge->subGenres) &&
                     is_array($edge->subGenres) &&
@@ -238,16 +215,17 @@ EOF;
     /**
      * Get the PrincipalCredits for this title
      * @param list<\stdClass> $principalCredits principal credits array from main()
-     * @return array<string, list<array{name: string, imdbid: string}>> creditsPrincipal[category][Director, Writer, Creator, Stars]
+     * @return array<string, list<array{name: string|null, imdbid: string|null}>> creditsPrincipal[category][Director, Writer, Creator, Stars]
      */
     private function principalCredits(array $principalCredits): array
     {
-        $creditsPrincipal = array();
+        /** @var array<string, list<array{name: string|null, imdbid: string|null}>> $creditsPrincipal */
+        $creditsPrincipal = [];
         if (count($principalCredits) > 0) {
             foreach ($principalCredits as $value) {
                 $category = 'Unknown';
-                $credits = array();
-                if (!empty($value->credits[0]->category->text)) {
+                $credits = [];
+                if (!empty($value->credits[0]->category->text) && is_string($value->credits[0]->category->text)) {
                     $category = $value->credits[0]->category->text;
                     if ($category === "Actor" || $category === "Actress") {
                         $category = "Star";
@@ -259,11 +237,16 @@ EOF;
                     count($value->credits) > 0
                 ) {
                     foreach ($value->credits as $credit) {
+                        $name = isset($credit->name->nameText->text) && is_string($credit->name->nameText->text)
+                            ? $credit->name->nameText->text
+                            : null;
+                        $imdbid = isset($credit->name->id) && is_string($credit->name->id)
+                            ? str_replace('nm', '', $credit->name->id)
+                            : null;
+
                         $credits[] = array(
-                            'name' => isset($credit->name->nameText->text) ?
-                                            $credit->name->nameText->text : null,
-                            'imdbid' => isset($credit->name->id) ?
-                                            str_replace('nm', '', $credit->name->id) : null
+                            'name' => $name,
+                            'imdbid' => $imdbid,
                         );
                     }
                 } elseif ($category === 'Unknown') {

@@ -1,12 +1,11 @@
 <?php
 
-#############################################################################
-# PHP GraphQL API                                             (c) Tboothman #
-# written by Tom Boothman                                                   #
-# ------------------------------------------------------------------------- #
-# This program is free software; you can redistribute and/or modify it      #
-# under the terms of the GNU General Public License (see doc/LICENSE)       #
-#############################################################################
+/**
+ * imdbGraphQLPHP
+ * This program is free software; you can redistribute and/or modify it
+ * under the terms of the GNU General Public License (see doc/LICENSE)
+ */
+
 declare(strict_types=1);
 
 namespace Imdb;
@@ -17,9 +16,6 @@ use stdClass;
 
 /**
  * Accessing Movie information through GraphQL
- * @author Tom Boothman
- * @author Ed (duck7000)
- * @copyright (c) 2002-2023 by Tom Boothman
  */
 class GraphQL
 {
@@ -29,11 +25,11 @@ class GraphQL
      * @param LoggerInterface $logger
      * @param Config $config
      */
-    public function __construct(private CacheInterface $cache, private LoggerInterface $logger, private Config $config)
-    {
-        $this->cache = $cache;
-        $this->logger = $logger;
-        $this->config = $config;
+    public function __construct(
+        private readonly CacheInterface $cache,
+        private readonly LoggerInterface $logger,
+        private readonly Config $config
+    ) {
     }
 
     /**
@@ -80,10 +76,17 @@ class GraphQL
                 'variables' => (object) $variables // apparently $variables needs to object
             )
         );
+
+        if ($payload === false) {
+            $this->logger->error("[GraphQL] Failed to JSON encode request payload for {$queryName}");
+            return new stdClass();
+        }
+
         $this->logger->info("[GraphQL] Requesting {$queryName}");
         $request->post($payload);
         if (200 === $request->getStatus()) {
-            $responseObj = json_decode($request->getResponseBody());
+            $responseBody = $request->getResponseBody();
+            $responseObj = is_string($responseBody) ? json_decode($responseBody) : null;
 
             // Ensure response contains expected data property
             if (isset($responseObj->data)) {

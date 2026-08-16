@@ -1,12 +1,11 @@
 <?php
 
-#############################################################################
-# imdbGraphQLPHP Trailers                https://www.imdb.com/trailers/     #
-# written by Ed (github user: duck7000)                                     #
-# ------------------------------------------------------------------------- #
-# This program is free software; you can redistribute and/or modify it      #
-# under the terms of the GNU General Public License (see doc/LICENSE)       #
-#############################################################################
+/**
+ * imdbGraphQLPHP
+ * This program is free software; you can redistribute and/or modify it
+ * under the terms of the GNU General Public License (see doc/LICENSE)
+ */
+
 declare(strict_types=1);
 
 namespace Imdb;
@@ -19,13 +18,12 @@ use Imdb\Image;
  * Obtains information about trailers as seen on https://www.imdb.com/trailers/
  * https://www.imdb.com/trailers/
  * @Note thumbnail width and height are set in config, one setting for all methods!
- * @author Ed (github user: duck7000)
  */
 class News extends MdbBase
 {
-    protected Image $imageFunctions;
-    protected int $newImageWidth;
-    protected int $newImageHeight;
+    protected readonly Image $imageFunctions;
+    protected readonly int $newImageWidth;
+    protected readonly int $newImageHeight;
 
     /**
      * @param Config|null $config OPTIONAL override default config
@@ -48,17 +46,7 @@ class News extends MdbBase
      * @param string $listType determines which list to return
      *                         possible values: CELEBRITY, INDIE, MOVIE, TOP, TV
      *
-     * @phpstan-return array<int, array{
-     *     id: string|null,
-     *     title: string|null,
-     *     author: string|null,
-     *     date: string|null,
-     *     extUrl: string|null,
-     *     exturlLabel: string|null,
-     *     textHtml: string|null,
-     *     textText: string|null,
-     *     thumbnailUrl: string|null
-     * }>
+     * @return array<int, array{id: string|null, title: string|null, author: string|null, date: string|null, extUrl: string|null, exturlLabel: string|null, textHtml: string|null, textText: string|null, thumbnailUrl: string|null}>
      */
     public function newsList(string $listType = "MOVIE"): array
     {
@@ -105,7 +93,7 @@ EOF;
         ) {
             foreach ($data->news->edges as $edge) {
                 $thumbUrl = null;
-                if (!empty($edge->node->image->url)) {
+                if (!empty($edge->node->image->url) && isset($edge->node->image->width, $edge->node->image->height)) {
                     $fullImageWidth = $edge->node->image->width;
                     $fullImageHeight = $edge->node->image->height;
                     $img = str_replace('.jpg', '', $edge->node->image->url);

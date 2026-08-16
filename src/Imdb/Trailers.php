@@ -1,31 +1,28 @@
 <?php
 
-#############################################################################
-# imdbGraphQLPHP Trailers                https://www.imdb.com/trailers/     #
-# written by Ed (github user: duck7000)                                     #
-# ------------------------------------------------------------------------- #
-# This program is free software; you can redistribute and/or modify it      #
-# under the terms of the GNU General Public License (see doc/LICENSE)       #
-#############################################################################
+/**
+ * imdbGraphQLPHP
+ * This program is free software; you can redistribute and/or modify it
+ * under the terms of the GNU General Public License (see doc/LICENSE)
+ */
+
 declare(strict_types=1);
 
 namespace Imdb;
 
 use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
-use Imdb\Image;
 
 /**
  * Obtains information about trailers as seen on https://www.imdb.com/trailers/
  * https://www.imdb.com/trailers/
  * @Note thumbnail width and height are set in config, one setting for all methods!
- * @author Ed (github user: duck7000)
  */
 class Trailers extends MdbBase
 {
-    protected Image $imageFunctions;
-    protected int $newImageWidth;
-    protected int $newImageHeight;
+    protected readonly Image $imageFunctions;
+    protected readonly int $newImageWidth;
+    protected readonly int $newImageHeight;
 
     /**
      * @param Config|null $config OPTIONAL override default config
@@ -42,16 +39,16 @@ class Trailers extends MdbBase
 
     /**
      * Get the latest trailers as seen on IMDb https://www.imdb.com/trailers/
-     * @phpstan-return array<int, array{
-     *     videoId: string,
-     *     titleId: string,
-     *     title: string,
-     *     trailerCreateDate: string,
-     *     trailerRuntime: int,
-     *     playbackUrl: string,
-     *     thumbnailUrl: string,
-     *     releaseDate: string,
-     *     contentType: string
+     * @phpstan-return list<array{
+     *     videoId: string|null,
+     *     titleId: string|null,
+     *     title: string|null,
+     *     trailerCreateDate: string|null,
+     *     trailerRuntime: int|null,
+     *     playbackUrl: string|null,
+     *     thumbnailUrl: string|null,
+     *     releaseDate: string|null,
+     *     contentType: string|null
      * }>
      */
     public function recentVideo(): array
@@ -105,32 +102,32 @@ EOF;
         ) {
             foreach ($data->recentVideos->videos as $edge) {
                 $thumbUrl = null;
-                $videoId = isset($edge->id) ?
-                                str_replace('vi', '', $edge->id) : null;
-                if (!empty($edge->primaryTitle->primaryImage->url)) {
-                    $fullImageWidth = $edge->primaryTitle->primaryImage->width;
-                    $fullImageHeight = $edge->primaryTitle->primaryImage->height;
-                    $img = str_replace('.jpg', '', $edge->primaryTitle->primaryImage->url);
+                $rawVideoId = isset($edge->id) && is_string($edge->id) ? $edge->id : null;
+                $videoId = $rawVideoId !== null ? str_replace('vi', '', $rawVideoId) : null;
+
+                if (
+                    !empty($edge->primaryTitle->primaryImage->url) &&
+                    isset($edge->primaryTitle->primaryImage->width, $edge->primaryTitle->primaryImage->height)
+                ) {
+                    $fullImageWidth = (int) $edge->primaryTitle->primaryImage->width;
+                    $fullImageHeight = (int) $edge->primaryTitle->primaryImage->height;
+                    $img = str_replace('.jpg', '', (string) $edge->primaryTitle->primaryImage->url);
                     $parameter = $this->imageFunctions->resultParameter($fullImageWidth, $fullImageHeight, $this->newImageWidth, $this->newImageHeight);
                     $thumbUrl = $img . $parameter;
                 }
+
+                $rawTitleId = isset($edge->primaryTitle->id) && is_string($edge->primaryTitle->id) ? $edge->primaryTitle->id : null;
+
                 $recentVideoResults[] = array(
                     'videoId' => $videoId,
-                    'titleId' => isset($edge->primaryTitle->id) ?
-                                    str_replace('tt', '', $edge->primaryTitle->id) : null,
-                    'title' => isset($edge->primaryTitle->titleText->text) ?
-                                    $edge->primaryTitle->titleText->text : null,
-                    'trailerCreateDate' => isset($edge->createdDate) ?
-                                                $edge->createdDate : null,
-                    'trailerRuntime' => isset($edge->runtime->value) ?
-                                            $edge->runtime->value : null,
-                    'playbackUrl' => !empty($videoId) ?
-                                            'https://www.imdb.com/video/vi' . $videoId . '/' : null,
+                    'titleId' => $rawTitleId !== null ? str_replace('tt', '', $rawTitleId) : null,
+                    'title' => isset($edge->primaryTitle->titleText->text) && is_string($edge->primaryTitle->titleText->text) ? $edge->primaryTitle->titleText->text : null,
+                    'trailerCreateDate' => isset($edge->createdDate) && is_string($edge->createdDate) ? $edge->createdDate : null,
+                    'trailerRuntime' => isset($edge->runtime->value) && is_numeric($edge->runtime->value) ? (int) $edge->runtime->value : null,
+                    'playbackUrl' => !empty($videoId) ? 'https://www.imdb.com/video/vi' . $videoId . '/' : null,
                     'thumbnailUrl' => $thumbUrl,
-                    'releaseDate' => isset($edge->primaryTitle->releaseDate->displayableProperty->value->plainText) ?
-                                        $edge->primaryTitle->releaseDate->displayableProperty->value->plainText : null,
-                    'contentType' => isset($edge->name->value) ?
-                                        $edge->name->value : null
+                    'releaseDate' => isset($edge->primaryTitle->releaseDate->displayableProperty->value->plainText) && is_string($edge->primaryTitle->releaseDate->displayableProperty->value->plainText) ? $edge->primaryTitle->releaseDate->displayableProperty->value->plainText : null,
+                    'contentType' => isset($edge->name->value) && is_string($edge->name->value) ? $edge->name->value : null
                 );
             }
         }
@@ -152,14 +149,14 @@ EOF;
      *
      * @phpstan-return list<array{
      *     videoId: string,
-     *     titleId: string,
-     *     title: string,
-     *     trailerCreateDate: string,
-     *     trailerRuntime: int,
-     *     playbackUrl: string,
-     *     thumbnailUrl: string,
-     *     releaseDate: string,
-     *     contentType: string
+     *     titleId: string|null,
+     *     title: string|null,
+     *     trailerCreateDate: string|null,
+     *     trailerRuntime: int|null,
+     *     playbackUrl: string|null,
+     *     thumbnailUrl: string|null,
+     *     releaseDate: string|null,
+     *     contentType: string|null
      * }>
      */
     public function trendingVideo(): array
@@ -211,35 +208,36 @@ EOF;
         ) {
             foreach ($data->trendingTitles->titles as $edge) {
                 $thumbUrl = null;
-                $videoId = isset($edge->latestTrailer->id) ?
-                                str_replace('vi', '', $edge->latestTrailer->id) : null;
-                if (empty($videoId)) {
+                $rawVideoId = isset($edge->latestTrailer->id) && is_string($edge->latestTrailer->id) ? $edge->latestTrailer->id : null;
+                $videoId = $rawVideoId !== null ? str_replace('vi', '', $rawVideoId) : null;
+
+                if ($videoId === null || $videoId === '') {
                     continue;
                 }
-                if (!empty($edge->primaryImage->url)) {
-                    $fullImageWidth = $edge->primaryImage->width;
-                    $fullImageHeight = $edge->primaryImage->height;
-                    $img = str_replace('.jpg', '', $edge->primaryImage->url);
+
+                if (
+                    !empty($edge->primaryImage->url) &&
+                    isset($edge->primaryImage->width, $edge->primaryImage->height)
+                ) {
+                    $fullImageWidth = (int) $edge->primaryImage->width;
+                    $fullImageHeight = (int) $edge->primaryImage->height;
+                    $img = str_replace('.jpg', '', (string) $edge->primaryImage->url);
                     $parameter = $this->imageFunctions->resultParameter($fullImageWidth, $fullImageHeight, $this->newImageWidth, $this->newImageHeight);
                     $thumbUrl = $img . $parameter;
                 }
+
+                $rawTitleId = isset($edge->id) && is_string($edge->id) ? $edge->id : null;
+
                 $trendingVideoResults[] = array(
                     'videoId' => $videoId,
-                    'titleId' => isset($edge->id) ?
-                                    str_replace('tt', '', $edge->id) : null,
-                    'title' => isset($edge->titleText->text) ?
-                                    $edge->titleText->text : null,
-                    'trailerCreateDate' => isset($edge->latestTrailer->createdDate) ?
-                                                $edge->latestTrailer->createdDate : null,
-                    'trailerRuntime' => isset($edge->latestTrailer->runtime->value) ?
-                                            $edge->latestTrailer->runtime->value : null,
-                    'playbackUrl' => is_string($videoId) ?
-                                            'https://www.imdb.com/video/vi' . $videoId . '/' : null,
+                    'titleId' => $rawTitleId !== null ? str_replace('tt', '', $rawTitleId) : null,
+                    'title' => isset($edge->titleText->text) && is_string($edge->titleText->text) ? $edge->titleText->text : null,
+                    'trailerCreateDate' => isset($edge->latestTrailer->createdDate) && is_string($edge->latestTrailer->createdDate) ? $edge->latestTrailer->createdDate : null,
+                    'trailerRuntime' => isset($edge->latestTrailer->runtime->value) && is_numeric($edge->latestTrailer->runtime->value) ? (int) $edge->latestTrailer->runtime->value : null,
+                    'playbackUrl' => 'https://www.imdb.com/video/vi' . $videoId . '/',
                     'thumbnailUrl' => $thumbUrl,
-                    'releaseDate' => isset($edge->releaseDate->displayableProperty->value->plainText) ?
-                                        $edge->releaseDate->displayableProperty->value->plainText : null,
-                    'contentType' => isset($edge->latestTrailer->name->value) ?
-                                        $edge->latestTrailer->name->value : null
+                    'releaseDate' => isset($edge->releaseDate->displayableProperty->value->plainText) && is_string($edge->releaseDate->displayableProperty->value->plainText) ? $edge->releaseDate->displayableProperty->value->plainText : null,
+                    'contentType' => isset($edge->latestTrailer->name->value) && is_string($edge->latestTrailer->name->value) ? $edge->latestTrailer->name->value : null
                 );
             }
         }

@@ -33,11 +33,11 @@ class Title extends MdbBase
     protected Image $imageFunctions;
     /** @var array<array{title: string, country: string, countryId: string, language: string|null, languageId: string, comment: array<string>|null}> */
     protected array $akas = array();
-    /** @var array<string, string> */
+    /** @var array<array-key, array{country: string, day: int, month: int, year: int, attributes: list<mixed>}|string> */
     protected array $releaseDates = array();
-    /** @var array<string, string> */
+    /** @var string[] */
     protected array $countries = array();
-    /** @var list<array{ imdb: string|null, name: string|null, alias: string|null, credited: bool, character: list<string>, comment: list<string>, thumb: string|null }> */
+    /** @phpstan-var list<array{ imdb: string|null, name: string|null, alias: string|null, credited: bool, character: list<string>, comment: list<string>, thumb: string|null }> */
     protected array $creditsCast = array();
     /** @var array<string, string> */
     protected array $creditsPrincipal = array();
@@ -119,40 +119,40 @@ class Title extends MdbBase
     protected array $genres = array();
     /** @var array<array<string>|string> */
     protected array $quotes = array();
-    /** @var array<string, string> */
+    /** @var list<array{title: string|null, imdbid: string|null, rating: int|null, img: string|null, year: int|null}> */
     protected array $recommendations = array();
-    /** @var array<string, string> */
+    /** @var list<array{time: int|float|null, country: string|null, annotations: list<string>}> */
     protected array $runtimes = array();
     /** @var list<array{string, string, string|null}> */
     protected array $mpaas = array();
-    /** @var array<string, array{severity: string, severityVotedFor: int, totalSeverityVotes: int, guideItems: list<array{ isSpoiler: bool, guideText: string}>}> */
+    /** @phpstan-var array<string, array{severity: string, severityVotedFor: int, totalSeverityVotes: int, guideItems: list<array{ isSpoiler: bool, guideText: string}>}> */
     protected array $parentsGuide = array();
     /** @var array<string, string> */
     protected array $plot = array();
-    /** @var array<int, array<int, list<array{ imdbid: string, title: string, airdate: string|null, airdateParts: array{ day: int|null, month: int|null, year: int|null }|null, plot: string|null, episode: int|string, imgUrl: string|null }>>> */
+    /** @phpstan-var array<int, array<int, list<array{ imdbid: string, title: string, airdate: string|null, airdateParts: array{ day: int|null, month: int|null, year: int|null }|null, plot: string|null, episode: int|string, imgUrl: string|null }>>> */
     protected array $seasonEpisodes = array();
-    /** @var array<string, string> */
+    /** @phpstan-var list<array{soundtrack: string,credits: list<string>, creditSplit: array{creditors: list<array{creditType: string|null, name: string, nameId: string|null, attribute: string|null }>, comment: list<string> } }> */
     protected array $soundtracks = array();
     /** @var array<string, string> */
     protected array $taglines = array();
     /** @var array<string, string> */
     protected array $trivias = array();
     protected ?bool $isOngoing = null;
-    /** @var array<int, array<array{ content: string, isSpoiler: bool }>> */
+    /** @phpstan-var array<int, array<array{ content: string, isSpoiler: bool }>> */
     protected array $goofs = array();
     /** @var array<string, string> */
     protected array $crazyCredits = array();
     /** @var list<array{real: string, movie: list<string>}> */
     protected array $locations = array();
-    /** @var CompCredits */
+    /** @phpstan-var CompCredits */
     protected array $compCreditsProd = array();
-    /** @var CompCredits */
+    /** @phpstan-var CompCredits */
     protected array $compCreditsDist = array();
-    /** @var CompCredits */
+    /** @phpstan-var CompCredits */
     protected array $compCreditsSpecial = array();
-    /** @var CompCredits */
+    /** @phpstan-var CompCredits */
     protected array $compCreditsOther = array();
-    /** @var array<array<array{titleId: string|null, titleName: string|null, titleType: string|null, year: string|null, endYear: string|null, seriesName: string|null, description: string|null}>> */
+    /** @phpstan-var array<array<array{titleId: string|null, titleName: string|null, titleType: string|null, year: string|null, endYear: string|null, seriesName: string|null, description: string|null}>> */
     protected array $connections = array();
     /** @var array<list<array{label: string, url: string, language: list<string>}>|string> */
     protected array $externalSites = array();
@@ -170,7 +170,7 @@ class Title extends MdbBase
     protected array $cameras = array();
     /** @var array<string, string> */
     protected array $featuredReviews = array();
-    /** @var array<string, string> */
+    /** @phpstan-var list<array{question: string|null, answer: string|null, isSpoiler: bool|null}> */
     protected array $faqs = array();
     protected ?bool $isAdult = null;
     /** @var array<string, string> */
@@ -211,9 +211,9 @@ class Title extends MdbBase
 
     /**
      * @param string $id IMDb ID. e.g. 285331 for https://www.imdb.com/title/tt0285331/
-     * @param Config $config OPTIONAL override default config
-     * @param LoggerInterface $logger OPTIONAL override default logger `\Imdb\Logger` with a custom one
-     * @param CacheInterface $cache OPTIONAL override the default cache with any PSR-16 cache.
+     * @param Config|null $config OPTIONAL override default config
+     * @param LoggerInterface|null $logger OPTIONAL override default logger `\Imdb\Logger` with a custom one
+     * @param CacheInterface|null $cache OPTIONAL override the default cache with any PSR-16 cache.
      */
     public function __construct(string $id, ?Config $config = null, ?LoggerInterface $logger = null, ?CacheInterface $cache = null)
     {
@@ -253,10 +253,10 @@ class Title extends MdbBase
     }
 
     /** Get movie original title
-     * @return string mainOriginalTitle  movie original title
+     * @phpstan-return string|null mainOriginalTitle  movie original title
      * @see IMDB page / (TitlePage)
      */
-    public function originalTitle(): string
+    public function originalTitle(): ?string
     {
         if (empty($this->mainOriginalTitle)) {
             $this->titleYear();
@@ -280,7 +280,7 @@ class Title extends MdbBase
     /**
      * Get end-year
      * if production spanned multiple years, usually for series
-     * @return int endyear|null
+     * @return int|null endyear|null
      * @see IMDB page / (TitlePage)
      */
     public function endyear(): ?int
@@ -294,8 +294,8 @@ class Title extends MdbBase
     #---------------------------------------------------------------[ Runtime ]---
     /**
      * Retrieve all runtimes and their descriptions
-     * @return array<array{time: int|float|null, country: string|null, annotations: list<string>}>
-     *      time is the length in minutes, country optionally exists for alternate cuts, annotations is an array of comments
+     * @return list<array{time: int|float|null, country: string|null, annotations: list<string>}>
+     * time is the length in minutes, country optionally exists for alternate cuts, annotations is an array of comments
      */
     public function runtime(): array
     {
@@ -345,8 +345,7 @@ EOF;
                         'time' => isset($edge->node->seconds) ?
                                         $edge->node->seconds / 60 : null,
                         'annotations' => $attributes,
-                        'country' => isset($edge->node->country->text) ?
-                                        $edge->node->country->text : null
+                        'country' => $edge->node->country?->text
                     );
                 }
             }
@@ -508,7 +507,7 @@ EOF;
     /**
      * Get movie frequently asked questions, it includes questions with and without answer
      * @param bool $spoil include spoilers or not, isSpoiler indicates if this question is spoiler or not
-     * @return array<array{question: string, answer: string, isSpoiler: bool}>
+     * @phpstan-return list<array{question: string|null, answer: string|null, isSpoiler: bool|null}>
      * @see IMDB page / (Faq)
      */
     public function faq(bool $spoil = false): array
@@ -542,7 +541,7 @@ EOF;
 
     /**
      * Get recommended movies (People who liked this...also liked)
-     * @return array<array{title: string, imdbid: string, rating: int, img: string, year: int}>
+     * @return list<array{title: string|null, imdbid: string|null, rating: int|null, img: string|null, year: int|null}>
      * @see IMDB page / (TitlePage)
      */
     public function recommendation(): array
@@ -742,10 +741,10 @@ EOF;
     /**
      * Get the main photo image url for thumbnail or full size
      * @param bool $thumb get the thumbnail (height: 281) or large (max 1000 pixels)
-     * @return string|false photo (string URL if found, FALSE otherwise)
+     * @return string|false|null photo (string URL if found, FALSE otherwise)
      * @see IMDB page / (TitlePage)
      */
-    public function photo(bool $thumb = true): string|bool
+    public function photo(bool $thumb = true): string|bool|null
     {
         if (empty($this->mainPoster)) {
             $this->populatePoster();
@@ -837,7 +836,7 @@ EOF;
     #-------------------------------------------------[ Country of Origin ]---
     /**
      * Get country of origin
-     * @return list<string>
+     * @return string[]
      * @see IMDB page / (TitlePage)
      */
     public function country(): array
@@ -876,7 +875,7 @@ EOF;
     #-------------------------------------------------[ Release dates ]---
     /**
      * Get all release dates for this title
-     * @return array<int<0, max>|string, array{country: mixed, day: mixed, month: mixed, year: mixed, attributes: list<mixed>}|string>
+     * @return array<array-key, array{country: string, day: int, month: int, year: int, attributes: list<mixed>}|string>
      * @see IMDB page / (TitlePage)
      */
     public function releaseDate(): array

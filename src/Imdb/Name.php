@@ -105,7 +105,7 @@ class Name extends MdbBase
     protected array $externalSites = array();
 
     // "Credits" page:
-    /** @phpstan-var array<string, list<array{ awardYear: int, awardWinner: bool, awardCategory: string, awardName: string, awardTitles: list<array{ titleId: string, titleName: string, titleNote: string|null, titleFullImageUrl: string|null, titleThumbImageUrl: string|null }>, awardNotes: string|null, awardOutcome: string }>|array{win: int, nom: int}> */
+    /** @phpstan-var array<string, array{ win: int, nom: int }|list<array{ awardYear: int|null, awardWinner: bool, awardCategory: string|null, awardName: string|null, awardTitles: list<array{ titleId: string, titleName: string, titleNote: string|null, titleFullImageUrl: string|null, titleThumbImageUrl: string|null }>, awardNotes: string|null, awardOutcome: string }>> */
     protected array $awards = array();
     /** @phpstan-var list<array{ title: string, titleId: string, titleYear: int|null, titleEndYear: int|null, titleFullImageUrl: string|null, titleThumbImageUrl: string|null, titleCharacters: list<string> }> */
     protected array $creditKnownFor = array();
@@ -1362,11 +1362,14 @@ EOF;
      *  ev0000223 (Emmy)
      *  ev0000292 (Golden Globe)
      *
-     * @phpstan-return array<string, list<array{
-     *     awardYear: int,
+     * @phpstan-return array<string, array{
+     *     win: int,
+     *     nom: int
+     * }|list<array{
+     *     awardYear: int|null,
      *     awardWinner: bool,
-     *     awardCategory: string,
-     *     awardName: string,
+     *     awardCategory: string|null,
+     *     awardName: string|null,
      *     awardTitles: list<array{
      *         titleId: string,
      *         titleName: string,
@@ -1376,7 +1379,7 @@ EOF;
      *     }>,
      *     awardNotes: string|null,
      *     awardOutcome: string
-     * }>|array{win: int, nom: int}>
+     * }>>
      * @see IMDB page / (TitlePage)
      */
     public function award(bool $winsOnly = false, string $event = ""): array

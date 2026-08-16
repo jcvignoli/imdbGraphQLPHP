@@ -4,18 +4,15 @@ declare(strict_types=1);
 
 namespace Imdb;
 
-use Psr\Log\LoggerInterface;
-use Psr\Log\LoggerTrait;
+use Psr\Log\AbstractLogger;
 use Stringable;
 
 /**
  * Debug logging. Echos html to the page
  * Only used when `\Imdb\Config::debug` is true
  */
-class Logger implements LoggerInterface
+class Logger extends AbstractLogger
 {
-    use LoggerTrait;
-
     public function __construct(protected bool $enabled = true)
     {
     }

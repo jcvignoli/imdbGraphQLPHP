@@ -29,6 +29,8 @@ use Imdb\Image;
 * @phpstan-type DateDef array{ day: int|null, month: string|null, mon: int|null, year: int|null }
  * @phpstan-type SpouseDef array{ imdb: string|null, name: string|null, from: DateDef, to: DateDef, dateText: string|null, comment: list<string>, children: int, current: string }
 * @phpstan-type SalaryDef array{ imdb: string|null, name: string|null, year: string|null, amount: string|null, currency: string|null, comment: list<string> }
+ * @phpstan-type AwardsShort = array{ awardYear: int|null, awardWinner: bool, awardCategory: string|null, awardName: string|null, awardTitles: list<array{ titleId: string, titleName: string, titleNote: string|null, titleFullImageUrl: string|null, titleThumbImageUrl: string|null }>, awardNotes: string|null, awardOutcome: string|null }
+ * @phpstan-type AwardsWins = array{win?: int, nom?: int}
  */
 class Name extends MdbBase
 {
@@ -105,7 +107,7 @@ class Name extends MdbBase
     protected array $externalSites = array();
 
     // "Credits" page:
-    /** @phpstan-var array<string, array{ win: int, nom: int }|list<array{ awardYear: int|null, awardWinner: bool, awardCategory: string|null, awardName: string|null, awardTitles: list<array{ titleId: string, titleName: string, titleNote: string|null, titleFullImageUrl: string|null, titleThumbImageUrl: string|null }>, awardNotes: string|null, awardOutcome: string }>> */
+    /** @phpstan-var array<string, list<AwardsShort>|AwardsWins> */
     protected array $awards = array();
     /** @phpstan-var list<array{ title: string, titleId: string, titleYear: int|null, titleEndYear: int|null, titleFullImageUrl: string|null, titleThumbImageUrl: string|null, titleCharacters: list<string> }> */
     protected array $creditKnownFor = array();
@@ -1362,24 +1364,7 @@ EOF;
      *  ev0000223 (Emmy)
      *  ev0000292 (Golden Globe)
      *
-     * @phpstan-return array<string, array{
-     *     win: int,
-     *     nom: int
-     * }|list<array{
-     *     awardYear: int|null,
-     *     awardWinner: bool,
-     *     awardCategory: string|null,
-     *     awardName: string|null,
-     *     awardTitles: list<array{
-     *         titleId: string,
-     *         titleName: string,
-     *         titleNote: string|null,
-     *         titleFullImageUrl: string|null,
-     *         titleThumbImageUrl: string|null
-     *     }>,
-     *     awardNotes: string|null,
-     *     awardOutcome: string
-     * }>>
+     * @phpstan-return array<string, list<AwardsShort>|AwardsWins>
      * @see IMDB page / (TitlePage)
      */
     public function award(bool $winsOnly = false, string $event = ""): array

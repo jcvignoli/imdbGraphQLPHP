@@ -2,37 +2,68 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>IMDbPHP - Movie Search</title>
+    <title>IMDbPHP - Test Suite & Demo Hub</title>
     <link rel="stylesheet" href="style.css">
   </head>
   <body>
-    <h2 class="text-center">Movie Search</h2>
-    <form action="search.php" method="get">
+    <div class="nav-bar">
+      <a href="index.html">Home</a> |
+      <a href="search.php">Search</a> |
+      <a href="calendar.php">Calendar</a> |
+      <a href="chart.php">Charts</a> |
+      <a href="trailers.php">Trailers</a> |
+      <a href="news.php">News</a> |
+      <a href="company.php">Company</a> |
+      <a href="cache.php">Cache</a>
+    </div>
+
+    <h2 class="text-center">IMDbPHP Test Suite & Demo Hub</h2>
+
+    <form action="search.php" method="get" class="mb-10">
       <table>
-        <tr><th colspan="2">IMDbPHP</th></tr>
+        <tr><th colspan="2">Quick Search & Lookup</th></tr>
         <tr>
-          <td class="bb-none text-right pl-10 pr-10">Name:</td>
-          <td>
-            <input type="text" name="name" size="30" maxlength="50"><br>
-          </td>
+          <td class="text-right pl-10 pr-10" style="width: 30%;">Query / Name / Title:</td>
+          <td><input type="text" name="query" size="30"></td>
         </tr>
         <tr>
           <td class="text-right pl-10 pr-10">Type:</td>
           <td>
             <select name="searchtype">
-              <option value="movie">Movie</option>
-              <option value="episode">Episode</option>
-              <option value="nm">Person</option>
+              <option value="movie">Movie / Title (TitleSearch)</option>
+              <option value="episode">Episode (TitleSearch)</option>
+              <option value="person">Person (NameSearch)</option>
+              <option value="company">Company (CompanySearch)</option>
+              <option value="keyword">Keyword (KeywordSearch)</option>
             </select>
           </td>
         </tr>
         <tr>
-          <td class="text-right pl-10 pr-10">or IMDb ID:</td>
-          <td><input type="text" name="mid" size="30" maxlength="10"></td>
+          <td class="text-right pl-10 pr-10">or IMDb ID directly:</td>
+          <td><input type="text" name="mid" size="20" placeholder="e.g. tt0133093 or nm0000206"></td>
         </tr>
-        <tr><td colspan="2" class="text-center"><input type="submit" value="search"></td></tr>
+        <tr><td colspan="2" class="text-center"><input type="submit" value="Search / Direct View"></td></tr>
       </table>
     </form>
-    <p class="text-center"><a href="cache.php">View cache contents</a></p>
+
+    <table>
+      <tr><th>Available Feature Modules & Test Suites</th></tr>
+      <tr>
+        <td class="p-10">
+          <ul class="demo-list">
+            <li><strong><a href="movie.php?mid=0133093">Title & TitleCombined Demo (movie.php)</a></strong> - Test <code>Imdb\Title</code> & <code>Imdb\TitleCombined</code> (ratings, cast, crew, trivia, quotes, plots, media, awards, watch options, etc.)</li>
+            <li><strong><a href="person.php?mid=0000206">Name Demo (person.php)</a></strong> - Test <code>Imdb\Name</code> (bio, filmography/credits, awards, trivia, articles, photos, etc.)</li>
+            <li><strong><a href="search.php">Search Suite (search.php)</a></strong> - Test <code>TitleSearch</code>, <code>NameSearch</code>, <code>CompanySearch</code>, <code>KeywordSearch</code>, <code>TitleSearchAdvanced</code>, and <code>NameSearchAdvanced</code></li>
+            <li><strong><a href="calendar.php">Calendar Demo (calendar.php)</a></strong> - Test <code>Imdb\Calendar</code> (upcoming movie releases and streaming schedules)</li>
+            <li><strong><a href="chart.php">Charts Demo (chart.php)</a></strong> - Test <code>Imdb\Chart</code> (Top 250, Box Office, Popular Titles & Names)</li>
+            <li><strong><a href="trailers.php">Trailers Demo (trailers.php)</a></strong> - Test <code>Imdb\Trailers</code> (recent and trending videos)</li>
+            <li><strong><a href="news.php">News Demo (news.php)</a></strong> - Test <code>Imdb\News</code> (movie, TV, and celebrity news)</li>
+            <li><strong><a href="company.php">Company Demo (company.php)</a></strong> - Test <code>Imdb\Company</code> (company info and details)</li>
+            <li><strong><a href="cache.php">Cache Contents (cache.php)</a></strong> - Inspect cached titles and names</li>
+          </ul>
+        </td>
+      </tr>
+    </table>
   </body>
 </html>
+

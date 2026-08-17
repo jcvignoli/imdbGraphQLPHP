@@ -365,7 +365,7 @@ EOF;
                     'name' => $edge->node->nameText->text,
                     'imdbid' => isset($edge->node->id) ?
                                     str_replace('nm', '', $edge->node->id) : null,
-                    'rank' => $edge->node->rank,
+                    'rank' => $edge->node->rank ?? null,
                     'credits' => $credits,
                     'knownFor' => $knownFor,
                     'imgUrl' => $thumbUrl
@@ -497,8 +497,8 @@ EOF;
                     'imdbid' => isset($edge->node->id) ?
                                     str_replace('tt', '', $edge->node->id) : null,
                     'year' => $edge->node->releaseYear->year,
-                    'runtimeSeconds' => $edge->node->runtime->seconds,
-                    'runtimeText' => $edge->node->runtime->displayableProperty->value->plainText,
+                    'runtimeSeconds' => $edge->node->runtime->seconds ?? null,
+                    'runtimeText' => $edge->node->runtime->displayableProperty->value->plainText ?? null,
                     'rank' => $edge->currentRank,
                     'genre' => $genres,
                     'rating' => $edge->node->ratingsSummary->aggregateRating,

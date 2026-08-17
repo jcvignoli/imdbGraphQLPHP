@@ -12,6 +12,8 @@ namespace Imdb;
 
 /**
  * Search by title
+ *
+ * @phpstan-type SearchArray list<array{imdbid: string, title: string|null, originalTitle: string|null, year: string|null, movietype: string|null, titleSearchObject: \Imdb\Title}>
  */
 class TitleSearch extends MdbBase
 {
@@ -33,7 +35,8 @@ class TitleSearch extends MdbBase
      * @param string $endDate search from endDate and earlier, iso date (year-month-day) ("1975-01-01")
      * if both dates are provided searches within the date span ("1950-01-01" - "1980-01-01")
      *
-     * @return array<int, array<string, string|\Imdb\Title|null>>
+     * @return list<array<string, string|null|\Imdb\Title>>
+     * @phpstan-return SearchArray
      */
     public function search(string $searchTerms, ?string $types = null, string $startDate = '', string $endDate = ''): array
     {

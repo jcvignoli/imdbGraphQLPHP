@@ -12,13 +12,16 @@ namespace Imdb;
 
 /**
  * Search for names on IMDb
+ *
+ * @phpstan-type SearchArray list<array{id: string, name: string|null, knownFor: array{title: mixed, titleYear: mixed}|null, primaryProfession: string|null, nameSearchObject: \Imdb\Name}>
  */
 class NameSearch extends MdbBase
 {
     /**
      * Search IMDb for names matching $searchTerms
      * @param string $searchTerms
-     * @return list<array<string, mixed>>
+     * @return list<array<string, string|list<string>|null|\Imdb\Name>>
+     * @phpstan-return SearchArray
      */
     public function search(string $searchTerms): array
     {

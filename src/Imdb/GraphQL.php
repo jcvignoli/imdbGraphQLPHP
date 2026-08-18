@@ -60,7 +60,7 @@ class GraphQL
      */
     private function doRequest(string $query, ?string $queryName = null, array $variables = array()): stdClass
     {
-        $request = new Request('https://api.graphql.imdb.com/', $this->config);
+        $request = new Request($this->config->apiUrl, $this->config);
         $request->addHeaderLine("Content-Type", "application/json");
         $request->addHeaderLine("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36");
         $request->addHeaderLine("x-imdb-client-name", "imdb-web-next-localized");

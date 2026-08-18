@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace Imdb;
 
 /**
- * Configuration class for imdbGraphQLPHP
+ * Configuration class
  */
 class Config
 {
@@ -19,33 +19,28 @@ class Config
     /**
      * Directory to store cached pages. This must be writable by the web
      * server. It doesn't need to be under documentroot.
-     * @var string
      */
     public string $cacheDir = './cache/';
 
     /**
      * Use cached pages if available?
-     * @var bool
      */
     public bool $cacheUse = false;
 
     /**
      * Store the pages retrieved for later use?
-     * @var bool
      */
     public bool $cacheStore = false;
 
     /**
      * Use zip compression for caching the retrieved html-files?
      * @see $converttozip if you're changing from false to true
-     * @var bool
      */
     public bool $cacheUseZip = true;
 
     /**
      * Convert non-zip cache-files to zip
      * You might want to use this if you weren't gzipping your cache files, but now are. They will be rewritten when they're used
-     * @var bool
      */
     public bool $cacheConvertZip = false;
 
@@ -53,28 +48,24 @@ class Config
      * Cache expiration time - cached pages older than this value (in seconds) will
      * be automatically deleted.
      * If 0 cached pages will never expire
-     * @var int
      */
     public int $cacheExpire = 604800;
 
     /**
      * Where to store images retrieved from the IMDB site by the method photoLocalurl().
      * This needs to be under documentroot to be able to display them on your pages.
-     * @var string
      */
     public string $photodir = './images/';
 
     /**
      * URL corresponding to photodir, i.e. the URL to the images, i.e. start at
      * your servers DOCUMENT_ROOT when specifying absolute path
-     * @var string
      */
     public string $photoroot = './images/';
 
 
     #========================================================[ Localization options ]===
      /**
-     * @var boolean useLocalization set true to use localization
      * leave this to false if you want US American English
      */
     public bool $useLocalization = false;
@@ -94,7 +85,7 @@ class Config
     public string $country = "DE";
 
     /**
-     * @var string language set language code
+     * Set language code
      * possible values:
      * fr-CA (French Canada)
      * fr-FR (French France)
@@ -110,7 +101,6 @@ class Config
     #========================================================[ TitleSearch options ]===
     /**
      * amount of search results for Title search
-     * @var int default: 10
      */
     public int $titleSearchAmount = 10;
 
@@ -118,7 +108,6 @@ class Config
     #========================================================[ NameSearch options ]===
     /**
      * amount of search results for Name search
-     * @var int default: 10
      */
     public int $nameSearchAmount = 10;
 
@@ -126,7 +115,6 @@ class Config
     #========================================================[ KeywordSearch options ]===
     /**
      * amount of search results for Keyword search
-     * @var int default: 30
      */
     public int $keywordSearchAmount = 30;
 
@@ -134,7 +122,6 @@ class Config
     #========================================================[ CompanySearch options ]===
     /**
      * amount of search results for Company search
-     * @var int default: 30
      */
     public int $companySearchAmount = 30;
 
@@ -142,13 +129,12 @@ class Config
     #========================================================[ TitleSearchAdvanced options ]===
     /**
      * amount of search results
-     * @var int (should be 250 or less, more is not very useful)
+     * should be 250 or less, more is not very useful
      */
     public int $titleSearchAdvancedAmount = 250;
 
     /**
      * Sort by options
-     * @var string ENUM with double quotes.
      * Possible values:
      *
      * BOX_OFFICE_GROSS_DOMESTIC
@@ -213,8 +199,7 @@ class Config
 
     /**
      * Sort order options
-     * @var string ENUM
-     * Possible values:
+      * Possible values:
      *
      * ASC
      *      Ascending order e.g. 1,2,3
@@ -234,7 +219,6 @@ class Config
 
     /**
      * Sort by options
-     * @var string with double quotes (Default: POPULARITY
      * Possible values:
      *
      * BIRTH_DATE
@@ -257,8 +241,7 @@ class Config
     public string $nameSortBy = "POPULARITY";
 
     /**
-     * Sort order options (Default: ASC
-     * @var string ENUM
+     * Sort order options
      * Possible values:
      *
      * ASC
@@ -275,7 +258,6 @@ class Config
     #---------------------------------------comingSoonStreaming]---
     /**
      * Sort by options
-     * @var string with double quotes (Default: LIST_ORDER)
      * Possible values:
      *
      * LIST_ORDER
@@ -296,7 +278,6 @@ class Config
 
     /**
      * Sort order options (Default: ASC
-     * @var string ENUM
      * Possible values:
      *
      * ASC
@@ -312,16 +293,14 @@ class Config
     #---------------------------------------[Title and TitleCombined class Photo thumbnail]---
     /**
      * photo() thumbnail width
-     * Default value: 190
-     * @var int pixels
+     * Default value: 190, in pixels
      * Keep ratio in mind, square thumbnails don't work
      */
     public int $photoThumbnailWidth = 190;
 
     /**
      * photo() thumbnail height
-     * Default value: 281
-     * @var int pixels
+     * Default value: 281, in pixels
      * Keep ratio in mind, square thumbnails don't work
      */
     public int $photoThumbnailHeight = 281;
@@ -329,16 +308,14 @@ class Config
     #----------------------------------------[Title class Recommendation thumbnail]---
     /**
      * recommendation() thumbnail width
-     * Default value: 140
-     * @var int pixels
+     * Default value: 140, in pixels
      * Keep ratio in mind, square thumbnails don't work
      */
     public int $recommendationThumbnailWidth = 140;
 
     /**
      * recommendation() thumbnail height
-     * Default value: 207
-     * @var int pixels
+     * Default value: 207, in pixels
      * Keep ratio in mind, square thumbnails don't work
      */
     public int $recommendationThumbnailHeight = 207;
@@ -346,16 +323,14 @@ class Config
     #----------------------------------------[Title class Cast thumbnail]---
     /**
      * cast() thumbnail width
-     * Default value: 32
-     * @var int pixels
+     * Default value: 32, in pixels
      * Keep ratio in mind, square thumbnails don't work
      */
     public int $castThumbnailWidth = 32;
 
     /**
      * cast() thumbnail height
-     * Default value: 44
-     * @var int pixels
+     * Default value: 44, in pixels
      * Keep ratio in mind, square thumbnails don't work
      */
     public int $castThumbnailHeight = 44;
@@ -363,16 +338,14 @@ class Config
     #----------------------------------------[Title class Episodes thumbnail]---
     /**
      * episode() thumbnail width
-     * Default value: 224
-     * @var int pixels
+     * Default value: 224, in pixels
      * Keep ratio in mind, square thumbnails don't work
      */
     public int $episodeThumbnailWidth = 224;
 
     /**
      * episode() thumbnail height
-     * Default value: 126
-     * @var int pixels
+     * Default value: 126, in pixels
      * Keep ratio in mind, square thumbnails don't work
      */
     public int $episodeThumbnailHeight = 126;
@@ -380,24 +353,21 @@ class Config
     #----------------------------------------[Title and Name class mainphoto thumbnail]---
     /**
      * mainphoto() thumbnail height
-     * Default value: 100
-     * @var int pixels
+     * Default value: 100, in pixels
      */
     public int $mainphotoThumbnailHeight = 100;
 
     #---------------------------------------[Name class Photo thumbnail]---
     /**
      * photo() thumbnail width
-     * Default value: 140
-     * @var int pixels
+     * Default value: 140, in pixels
      * Keep ratio in mind, square thumbnails don't work
      */
     public int $namePhotoThumbnailWidth = 140;
 
     /**
      * photo() thumbnail height
-     * Default value: 207
-     * @var int pixels
+     * Default value: 207, in pixels
      * Keep ratio in mind, square thumbnails don't work
      */
     public int $namePhotoThumbnailHeight = 207;
@@ -405,16 +375,14 @@ class Config
     #---------------------------------------[Trailers and Chart class Photo thumbnail]---
     /**
      * ALL methods thumbnail width
-     * Default value: 140
-     * @var int pixels
+     * Default value: 140, in pixels
      * Keep ratio in mind, square thumbnails don't work
      */
     public int $thumbnailWidth = 140;
 
     /**
      * ALL methods thumbnail height
-     * Default value: 207
-     * @var int pixels
+     * Default value: 207, in pixels
      * Keep ratio in mind, square thumbnails don't work
      */
     public int $thumbnailHeight = 207;
@@ -422,16 +390,14 @@ class Config
     #---------------------------------------[Calendar class thumbnail]---
     /**
      * All methods thumbnail width
-     * Default value: 140
-     * @var int pixels
+     * Default value: 140, in pixels
      * Keep ratio in mind square thumbnails don't work
      */
     public int $calendarThumbnailWidth = 140;
 
     /**
      * All methods thumbnail height
-     * Default value: 207
-     * @var int pixels
+     * Default value: 207, in pixels
      * Keep ratio in mind, square thumbnails don't work
      */
     public int $calendarThumbnailHeight = 207;
@@ -439,16 +405,14 @@ class Config
     #---------------------------------------[NameSearchAdvanced class thumbnail]---
     /**
      * All methods thumbnail width
-     * Default value: 140
-     * @var int pixels
+     * Default value: 140, in pixels
      * Keep ratio in mind square thumbnails don't work
      */
     public int $nameSearchAdvancedThumbnailWidth = 140;
 
     /**
      * All methods thumbnail height
-     * Default value: 207
-     * @var int pixels
+     * Default value: 207, in pixels
      * Keep ratio in mind, square thumbnails don't work
      */
     public int $nameSearchAdvancedThumbnailHeight = 207;
@@ -456,16 +420,14 @@ class Config
     #---------------------------------------[TitleSearchAdvanced class thumbnail]---
     /**
      * All methods thumbnail width
-     * Default value: 140
-     * @var int pixels
+     * Default value: 140, in pixels
      * Keep ratio in mind square thumbnails don't work
      */
     public int $titleSearchAdvancedThumbnailWidth = 140;
 
     /**
      * All methods thumbnail height
-     * Default value: 207
-     * @var int pixels
+     * Default value: 207, in pixels
      * Keep ratio in mind, square thumbnails don't work
      */
     public int $titleSearchAdvancedThumbnailHeight = 207;
@@ -473,19 +435,21 @@ class Config
     #========================================================[ Debug / Expert options ]===
     /**
      * Enable debug mode?
-     * @var bool
      */
     public bool $debug = false;
 
     /**
      * Throw exceptions when a request to fetch some content fails?
-     * @var bool
      */
     public bool $throwHttpExceptions = true;
 
     /**
      * Set curlopt_timout, this is the time out if curl has a connection problem
-     * @var int
      */
     public int $curloptTimeout = 30;
+
+    /**
+     * Set a different URL to call IMDB api (can be installed locally)
+     */
+    public string $apiUrl = 'https://api.graphql.imdb.com/';
 }

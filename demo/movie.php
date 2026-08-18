@@ -99,7 +99,13 @@ $titleCombinedData = method_exists($titleCombined, 'main') ? $titleCombined->mai
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title><?php echo esc($title->title() ?: 'Movie'); ?> - IMDbPHP Title Test</title>
+  <title><?php
+    // Using a try/catch, because if something goes wrong in the title, there is no message thrown.
+    try {
+        echo esc($title->title());
+    } catch (Throwable $e) {
+        echo $e->getMessage();
+    } ?> - IMDbPHP Title Test</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>

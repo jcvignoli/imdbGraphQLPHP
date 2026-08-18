@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Helper functions
+ */
 function esc($str)
 {
     if ($str === null) {

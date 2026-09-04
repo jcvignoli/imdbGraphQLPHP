@@ -3059,9 +3059,9 @@ EOF;
                                  trim(str_replace('"', ':', trim($data->title->titleText->text, '"'))) : null;
         $this->mainOriginalTitle  = isset($data->title->originalTitleText->text) ?
                                           trim(str_replace('"', ':', trim($data->title->originalTitleText->text, '"'))) : null;
-        $this->mainMovietype = $data->title->titleType?->text;
-        $this->mainYear = $data->title->releaseYear?->year;
-        $this->mainEndYear = $data->title->releaseYear?->endYear;
+        $this->mainMovietype = $data->title->titleType->text ?? null;
+        $this->mainYear = $data->title->releaseYear->year ?? null;
+        $this->mainEndYear = $data->title->releaseYear->endYear ?? null;
     }
 
     #========================================================[ photo/poster ]===

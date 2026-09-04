@@ -123,8 +123,8 @@ class Name extends MdbBase
         ?Config $config = null,
         ?LoggerInterface $logger = null,
         ?CacheInterface $cache = null
-    ) {
-        $person = new Name($id, $config, $logger, $cache);
+    ): self {
+        $person = new self($id, $config, $logger, $cache);
         $person->fullName = $name;
         return $person;
     }
@@ -142,10 +142,8 @@ class Name extends MdbBase
         $this->imageFunctions = new Image();
     }
 
-    #=============================================================[ Main Page ]===
-
-    #------------------------------------------------------------------[ Name ]---
-    /** Get the name of the person
+    /**
+     * Get the name of the person
      * @return string|null name full name of the person
      * @see IMDB person page / (Main page)
      */
@@ -169,7 +167,6 @@ EOF;
         return $this->fullName;
     }
 
-    #--------------------------------------------------------[ Photo specific ]---
     /**
      * Get the main photo image url for thumbnail or full size
      * @param bool $thumb get the thumbnail (140x207 pixels) or large (max 1000 pixels)
@@ -198,10 +195,10 @@ EOF;
      * @param string $path where to store the file
      * @param boolean $thumb get the thumbnail or the
      *        bigger variant (max width 1000 pixels - FALSE)
-     * @return boolean success
+     * @return bool success
      * @see IMDB page / (NamePage)
      */
-    public function savephoto($path, $thumb = true)
+    public function savephoto(string $path, bool $thumb = true): bool
     {
         $photoUrl = $this->photo($thumb);
         if (!$photoUrl) {
@@ -238,10 +235,10 @@ EOF;
      * Get the URL for the Name cover image
      * @param boolean $thumb get the thumbnail (default) or the
      *        bigger variant (max width 1000 pixels - FALSE)
-     * @return mixed url (string URL or FALSE if none)
+     * @return string|bool url (string URL or FALSE if none)
      * @see IMDB page / (NamePage)
      */
-    public function photoLocalurl($thumb = true)
+    public function photoLocalurl(bool $thumb = true): string|bool
     {
         if ($thumb) {
             $ext = "";
@@ -268,9 +265,8 @@ EOF;
         return false;
     }
 
-    #==================================================================[ /bio ]===
-    #------------------------------------------------------------[ Birth Name ]---
-    /** Get the birth name
+    /**
+     * Get the birth name
      * @return string|null birthname
      * @see IMDB person page /bio
      */
@@ -294,8 +290,8 @@ EOF;
         return $this->birthName;
     }
 
-    #-------------------------------------------------------------[ Nick Name ]---
-    /** Get the nick name
+    /**
+     * Get the nick name
      * @return string[] nicknames
      * @see IMDB person page /bio
      */
@@ -330,8 +326,8 @@ EOF;
         return $this->nickName;
     }
 
-    #-------------------------------------------------------------[ Alternative Names ]---
-    /** Get alternative names for a person
+    /**
+     * Get alternative names for a person
      * @return string[] alternative names
      * @see IMDB person page /bio
      */
@@ -370,8 +366,8 @@ EOF;
         return $this->akaName;
     }
 
-    #------------------------------------------------------------------[ Born ]---
-    /** Get Birthday
+    /**
+     * Get Birthday
      * @return array{
      *     day: int|null,
      *     month: string|null,
@@ -423,7 +419,6 @@ EOF;
         return $this->birthday;
     }
 
-    #------------------------------------------------------------------[ Died ]---
     /**
      * Get date of death with place and cause
      * @return array{
@@ -485,8 +480,8 @@ EOF;
         return $this->deathday;
     }
 
-    #------------------------------------------------------------------[ Age ]---
-    /** Get the age of the person
+    /**
+     * Get the age of the person
      * @return int|null age
      * @see IMDB person page / (Main page)
      */
@@ -510,8 +505,8 @@ EOF;
         return $this->age;
     }
 
-    #-----------------------------------------------------------[ Primary Professions ]---
-    /** Get primary professions of this person
+    /**
+     * Get primary professions of this person
      * @return array<array-key, string> all professions
      * @see IMDB person page
      */
@@ -548,7 +543,6 @@ EOF;
         return $this->professions;
     }
 
-    #----------------------------------------------------------[ Popularity ]---
     /**
      * Get current popularity rank of a person
      * @return array{
@@ -589,8 +583,8 @@ EOF;
         return $this->popRank;
     }
 
-    #-----------------------------------------------------------[ Body Height ]---
-    /** Get the body height
+    /**
+     * Get the body height
      * imperial: array[feet (int), inches (float)], metric: int (in centimeters)
      * @return array{
      *     imperial: array{feet: int, inches: float},
@@ -631,8 +625,8 @@ EOF;
         return $this->bodyheight;
     }
 
-    #----------------------------------------------------------------[ Spouse ]---
-    /** Get spouse(s)
+    /**
+     * Get spouse(s)
      * MonthName is the name, MonthInt the number of the month
      * @return array<int, array<string, mixed>>
      * @phpstan-return list<SpouseDef>
@@ -765,8 +759,8 @@ EOF;
         return $this->spouses;
     }
 
-    #----------------------------------------------------------------[ Children ]---
-    /** Get the Children
+    /**
+     * Get the Children
      * @phpstan-return list<RelativeDef>
      * @see IMDB person page /bio
      */
@@ -778,8 +772,8 @@ EOF;
         return $this->children;
     }
 
-    #----------------------------------------------------------------[ Parents ]---
-    /** Get the Parents
+    /**
+     * Get the Parents
      * @phpstan-return list<RelativeDef>
      * @see IMDB person page /bio
      */
@@ -791,8 +785,8 @@ EOF;
         return $this->parents;
     }
 
-    #----------------------------------------------------------------[ Relatives ]---
-    /** Get the relatives
+    /**
+     * Get the relatives
      * @phpstan-return list<RelativeDef>
      * @see IMDB person page /bio
      */
@@ -804,8 +798,8 @@ EOF;
         return $this->relatives;
     }
 
-    #---------------------------------------------------------------[ MiniBio ]---
-    /** Get the person's mini bio
+    /**
+     * Get the person's mini bio
      * @phpstan-return list<array{
      *     desc: string,
      *     author: string
@@ -855,8 +849,8 @@ EOF;
         return $this->bioBio;
     }
 
-    #----------------------------------------------------------------[ Trivia ]---
-    /** Get the Trivia
+    /**
+     * Get the Trivia
      * @return string[] trivias
      * @see IMDB person page /bio
      */
@@ -868,8 +862,8 @@ EOF;
         return $this->bioTrivia;
     }
 
-    #----------------------------------------------------------------[ Quotes ]---
-    /** Get the Personal Quotes
+    /**
+     * Get the Personal Quotes
      * @return string[] quotes
      * @see IMDB person page /bio
      */
@@ -881,8 +875,8 @@ EOF;
         return $this->bioQuotes;
     }
 
-    #------------------------------------------------------------[ Trademarks ]---
-    /** Get the "trademarks" of the person
+    /**
+     * Get the "trademarks" of the person
      * @return string[] trademarks
      * @see IMDB person page /bio
      */
@@ -894,8 +888,8 @@ EOF;
         return $this->bioTrademark;
     }
 
-    #----------------------------------------------------------------[ Salary ]---
-    /** Get the salary list
+    /**
+     * Get the salary list
      * @phpstan-return list<SalaryDef>
      * @see IMDB person page /bio
      */
@@ -952,8 +946,8 @@ EOF;
 
     #============================================================[ /publicity ]===
 
-    #-----------------------------------------------------------[ Print media ]---
-    /** Print media about this person
+    /**
+     * Print media about this person
      * @phpstan-return list<array{
      *     title: string|null,
      *     author: list<string>|null,
@@ -1004,8 +998,8 @@ EOF;
         return $this->pubPrints;
     }
 
-    #----------------------------------------------------[ Biographical movies ]---
-    /** Biographical Movies
+    /**
+     * Biographical Movies
      * @phpstan-return list<array{
      *     title: string,
      *     id: string,
@@ -1071,8 +1065,8 @@ EOF;
         return $this->pubMovies;
     }
 
-    #-----------------------------------------------------------[ Portrayal]---
-    /** Portrayal listings about this person
+    /**
+     * Portrayal listings about this person
      * @phpstan-return list<array{
      *     title: string,
      *     id: string,
@@ -1114,8 +1108,8 @@ EOF;
         return $this->pubPortrayal;
     }
 
-    #----------------------------------------------------------------[ Article ]---
-    /** Get the Publicity Articles of this name
+    /**
+     * Get the Publicity Articles of this name
      * @phpstan-return list<PublicityDef>
      * @see IMDB person page /publicity
      */
@@ -1127,8 +1121,8 @@ EOF;
         return $this->pubArticle;
     }
 
-    #----------------------------------------------------------------[ Interview ]---
-    /** Get the Publicity Interviews of this name
+    /**
+     * Get the Publicity Interviews of this name
      * @phpstan-return list<PublicityDef>
      * @see IMDB person page /publicity
      */
@@ -1140,8 +1134,8 @@ EOF;
         return $this->pubInterview;
     }
 
-    #----------------------------------------------------------------[ Magazines ]---
-    /** Get the Publicity Magazines of this name
+    /**
+     * Get the Publicity Magazines of this name
      * @phpstan-return list<PublicityDef>
      * @see IMDB person page /publicity
      */
@@ -1153,8 +1147,8 @@ EOF;
         return $this->pubMagazine;
     }
 
-    #----------------------------------------------------------------[ Pictorial ]---
-    /** Get the Publicity Pictoryials of this name
+    /**
+     * Get the Publicity Pictoryials of this name
      * @phpstan-return list<PublicityDef>
      * @see IMDB person page /publicity
      */
@@ -1166,9 +1160,8 @@ EOF;
         return $this->pubPictorial;
     }
 
-    #============================================================[ /OtherWorks ]===
-
-    /** Other works of this person
+    /**
+     * Other works of this person
      * @phpstan-return list<array{
      *     category: string,
      *     fromDate: array{
@@ -1233,7 +1226,6 @@ EOF;
         return $this->otherWorks;
     }
 
-    #-------------------------------------------------------[ External sites ]---
     /**
      * external websites with info of this name, excluding external reviews.
      * @phpstan-return array<'official'|'video'|'photo'|'sound'|'misc', list<array{
@@ -1291,7 +1283,6 @@ EOF;
         return $this->externalSites;
     }
 
-    #-------------------------------------------------[ Main images ]---
     /**
      * Get image URLs for (default 6) pictures from photo page
      * @param int $amount how many images, max = 9999
@@ -1469,8 +1460,8 @@ EOF;
         return $this->awards;
     }
 
-    #============================================================[ /creditKnownFor ]===
-    /** All prestigious title credits for this person
+    /**
+     * All prestigious title credits for this person
      * @phpstan-return list<array{
      *     title: string,
      *     titleId: string,
@@ -1572,8 +1563,8 @@ EOF;
         return $this->creditKnownFor;
     }
 
-    #-------------------------------------------------------[ Credits ]---
-    /** Get all credits for a person
+    /**
+     * Get all credits for a person
      * @phpstan-return array<string, list<array{
      *     titleId: string,
      *     titleName: string,
@@ -1692,7 +1683,6 @@ EOF;
         return $this->credits;
     }
 
-    #-------------------------------------------------[ Video ]---
     /**
      * Get all video URL's and images from videogallery page
      * @phpstan-return array<'Trailer'|'Clip', list<array{
@@ -1791,7 +1781,6 @@ EOF;
         return $this->videos;
     }
 
-    #----------------------------------------------------------[ News ]---
     /**
      * Get news items about this name, max 100 items!
      * @phpstan-return list<array{
@@ -1892,7 +1881,6 @@ EOF;
 
     #========================================================[ Helper functions ]===
 
-    #========================================================[ photo/poster ]===
     /**
      * Setup cover photo (thumbnail and big variant)
      * @return void
@@ -1930,8 +1918,8 @@ EOF;
         }
     }
 
-    #-----------------------------------------[ Helper for Trivia, Quotes and Trademarks ]---
-    /** Parse Trivia, Quotes and Trademarks
+    /**
+     * Parse Trivia, Quotes and Trademarks
      * @param string $name
      * @param array<string, string> $arrayName
      * @return array<string, string>
@@ -1954,8 +1942,8 @@ EOF;
         return $arrayName;
     }
 
-    #-----------------------------------------[ Helper for children, parents, relatives ]---
-    /** Parse children, parents, relatives
+    /**
+     * Parse children, parents, relatives
      * @param string $name
      *     possible values for $name: CHILDREN, PARENTS, OTHERS
      * @param array<string, string> $arrayName
@@ -2005,8 +1993,8 @@ EOF;
         return $arrayName;
     }
 
-    #-----------------------------------------------------------[ Other Publicity Listings helper]---
-    /** helper for Article, Interview, Magazine and Pictorial publicity listings about this person
+    /**
+     * helper for Article, Interview, Magazine and Pictorial publicity listings about this person
      * @phpstan-return list<PublicityDef> listing
      * @see IMDB person page /publicity
      */
@@ -2070,7 +2058,6 @@ EOF;
         return $results;
     }
 
-    #-----------------------------------------[ Helper GraphQL Paginated ]---
     /**
      * Get all edges of a field in the name type
      * @param string $queryName The cached query name
@@ -2125,7 +2112,6 @@ EOF;
         return $edges;
     }
 
-    #----------------------------------------------------------[ imdbID redirect ]---
     /**
      * Check if imdbid is redirected to another id or not.
      * It sometimes happens that imdb redirects an existing id to a new id.
@@ -2162,7 +2148,6 @@ EOF;
         return false;
     }
 
-    #----------------------------------------------------------[ Award filter helper ]---
     /**
      * Build award filter string
      * @param bool $winsOnly

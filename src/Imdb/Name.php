@@ -213,6 +213,10 @@ EOF;
             strpos($req->getResponseHeader("Content-Type"), 'image/bmp') === 0
         ) {
             $image = $req->getResponseBody();
+            if (!$image) {
+                $this->logger->error("Failed to find image at {$photoUrl}<br>");
+                return false;
+            }
         } else {
             $ctype = $req->getResponseHeader("Content-Type");
             $this->debugScalar("*photoerror* at " . __FILE__ . " line " . __LINE__ . ": " . $photoUrl . ": Content Type is '$ctype'");
@@ -224,7 +228,7 @@ EOF;
 
         $fp2 = fopen($path, "w");
         if (!$fp2) {
-            $this->logger->warning("Failed to open [$path] for writing  at " . __FILE__ . " line " . __LINE__ . "...<BR>");
+            $this->logger->error("Failed to open [$path] for writing  at " . __FILE__ . " line " . __LINE__ . "...<BR>");
             return false;
         }
         fputs($fp2, $image);

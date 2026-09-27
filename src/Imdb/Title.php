@@ -207,10 +207,10 @@ class Title extends MdbBase
     }
 
     /** Get movie title
-     * @return string title movie title (name)
+     * @return null|string title movie title (name)
      * @see IMDB page / (TitlePage)
      */
-    public function title(): string
+    public function title(): ?string
     {
         if (empty($this->mainTitle)) {
             $this->titleYear();

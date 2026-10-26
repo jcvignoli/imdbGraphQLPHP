@@ -7,7 +7,10 @@ use Imdb\Company;
 $companyId = $_GET['companyId'] ?? '0017902'; // Default Warner Bros
 $companyId = preg_replace('/[^0-9]/', '', $companyId);
 
-$company = new Company();
+$config = getDemoConfig();
+$logger = getDemoLogger();
+
+$company = new Company($config, $logger);
 $info = $company->companyInfo($companyId);
 ?>
 <!DOCTYPE html>
@@ -25,7 +28,9 @@ $info = $company->companyInfo($companyId);
     <a href="chart.php">Charts</a> |
     <a href="trailers.php">Trailers</a> |
     <a href="news.php">News</a> |
-    <a href="cache.php">Cache</a>
+    <a href="company.php">Company</a> |
+    <a href="cache.php">Cache</a> |
+    <a href="config.php">Config</a>
   </div>
 
   <h2 class="text-center">Company Info Test</h2>

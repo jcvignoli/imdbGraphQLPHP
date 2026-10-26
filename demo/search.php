@@ -9,6 +9,9 @@ use Imdb\KeywordSearch;
 use Imdb\TitleSearchAdvanced;
 use Imdb\NameSearchAdvanced;
 
+$config = getDemoConfig();
+$logger = getDemoLogger();
+
 $searchtype = $_GET["searchtype"] ?? 'movie';
 $query = $_GET["query"] ?? '';
 
@@ -32,37 +35,37 @@ if ($query !== '' || !empty($_GET['adv_submit'])) {
         case 'movie':
             $executedClass = 'TitleSearch';
             $executedMethod = 'search';
-            $s = new TitleSearch();
+            $s = new TitleSearch($config, $logger);
             $results = $s->search($query);
             break;
         case 'episode':
             $executedClass = 'TitleSearch';
             $executedMethod = 'search (TV_EPISODE)';
-            $s = new TitleSearch();
+            $s = new TitleSearch($config, $logger);
             $results = $s->search($query, [TitleSearch::TV_EPISODE]);
             break;
         case 'person':
             $executedClass = 'NameSearch';
             $executedMethod = 'search';
-            $s = new NameSearch();
+            $s = new NameSearch($config, $logger);
             $results = $s->search($query);
             break;
         case 'company':
             $executedClass = 'CompanySearch';
             $executedMethod = 'searchCompany';
-            $s = new CompanySearch();
+            $s = new CompanySearch($config, $logger);
             $results = $s->searchCompany($query);
             break;
         case 'keyword':
             $executedClass = 'KeywordSearch';
             $executedMethod = 'searchKeyword';
-            $s = new KeywordSearch();
+            $s = new KeywordSearch($config, $logger);
             $results = $s->searchKeyword($query);
             break;
         case 'title_advanced':
             $executedClass = 'TitleSearchAdvanced';
             $executedMethod = 'advancedSearch';
-            $s = new TitleSearchAdvanced();
+            $s = new TitleSearchAdvanced($config, $logger);
             $results = $s->advancedSearch(
                 $_GET['searchTerm'] ?? '',
                 $_GET['genres'] ?? '',
@@ -79,7 +82,7 @@ if ($query !== '' || !empty($_GET['adv_submit'])) {
         case 'person_advanced':
             $executedClass = 'NameSearchAdvanced';
             $executedMethod = 'advancedNameSearch';
-            $s = new NameSearchAdvanced();
+            $s = new NameSearchAdvanced($config, $logger);
             $results = $s->advancedNameSearch(
                 $_GET['searchTerm'] ?? '',
                 $_GET['birthDay'] ?? '',
@@ -108,7 +111,9 @@ if ($query !== '' || !empty($_GET['adv_submit'])) {
     <a href="chart.php">Charts</a> |
     <a href="trailers.php">Trailers</a> |
     <a href="news.php">News</a> |
-    <a href="cache.php">Cache</a>
+    <a href="company.php">Company</a> |
+    <a href="cache.php">Cache</a> |
+    <a href="config.php">Config</a>
   </div>
 
   <h2 class="text-center">IMDb Search Suite</h2>
@@ -196,4 +201,3 @@ if ($query !== '' || !empty($_GET['adv_submit'])) {
   <p class="text-center"><a href="index.html">Go back to home</a></p>
 </body>
 </html>
-

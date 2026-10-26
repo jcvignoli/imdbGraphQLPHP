@@ -3,16 +3,12 @@ require __DIR__ . "/../vendor/autoload.php";
 require "inc.php";
 
 use Imdb\Name;
-use Imdb\Config;
 
 $mid = $_GET['mid'] ?? '0000206'; // Default Keanu Reeves
 $mid = preg_replace('/[^0-9]/', '', $mid);
 
-$config = new Config();
-$config->cacheUse = true;
-$config->cacheStore = true;
-$config->language = 'en-US,en';
-$logger = null; //new \Imdb\Logger();
+$config = getDemoConfig();
+$logger = getDemoLogger();
 
 $person = new Name($mid, $config, $logger);
 
@@ -75,7 +71,9 @@ $methodList = [
     <a href="chart.php">Charts</a> |
     <a href="trailers.php">Trailers</a> |
     <a href="news.php">News</a> |
-    <a href="cache.php">Cache</a>
+    <a href="company.php">Company</a> |
+    <a href="cache.php">Cache</a> |
+    <a href="config.php">Config</a>
   </div>
 
   <h2 class="text-center">Person Details: <span><?php echo esc($person->name()); ?> (nm<?php echo esc($mid); ?>)</span></h2>

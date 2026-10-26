@@ -4,7 +4,10 @@ require "inc.php";
 
 use Imdb\Chart;
 
-$chart = new Chart();
+$config = getDemoConfig();
+$logger = getDemoLogger();
+
+$chart = new Chart($config, $logger);
 
 $listType = $_GET['listType'] ?? 'TOP_250';
 $popularType = $_GET['popularType'] ?? 'MOST_POPULAR_MOVIES';
@@ -30,7 +33,9 @@ $topBoxOffice = $chart->topBoxOffice();
     <a href="chart.php">Charts</a> |
     <a href="trailers.php">Trailers</a> |
     <a href="news.php">News</a> |
-    <a href="cache.php">Cache</a>
+    <a href="company.php">Company</a> |
+    <a href="cache.php">Cache</a> |
+    <a href="config.php">Config</a>
   </div>
 
   <h2 class="text-center">Charts Test Suite</h2>

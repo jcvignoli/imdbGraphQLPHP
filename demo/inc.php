@@ -54,3 +54,56 @@ function renderValue($value)
     }
     return esc((string)$value);
 }
+
+function getDemoConfigFile(): string
+{
+    return __DIR__ . '/config-temp.json';
+}
+
+function getDemoConfigData(): array
+{
+    $file = getDemoConfigFile();
+    if (file_exists($file)) {
+        $content = file_get_contents($file);
+        if ($content !== false) {
+            $data = json_decode($content, true);
+            if (is_array($data)) {
+                return $data;
+            }
+        }
+    }
+    return [];
+}
+
+function getDemoConfig(): \Imdb\Config
+{
+    $config = new \Imdb\Config();
+    $data = getDemoConfigData();
+
+    if (isset($data['cacheUse'])) {
+        $config->cacheUse = (bool)$data['cacheUse'];
+    }
+    if (isset($data['cacheStore'])) {
+        $config->cacheStore = (bool)$data['cacheStore'];
+    }
+    if (!empty($data['language'])) {
+        $config->language = (string)$data['language'];
+    }
+    if (!empty($data['apiUrl'])) {
+        $config->apiUrl = (string)$data['apiUrl'];
+    }
+
+    return $config;
+}
+
+function getDemoLogger(): ?\Imdb\Logger
+{
+    $data = getDemoConfigData();
+    if (isset($data['logger'])) {
+        $val = (string)$data['logger'];
+        if ($val === 'new \Imdb\Logger()' || $val === 'logger' || $val === 'true' || $val === '1') {
+            return new \Imdb\Logger();
+        }
+    }
+    return null;
+}

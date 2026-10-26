@@ -4,7 +4,10 @@ require "inc.php";
 
 use Imdb\News;
 
-$news = new News();
+$config = getDemoConfig();
+$logger = getDemoLogger();
+
+$news = new News($config, $logger);
 
 $listType = $_GET['listType'] ?? 'MOVIE';
 
@@ -25,7 +28,9 @@ $newsList = $news->newsList($listType);
     <a href="chart.php">Charts</a> |
     <a href="trailers.php">Trailers</a> |
     <a href="news.php">News</a> |
-    <a href="cache.php">Cache</a>
+    <a href="company.php">Company</a> |
+    <a href="cache.php">Cache</a> |
+    <a href="config.php">Config</a>
   </div>
 
   <h2 class="text-center">News Test Suite</h2>

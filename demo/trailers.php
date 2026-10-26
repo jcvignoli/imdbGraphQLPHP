@@ -4,7 +4,10 @@ require "inc.php";
 
 use Imdb\Trailers;
 
-$trailers = new Trailers();
+$config = getDemoConfig();
+$logger = getDemoLogger();
+
+$trailers = new Trailers($config, $logger);
 
 $recent = $trailers->recentVideo();
 $trending = $trailers->trendingVideo();
@@ -24,7 +27,9 @@ $trending = $trailers->trendingVideo();
     <a href="chart.php">Charts</a> |
     <a href="trailers.php">Trailers</a> |
     <a href="news.php">News</a> |
-    <a href="cache.php">Cache</a>
+    <a href="company.php">Company</a> |
+    <a href="cache.php">Cache</a> |
+    <a href="config.php">Config</a>
   </div>
 
   <h2 class="text-center">Trailers Test Suite</h2>

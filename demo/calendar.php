@@ -4,7 +4,10 @@ require "inc.php";
 
 use Imdb\Calendar;
 
-$calendar = new Calendar();
+$config = getDemoConfig();
+$logger = getDemoLogger();
+
+$calendar = new Calendar($config, $logger);
 
 $region = $_GET['region'] ?? 'US';
 $type = $_GET['type'] ?? 'MOVIE';
@@ -28,7 +31,9 @@ $comingSoonStreaming = $calendar->comingSoonStreaming($providerId);
     <a href="chart.php">Charts</a> |
     <a href="trailers.php">Trailers</a> |
     <a href="news.php">News</a> |
-    <a href="cache.php">Cache</a>
+    <a href="company.php">Company</a> |
+    <a href="cache.php">Cache</a> |
+    <a href="config.php">Config</a>
   </div>
 
   <h2 class="text-center">Calendar Test</h2>

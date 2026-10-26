@@ -4,16 +4,12 @@ require "inc.php";
 
 use Imdb\Title;
 use Imdb\TitleCombined;
-use Imdb\Config;
 
 $mid = $_GET['mid'] ?? '0133093'; // Default Matrix
 $mid = preg_replace('/[^0-9]/', '', $mid);
 
-$config = new Config();
-$config->cacheUse = true;
-$config->cacheStore = true;
-$config->language = 'en-US,en';
-$logger = null; //new \Imdb\Logger();
+$config = getDemoConfig();
+$logger = getDemoLogger();
 
 $title = new Title($mid, $config, $logger);
 $titleCombined = new TitleCombined($mid, $config, $logger);
@@ -116,7 +112,9 @@ $titleCombinedData = method_exists($titleCombined, 'main') ? $titleCombined->mai
     <a href="chart.php">Charts</a> |
     <a href="trailers.php">Trailers</a> |
     <a href="news.php">News</a> |
-    <a href="cache.php">Cache</a>
+    <a href="company.php">Company</a> |
+    <a href="cache.php">Cache</a> |
+    <a href="config.php">Config</a>
   </div>
 
   <h2 class="text-center">Title Details: <span><?php echo esc($title->title()); ?> (tt<?php echo esc($mid); ?>)</span></h2>
@@ -181,4 +179,3 @@ $titleCombinedData = method_exists($titleCombined, 'main') ? $titleCombined->mai
   <p class="text-center"><a href="index.html">Go back to home</a></p>
 </body>
 </html>
-
